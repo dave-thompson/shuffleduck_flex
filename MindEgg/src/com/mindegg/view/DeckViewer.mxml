@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="296" verticalGap="10" backgroundColor="#3D464B" paddingLeft="10" paddingRight="10" paddingTop="10" paddingBottom="10" currentState="cards" height="430">
+   <mx:states>
+      <mx:State name="template">
+         <mx:RemoveChild target="{newCardButton}"/>
+         <mx:SetStyle target="{templateButton}" name="color" value="#FFFFFF"/>
+         <mx:SetStyle target="{templateButton}" name="textDecoration" value="underline"/>
+         <mx:SetEventHandler target="{templateButton}" name="click"/>
+         <mx:SetStyle target="{templateButton}" name="textRollOverColor" value="#FFFFFF"/>
+      </mx:State>
+      <mx:State name="cards">
+         <mx:SetStyle target="{cardsButton}" name="textDecoration" value="underline"/>
+         <mx:SetStyle target="{cardsButton}" name="color" value="#FFFFFF"/>
+         <mx:SetEventHandler target="{cardsButton}" name="click"/>
+         <mx:RemoveChild target="{templateHBox}"/>
+         <mx:AddChild position="lastChild">
+         	<mx:VBox id = "CardsHBoxVBox" height="100%" width="100%" minHeight="0" minWidth="0">     	 <!-- This VBox is necessary as a workaround to a suspected Flex bug, which causes cards to be loaded but hidden if a deck was previously loaded which required a scroll of the CardsHBox. -->	
+	            <mx:HBox height="100%" width="100%" horizontalGap="10" id="cardsHBox" minWidth="0" horizontalScrollBarStyleName="customScroll" verticalScrollBarStyleName="customScroll" minHeight="0"/>
+         	</mx:VBox>      
+         </mx:AddChild>
+         <mx:SetStyle name="paddingBottom" value="0"/> 
+         <mx:SetStyle name="paddingLeft" value="0"/> 
+         <mx:SetStyle name="paddingRight" value="0"/>
+         <mx:SetStyle name="paddingTop" value="0"/>
+         <mx:SetProperty name="height" value="100%"/>
+         <mx:RemoveChild target="{newCardButton}"/>
+         <mx:AddChild relativeTo="{spacer1}" position="before" target="{newCardButton}"/>
+         <mx:SetStyle target="{cardsButton}" name="textRollOverColor" value="#FFFFFF"/>
+         <mx:SetStyle target="{newCardButton}" name="themeColor"/>
+         <mx:SetStyle target="{newCardButton}" name="textRollOverColor" value="0x25e9eb"/>
+         <mx:SetStyle target="{TitleHBox}" name="paddingLeft" value="10"/>
+         <mx:SetStyle target="{TitleHBox}" name="paddingRight" value="10"/>
+         <mx:SetStyle target="{TitleHBox}" name="paddingTop" value="10"/>
+      </mx:State>
+      <mx:State name="grid">
+         <mx:SetStyle target="{gridButton}" name="textDecoration" value="underline"/>
+         <mx:SetEventHandler target="{gridButton}" name="click"/>
+         <mx:SetStyle target="{gridButton}" name="color" value="#FFFFFF"/>
+         <mx:RemoveChild target="{templateHBox}"/>
+         <mx:SetStyle target="{gridButton}" name="textRollOverColor" value="#FFFFFF"/>
+         <mx:AddChild position="lastChild">
+            <mx:HBox horizontalGap="10" width="100%" height = "100%" id="gridHBox">
+               <mx:horizontalScrollBarStyleName/>
+               <mx:verticalScrollBarStyleName/>
+               <mx:DataGrid width="100%" height="100%" id="datagrid">
+                  <mx:columns>
+                     <mx:DataGridColumn headerText="Column 1" dataField="col1"/>
+                     <mx:DataGridColumn headerText="Column 2" dataField="col2"/>
+                     <mx:DataGridColumn headerText="Column 3" dataField="col3"/>
+                  </mx:columns>
+               </mx:DataGrid>
+            </mx:HBox>
+         </mx:AddChild>
+      </mx:State>
+   </mx:states>
+   
+   	<mx:Style source="com/mindegg/theme/styles.css"/>
+	
+   <mx:HBox id = "TitleHBox" width="100%" horizontalGap="0">
+   		<mx:Button label="+ Card" click="newCard()" id="newCardButton" styleName="SlimlineButton" height="17" width="47" textRollOverColor="0x25e9eb"/>
+    	<mx:Spacer width="100%" id="spacer1"/>
+    	<mx:Label text="View:" fontWeight="bold" color="#FFFFFF" fontSize="10" width="39"/>
+    	<mx:Button label="Template" id="templateButton" styleName="StandardButton" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" height="17" textRollOverColor="0x25e9eb" alpha="0.0" click="changeView(TEMPLATE_STATE)"/>
+    	<mx:Label text="|" fontWeight="bold" color="#FFFFFF" fontSize="14" width="13" height="17" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0"/>
+    	<mx:Button label="Cards" id="cardsButton" styleName="StandardButton" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" height="17" textRollOverColor="0x25e9eb" alpha="0.0" click="changeView(CARDS_STATE)"/>
+    	<mx:Label text="|" fontWeight="bold" color="#FFFFFF" fontSize="14" width="13" height="17" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0"/>
+    	<mx:Button label="Grid" id="gridButton" styleName="StandardButton" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" height="17" textRollOverColor="0x25e9eb" alpha="0.0" width="30" click="changeView(GRID_STATE)"/>
+   </mx:HBox>
+   
+      <mx:HBox id="templateHBox" horizontalGap="10" width="100%" height="100%" horizontalScrollBarStyleName="customScroll" verticalScrollBarStyleName="customScroll"/>
+		
+<mx:Script>
+	<![CDATA[
+		import mx.events.CollectionEvent;
+		import mx.collections.ArrayCollection;
+		import mx.controls.dataGridClasses.DataGridColumn;
+		import ascb.units.Unit;
+		import mx.messaging.AbstractConsumer;
+		import com.mindegg.data.Deck;
+		import com.mindegg.view.UISide;
+		import com.mindegg.data.Card;
+		import com.mindegg.data.TextBox;
+		import com.mindegg.data.Component;
+		import com.mindegg.data.Side;
+		import mx.containers.Canvas;
+		import mx.controls.Alert;
+		import com.mindegg.view.ContextualMenu;
+		import mx.managers.PopUpManager;
+		import com.mindegg.utils.CustomEvent;
+		import com.mindegg.utils.AttributeConstants;
+		import mx.events.ListEvent;
+		import mx.events.CollectionEventKind;
+		import mx.events.PropertyChangeEvent;
+		import flash.events.ContextMenuEvent;
+		import flash.net.*;
+		import mx.events.FlexEvent;
+		
+		// event constants
+		public static const SIDE_SELECTED:String = "sideSelected";
+		public static const DECK_CLEARED:String = "deckCleared";
+		public static const CARD_DELETED:String = "cardDeleted";
+		
+		// state constants
+		private static const CARDS_STATE:String = "cards";
+		private static const TEMPLATE_STATE:String = "template";
+		private static const GRID_STATE:String = "grid";
+
+		// card type constants
+		private static const TEMPLATE:uint = 0;
+		private static const CARD:uint = 1;
+		
+		// data in the grid (if in grid view)
+		private var _dataProviderCollection:ArrayCollection = null;
+		private var _cardsRequireFullRedraw:Boolean = false;
+		
+		// object model  		
+		private var _deck:Deck;
+		
+		// SETUP METHODS
+		
+		public function setup():void
+		{
+			// create a new, blank template with 2 cards
+			_deck = new Deck();
+						
+			// instantiate the other states - this is necessary to draw the components of other states, so that they may then be referenced
+			this.currentState = CARDS_STATE;
+			this.currentState = GRID_STATE;
+			
+			// show the blank template
+			this.currentState = TEMPLATE_STATE;
+			drawNewCard(_deck.template, TEMPLATE, false);
+		}
+		
+		public function clearContext():void
+		{	
+			// clear any currently shown cards
+			templateHBox.removeAllChildren();
+			cardsHBox.removeAllChildren();
+
+			// create a new, blank deck and show the blank template
+			setup();
+			
+			// send an event to the application so that it may clear any other panes (e.g. edit pane, properties pane)
+			var clearDeckParams:Object = new Object();
+            var clearDeckEvent:CustomEvent = new CustomEvent(DECK_CLEARED, clearDeckParams, true);
+            dispatchEvent(clearDeckEvent);
+		}
+		
+		private function changeView(state:String):void
+		{
+			switch(state)
+				{
+					case TEMPLATE_STATE:
+						// if leaving GRID_STATE, clear local grid variables and update the cards view
+						if (currentState == GRID_STATE)
+						{
+							_dataProviderCollection = null;
+							if (_cardsRequireFullRedraw)
+							{
+								fullyRedrawAllCards();
+								_cardsRequireFullRedraw = false;
+							}
+							else
+							{
+								redrawAllCards();
+							}
+						}
+						// switch state
+						currentState = TEMPLATE_STATE;
+						break;
+						
+					case CARDS_STATE:
+						// if leaving GRID_STATE, make sure that any data change is processed
+						if (currentState == GRID_STATE)
+						{
+							_dataProviderCollection = null;
+							if (_cardsRequireFullRedraw)
+							{
+								fullyRedrawAllCards();
+								_cardsRequireFullRedraw = false;
+							}
+							else
+							{
+								redrawAllCards();
+							}
+						}
+						// switch state
+						currentState = CARDS_STATE;
+						break;
+						
+					case GRID_STATE:
+						// load the grid
+						prepareGrid();
+						// switch state
+						currentState = GRID_STATE;
+				}
+		}
+		
+		private function prepareGrid():void
+		{
+			// get list of all variable atributes
+			var componentIDsAttributeConstants:Array = _deck.template.getVariableAttributes();
+
+			// find the number of variable attributes (== columns)			
+			var numColumns:uint = componentIDsAttributeConstants.length;
+			
+			// initialise column name arrays
+			var componentNames:Array = new Array();
+			var attributeIDs:Array = new Array();
+			var attributeNames:Array = new Array();
+			var columnNames:Array = new Array();
+			var dataFieldNames:Array = new Array();
+			
+			// initialise columns & data
+			var dataGridColumn:DataGridColumn;
+			var dataGridColumns:Array = new Array();
+			
+			//loop through each column
+			for (var i:uint = 0; i < numColumns; i ++)
+			{
+				// derive the column names
+					// find the component names
+					componentNames.push(toComponentName(componentIDsAttributeConstants[i].templateComponentID));
+					// find the attribute IDs and names
+					attributeIDs.push(componentIDsAttributeConstants[i].attributeConstant);
+					attributeNames.push(AttributeConstants.displayableString(attributeIDs[i]));
+					// stick them together to make column names
+					//columnNames.push(componentNames[i] + ": " + attributeNames[i]);
+					columnNames.push(componentNames[i]); // temporarily just have component names for column names - only showing text anyway
+					// but use componentIDs for dataField names (so that column names may be changed without impacting data integrity)
+					dataFieldNames.push(componentIDsAttributeConstants[i].templateComponentID.toString() + "." + attributeIDs[i]);
+				
+				// set up the datagrid columns
+					dataGridColumn = new DataGridColumn();
+					dataGridColumn.headerText = columnNames[i];
+					dataGridColumn.dataField = dataFieldNames[i];
+					dataGridColumns.push(dataGridColumn);
+			}
+				
+			// setup data provider
+			var dataProvider:Array = new Array()
+				// loop through cards 
+				for (var cardIndex:uint = 0; cardIndex < _deck.numCards(); cardIndex++)
+				{
+					var card:Card = _deck.getCardAtIndex(cardIndex);
+					var cardData:Object = new Object();
+					// for each column
+					for (var columnIndex:uint = 0; columnIndex < numColumns; columnIndex ++)
+					{	// get the card's attribute value for this column
+						var cardComponent:Component = card.getComponentWithTemplateComponentID(componentIDsAttributeConstants[columnIndex].templateComponentID);
+						var cardAttributeValue:String;
+						if (cardComponent == null) // this card doesn't have this component (either it was added to the template after the card was created, or it's been deleted from the card)
+						{
+							// set value to <N/A>
+							cardAttributeValue = "<N/A>";
+						}
+						else	
+						{
+							cardAttributeValue = cardComponent.getAttributeAsString(componentIDsAttributeConstants[columnIndex].attributeConstant);
+						}
+						// add the value to the Data Provider
+						cardData[dataFieldNames[columnIndex]] = cardAttributeValue;
+					}
+					dataProvider.push(cardData);
+				}
+			
+			// setup datagrid
+				// set its columns
+				datagrid.columns = dataGridColumns;
+				// set its data
+				datagrid.dataProvider = dataProvider;
+				// allow the user to change values in the datagrid			
+				datagrid.editable = true;
+				
+			// setup event listener on data collection
+				_dataProviderCollection = datagrid.dataProvider as ArrayCollection;
+				_dataProviderCollection.addEventListener(CollectionEvent.COLLECTION_CHANGE, gridDataChanged);
+		}
+
+		/**
+		 * 	Fired:	 	When the data in the grid changes
+		 *  Purpose:	Confirm the change is valid and update the data model
+		 */		
+		private function gridDataChanged(event:CollectionEvent):void
+		{
+			if (event.kind == CollectionEventKind.UPDATE)
+			{
+				for (var i:uint = 0; i < event.items.length; i++)
+				{
+                	// find the card that was edited
+                	var cardIndex:uint = datagrid.editedItemPosition.rowIndex;
+                	var card:Card = _deck.getCardAtIndex(cardIndex);
+                	
+                	// find the component and attribute on that card that were edited
+                	var propertyChangeEvent:PropertyChangeEvent = event.items[i];
+                	var templateComponentIDAndAttribute:Array = propertyChangeEvent.property.split(".");
+					var templateComponentID:uint = int(templateComponentIDAndAttribute[0]);
+					var attribute:uint = int(templateComponentIDAndAttribute[1]);
+
+                	// retrieve the new value
+                	var newValue:String = propertyChangeEvent.source[propertyChangeEvent.property];
+                	
+                	// update the value in the data model
+                	var errorString:String = card.getComponentWithTemplateComponentID(templateComponentID).setAttributeFromString(attribute, newValue);
+                	
+                	// if there was a problem, report it to the user and roll back the value
+                	if (errorString != "")
+                	{
+	                	// NOT REQUIRED FOR TEXT VALUES - IMPLEMENT LATER WHEN OTHER ATTRIBUTES ADDED            		
+                	}
+				}
+			}
+		}
+		
+		/**
+		 * 	Purpose: 	Removes all cards from the cards view and draws them from scratch using the existing deck
+		 * 				Differs from redrawAllCards, which redraws existing components and does not add any new content
+		 * 				Method can cause some on-screen flickering and delay, therefore use sparingly
+		 * 
+		 */
+		private function fullyRedrawAllCards():void
+		{
+			// recall current state before working
+			var formerState:String = currentState;
+			// for working on cardsHBox, we need to be in CARDS_STATE
+			currentState = CARDS_STATE;
+			
+			// remove the drawn cards
+			cardsHBox.removeAllChildren();
+			// draw the cards in the deck
+	        drawCardsFromDeck();
+	        
+	        // restore state
+	        currentState = formerState;
+		}
+		
+		private function toComponentName(componentID:uint):String
+		{
+			return _deck.template.getComponentWithTemplateComponentID(componentID).name;			
+		}
+	
+	
+		/** 
+		 * 	USER-INITIATED EVENTS
+		 */	
+		
+		/** 
+		 * 	New Card button clicked
+		 */
+		private function newCard():void
+		{			
+			// add a new card to the deck
+			_deck.newCard();
+			if (currentState == CARDS_STATE)
+			{
+				// draw the new card on screen
+				drawNewCard(_deck.getCardAtIndex(_deck.numCards() - 1), CARD, false, _deck.numCards());
+			}
+			else // currentState is TEMPLATE_STATE
+			{
+				// defer drawing until later, but set flag for it to be done
+				_cardsRequireFullRedraw = true;
+			}
+		}
+		
+		
+		/**
+		 * 	PUBLIC FUNCTIONS
+		 */
+
+		public function scrollLeft():void
+		{			
+			cardsHBox.horizontalScrollPosition = cardsHBox.horizontalScrollPosition - 298;
+		}
+		
+		public function scrollRight():void
+		{
+			cardsHBox.horizontalScrollPosition = cardsHBox.horizontalScrollPosition + 298;				
+		}
+		
+		public function scrollToEnd(e:FlexEvent):void
+		{			
+			var fullWidth:int = _deck.numCards() * 298;
+			var viewableWidth:int = cardsHBox.width;
+			var scrollPosition:int = fullWidth - viewableWidth;
+			if (scrollPosition < 0)
+			{
+				scrollPosition = 0;
+			}
+			cardsHBox.horizontalScrollPosition = scrollPosition + 298;
+		}
+		
+		public function scrollToBeginning(e:FlexEvent):void
+		{
+			cardsHBox.horizontalScrollPosition = 0;
+		}
+		
+
+
+		// returns true if the deck viewer is looking at template sides; false otherwise
+		// no guarantee is made that, if current sides are not from template, that there are current sides and they are from cards
+		// (it's possible that the DeckViewer could be in grid view)
+		public function areCurrentSidesFromTemplate():Boolean
+		{
+			var result:Boolean;
+			
+			if (currentState == TEMPLATE_STATE)
+			{
+				result = true;	
+			}
+			else
+			{
+				result = false;
+			}
+			
+			return result;
+		}
+		
+		/** 
+		 * 	Application has demanded a redraw
+		 *  (Presume that a card may have changed in some way.)
+		 * 	Parameters:	cardNumber should be either the 1-based index of the card to be updated, or the constant TEMPLATE
+		 */
+		 
+		public function redrawCard(cardNumber:uint):void
+		{
+			if (cardNumber == TEMPLATE)	// redraw the template
+				{
+					var templateCardToBeRedrawn:CardViewer = templateHBox.getChildAt(0) as CardViewer;
+					templateCardToBeRedrawn.redraw();
+				}
+			else // redraw the specified card
+				{
+					var cardToBeRedrawn:CardViewer = cardsHBox.getChildAt(cardNumber - 1) as CardViewer;
+					cardToBeRedrawn.redrawWithCardNumber(cardNumber);
+				}
+		}
+		
+		public function redrawAllCards():void
+		{
+			for (var i:int = 0; i < deck.numCards(); i++)
+			{
+				redrawCard(i + 1);
+			}
+		}
+				
+		public function loadDeck(xmlString:String):void
+        {
+    		// clear the existing deck
+			clearContext();
+        	
+        	try
+        	{
+	        	// load the new deck (if there is a loading error, user will be left with an empty deck)
+	        	_deck.loadDeck(xmlString);
+	        	
+	        	// draw the cards
+	        	drawCardsFromDeck();
+	        	
+	        	// draw the template
+	        	drawNewCard(_deck.template, TEMPLATE, true);
+	        	
+	        	// show the cards
+				this.currentState = CARDS_STATE;					
+         	}
+         	
+         	// in case of error loading the XML string, inform the user
+			catch (e:TypeError)
+			{
+				// xmlString couldn't be converted into XML; likely bad formatting
+				Alert.show("Your download couldn't be processed. Please try again. If you continue to have problems, please do let us know!","Oh no! Sorry about this...");
+				trace("String parsing to XML error: " + e.message);
+				
+				// not sure where the error was, so to cleanup - reset everything for a new deck
+				clearContext();
+			}
+
+        }
+        
+        /**
+        * 	Purpose: draws all cards in a deck
+        * 
+        */
+        private function drawCardsFromDeck():void
+        {
+        	// loop through deck, drawing cards
+	        for (var i:uint = 0; i < _deck.numCards(); i++)
+		        	{
+		        		drawNewCard(_deck.getCardAtIndex(i), CARD, true, i + 1);
+		        	}
+        }
+        
+        /**
+        * 	Purpose:	Create a new CardViewer containing the specified card
+        * 				and add it to the end of the shown cards.
+        */
+        private function drawNewCard(card:Card, cardType:uint, partOfLoadProcess:Boolean, cardNumber:uint = 0):void
+        {
+        	var cardViewer:CardViewer = new CardViewer();
+        	if (cardType == CARD)
+        	{
+        		// add the supplied card to the cards view
+	        	cardsHBox.addChild(cardViewer);
+	        	if (partOfLoadProcess)
+	        	{
+	        		cardViewer.addEventListener(FlexEvent.CREATION_COMPLETE, scrollToBeginning);	        		
+	        	}
+	        	else
+	        	{
+	        		cardViewer.addEventListener(FlexEvent.CREATION_COMPLETE, scrollToEnd);
+	        	}
+	        	
+	        	cardViewer.draw(card, cardNumber, false);
+	        	
+	        	var contextualMenu:ContextualMenu = new ContextualMenu();
+	        	contextualMenu.AddItem("Delete Card " + cardNumber, deleteCard);
+	        	contextualMenu.AssignRightClick(cardViewer);
+	        }
+	        else if (cardType == TEMPLATE)
+	        {
+	        	// template only supports one card, therefore remove anything already there
+	        	templateHBox.removeAllChildren();
+	        	// add the supplied card to the template view
+				templateHBox.addChild(cardViewer);			
+				cardViewer.draw(card, 0, true);
+	        }
+	        else throw new Error("drawNewCard called with invalid card type");
+        }
+        
+        public function get deck():Deck
+        {
+        	return _deck;
+        }
+        
+        private function deleteCard(event:ContextMenuEvent):void
+        {
+        	// find out which card was deleted
+        	var caption:String = event.target.caption;
+        	var words:Array = caption.split(" ");
+        	var oneBasedCardIndex:uint = words[words.length - 1];
+        	var zeroBasedCardIndex:uint = oneBasedCardIndex-1;
+        	
+        	// delete the corresponding card from the deck and from the screen
+        	_deck.deleteCard(zeroBasedCardIndex);
+        	cardsHBox.removeChildAt(zeroBasedCardIndex);
+        	
+        	// redraw the cards on the screen to update their card numbers (this could be made more efficient later if required)
+        	//redrawAllCards();
+        	
+        	// remove all cards and redraw them (can't simply redrawAllCards() as the contextual menus must be updated with the new card numbers)
+        	cardsHBox.removeAllChildren();
+        	drawCardsFromDeck();
+        	
+        	// fire CARD_DELETED event so that the application can clear the properties pane
+        	var params:Object = new Object();
+			var cardDeletedEvent:CustomEvent = new CustomEvent(CARD_DELETED, params, true);
+	        dispatchEvent(cardDeletedEvent); 
+        }
+        
+        public function loadDefaultTemplate():void
+        {
+        	var loader:URLLoader = new URLLoader();
+        	loader.dataFormat = URLLoaderDataFormat.TEXT;
+        	loader.addEventListener(Event.COMPLETE, handleTemplateLoadComplete);
+        	loader.load(new URLRequest("com/mindegg/assets/DefaultTemplate.xml"));
+        }
+
+		private function handleTemplateLoadComplete(event:Event):void
+		{
+			var loader:URLLoader = URLLoader(event.target);
+			var xmlString:String = loader.data;
+			loadDeck(xmlString);
+			changeView(TEMPLATE_STATE);
+		}
+		
+		public function getCardViewerNumber(cardNumber:uint):CardViewer
+		{
+			var returnCardViewer:CardViewer = cardsHBox.getChildAt(cardNumber-1) as CardViewer;
+			return returnCardViewer;
+		}
+
+				
+	]]>
+</mx:Script>	
+	
+</mx:VBox>

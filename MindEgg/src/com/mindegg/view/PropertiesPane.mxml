@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" width="280" height="430" title="Properties" layout="absolute" styleName="propertyFormItem">
+
+	<mx:states>
+		<mx:State name="off">
+			<mx:RemoveChild target="{nameFormItem}"/>
+			<mx:RemoveChild target="{hrule1}"/>
+			<mx:RemoveChild target="{widthFormItem}"/>
+			<mx:RemoveChild target="{heightFormItem}"/>
+			<mx:RemoveChild target="{xFormItem}"/>
+			<mx:RemoveChild target="{yFormItem}"/>
+			<mx:RemoveChild target="{hrule2}"/>
+			<mx:RemoveChild target="{textFormItem}"/>
+			<mx:RemoveChild target="{fontSizeFormItem}"/>
+			<mx:RemoveChild target="{alignmentFormItem}"/>
+			<mx:RemoveChild target="{foregroundColorFormItem}"/>
+			<mx:RemoveChild target="{hrule3}"/>
+			<mx:RemoveChild target="{backgroundColorFormItem}"/>
+			<mx:RemoveChild target="{propertiesForm}"/>
+			<mx:SetProperty name="title"/>
+		</mx:State>
+		<mx:State name="card">
+			<mx:RemoveChild target="{nameFormItem}"/>
+			<mx:RemoveChild target="{hrule1}"/>
+		</mx:State>
+	</mx:states>
+	
+	<mx:Style source="com/mindegg/theme/styles.css"/>
+	
+	
+	<mx:Form id="propertiesForm">
+	
+		<mx:FormItem id="nameFormItem" label="Name" styleName="propertyFormItem">
+			<mx:TextInput id="nameTextInput" width="96" change="onChange(event)" styleName="propertyFormInput"/>
+		</mx:FormItem>
+		
+		<mx:HRule height="22" width="100%" id="hrule1"/>
+				
+		<mx:FormItem id="widthFormItem" label="Width" styleName="propertyFormItem">
+			<mx:NumericStepper id="widthNumericStepper" minimum="1" maximum="260" value="90" change="onChange(event)" styleName="propertyFormInput"/>
+		</mx:FormItem>
+		<mx:FormItem id="heightFormItem" label="Height" styleName="propertyFormItem">
+			<mx:NumericStepper id="heightNumericStepper" value="30" minimum="1" maximum="160" change="onChange(event)" styleName="propertyFormInput"/>
+		</mx:FormItem>
+		<mx:FormItem id="xFormItem" label="x" styleName="propertyFormItem">
+			<mx:NumericStepper id="xNumericStepper" minimum="0" maximum="259" value="85" change="onChange(event)" styleName="propertyFormInput"/>
+		</mx:FormItem>
+		<mx:FormItem id="yFormItem" label="y" styleName="propertyFormItem">
+			<mx:NumericStepper id="yNumericStepper" minimum="0" maximum="159" value="65" change="onChange(event)" styleName="propertyFormInput"/>
+		</mx:FormItem>
+		
+		<mx:HRule height="22" width="100%" id="hrule2"/>
+
+		<mx:FormItem id="textFormItem" label="Text" styleName="propertyFormItem">
+			<mx:TextInput id="textTextInput" width="96" change="onChange(event)" styleName="propertyFormInput"/>
+		</mx:FormItem>
+		<mx:FormItem id="fontSizeFormItem" label="Font Size" styleName="propertyFormItem">
+			<mx:NumericStepper id="fontSizeNumericStepper" minimum="4" maximum="180" stepSize="1" change="onChange(event)" styleName="propertyFormInput"/>
+		</mx:FormItem>
+		<mx:FormItem id="alignmentFormItem" label="Alignment" styleName="propertyFormItem">
+			<mx:ComboBox id="alignmentComboBox" dataProvider="{alignments}" width="93" change="onChange(event)" styleName="propertyFormInput"/>
+		</mx:FormItem>
+		<mx:FormItem id="foregroundColorFormItem" label="Text Color" styleName="propertyFormItem">
+			<mx:ColorPicker id="foregroundColorPicker" change="onChange(event)"/>
+		</mx:FormItem>
+		
+		<mx:HRule height="22" width="100%" id="hrule3"/>
+
+		<mx:FormItem id="backgroundColorFormItem" label="Background Color" styleName="propertyFormItem">
+			<mx:ColorPicker id="backgroundColorPicker" change="onChange(event)"/>
+		</mx:FormItem>		
+		
+	</mx:Form>
+	
+	<mx:Script>
+		<![CDATA[
+			
+		import com.mindegg.data.Component;
+		import com.mindegg.data.TextBox;
+		import flash.display.DisplayObject;
+		import mx.collections.ArrayCollection;
+		import com.mindegg.utils.CustomEvent;
+		import flash.text.TextFormatAlign;
+		
+		public static const COMPONENT_NAME_CHANGE:String = "componentNameChange";
+		
+		[Bindable]
+         public var alignments:ArrayCollection = new ArrayCollection([ 	{label:"Left", data:"left"},
+                  														{label:"Center", data:"center"},
+                  														{label:"Right", data:"right"}
+                  													 ]);
+			
+		private var _component:Component; // the component currently being edited
+		private var _uiUserComponent:UIUserComponent; // the UIUserComponent representing the current component on screen
+			
+		public function setContext(component:Component, uiUserComponent:UIUserComponent, isTemplate:Boolean):void
+		{
+			_component = component;
+			_uiUserComponent = uiUserComponent;
+			var textBox:TextBox = component as TextBox;
+
+			// setup as template or card view
+			if (isTemplate)
+			{
+				currentState = "";
+				nameTextInput.text = textBox.name;
+			}
+			else
+			{
+				currentState = "card";
+				this.title = textBox.name;
+			}
+			
+			// populate values in properties pane, based on existing values for editable properties
+			widthNumericStepper.value = textBox.width;
+			heightNumericStepper.value = textBox.height;
+			xNumericStepper.value = textBox.x;
+			yNumericStepper.value = textBox.y;
+			textTextInput.text = textBox.text;
+			fontSizeNumericStepper.value = textBox.fontSize;			
+			foregroundColorPicker.selectedColor = textBox.foregroundColor;
+			backgroundColorPicker.selectedColor = textBox.backgroundColor;
+			// populate alignment combobox - can't set selected item directly by value
+				for (var i:int = 0; i < alignmentComboBox.dataProvider.length; i++)
+				{
+					if (textBox.alignment == alignmentComboBox.dataProvider[i].data)
+					{
+						alignmentComboBox.selectedIndex = i;
+						break;
+					}
+				}
+		}
+		
+		public function clearContext():void
+		{
+			_component = null;
+			currentState = "off";
+		}
+		
+		private function onChange(e:Event):void
+		{
+			if (e.target == nameTextInput) // name changes require special handling - names across all matching components must be changed
+			{
+				// the application needs to handle this
+				var params:Object = new Object();
+				params.newName = nameTextInput.text;
+				params.component = _component;
+		    	var event:CustomEvent = new CustomEvent(COMPONENT_NAME_CHANGE, params, true);
+		    	dispatchEvent(event);
+			}
+			else
+			{
+				// update data model
+					_component.width = widthNumericStepper.value;
+					_component.height = heightNumericStepper.value;
+					_component.x = xNumericStepper.value;
+					_component.y = yNumericStepper.value;
+					
+					// if editing a textbox, also update textbox specific data items
+					var textBox:TextBox = _component as TextBox;
+					textBox.text = textTextInput.text;
+					textBox.fontSize = fontSizeNumericStepper.value;
+					textBox.alignment = alignmentComboBox.selectedItem.data;
+					textBox.foregroundColor = foregroundColorPicker.selectedColor;
+					textBox.backgroundColor = backgroundColorPicker.selectedColor;
+				
+				// update drawn component on screen
+				_uiUserComponent.redraw();
+			}
+			
+		}			
+			
+		]]>
+	</mx:Script>
+	
+	
+</mx:Panel>

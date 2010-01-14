@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" verticalGap="10" backgroundColor="#3D464B" height="100%" paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5">
+
+	<mx:Style source="com/mindegg/theme/styles.css"/>
+
+	<mx:VBox id="titleVBox" verticalGap="10" width="100%">
+		<mx:Label id="titleLabel" text="Header" color="#FFFFFF" fontSize="10" textDecoration="underline"/>
+	</mx:VBox>
+   
+	<mx:VBox id="SidesVBox" verticalGap="10" width="100%" paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10"/>
+   
+	<mx:Spacer id="spacer" height="100%"/>
+	   
+	<mx:HBox id="bottomHBox" width="100%" horizontalGap="0">
+		<mx:Spacer id="bottomMiddleLeftSpacer" width="100%"/>
+		<!-- <mx:Button label="+ Side" click="newSide()" id="newSideButton" styleName="SlimlineButton" height="17" width="47" textRollOverColor="0x25e9eb"/> -->
+	</mx:HBox>
+	   	
+<mx:Script>
+	<![CDATA[
+		
+		import com.mindegg.data.Card;
+		import mx.containers.Canvas;
+		
+		private var _isTemplate:Boolean;
+		private var _cardNumber:uint;
+		private var _card:Card;
+		
+		/**
+		 * 	Draw the sides of a given card
+		 */		
+		public function draw(card:Card, cardNumber:int, isTemplate:Boolean):void
+		{
+			// store reflection information
+			_cardNumber = cardNumber;
+			_isTemplate = isTemplate;
+			_card = card;
+			
+			// remove all currently shown sides
+			SidesVBox.removeAllChildren();
+			
+			// loop through sides and add to pane
+			var numSides:uint = card.numSides();
+			for (var sideIndex:int = 0; sideIndex < numSides; sideIndex++)
+			{
+				var sideCanvas:Canvas = new UISide(card.getSideAtIndex(sideIndex));
+				SidesVBox.addChild(sideCanvas);
+			}
+			
+			// set heading
+			if (!_isTemplate)
+				{titleLabel.text = "Card " + _cardNumber;}
+			else
+				{titleLabel.text = "Template";}
+		}
+		
+		public function redraw():void
+		{
+			draw(_card, _cardNumber, _isTemplate);
+		}
+		
+		public function redrawWithCardNumber(cardNumber:uint):void
+		{
+			draw(_card, cardNumber, _isTemplate);
+		}
+		
+		public function getUISideNumber(sideNumber:uint):UISide
+		{
+			var returnSide:UISide = SidesVBox.getChildAt(sideNumber-1) as UISide;
+			return returnSide;
+		}
+		
+		/** 
+		 * 	New Side button clicked
+		 *  (New Side button removed to disable new side functionality - to be reinstated later)
+		 */
+		 
+		private function newSide():void
+		// Adds a side to the currently displayed Card
+		{
+			/*
+			var side:Side;
+			// add a new side to the card the user is viewing
+			if (currentState == CARDS_STATE) // looking at a card
+				{
+					// create a new side in the deck and retain a reference to it
+					side = _deck.getCardAtIndex(_currentCardIndex).newSide();
+				}
+			else	// looking at the template
+				{
+					// create a new side in the template and retain a reference to it
+					side = _deck.template.newSide();
+				}
+				
+			// create the UISide representation
+			var sideCanvas:Canvas = new UISide(side);
+			sideCanvas.addEventListener("click", selectedSide);
+			
+			// add a Context Menu to the UISide
+			var menu:ContextualMenu = new ContextualMenu();
+			menu.AddItem("Delete Side", function ():void{Alert.show("Side Deletion!");});
+			menu.AssignRightClick(sideCanvas);
+
+			// add the UISide to the card panel
+			CardPanelSidesVBox.addChild(sideCanvas);
+		*/
+		}
+		
+		
+	]]>
+</mx:Script>	   	
+	   	
+	   	
+</mx:VBox>

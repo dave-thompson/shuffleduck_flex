@@ -1,0 +1,38 @@
+/* CSS file */
+
+Button.StandardButton
+{
+	borderColor: #000000;
+	color: #FB9221;
+	fillAlphas: 0.0, 0.0, 0.0, 0.0;
+	cornerRadius: 0;
+	fontFamily: Verdana;
+}
+Button.SlimlineButton
+{
+	cornerRadius: 10;
+	fillAlphas: 0.8, 0.8, 0.8, 0.8;
+	fillColors: #000000, #000000;
+	paddingBottom: 0;
+	paddingLeft: 0;
+	paddingRight: 0;
+	paddingTop: 0;
+	textAlign: center;
+	color: #FB9221;
+}
+.customScroll
+{
+    upArrowSkin: ClassReference(null);
+    downArrowSkin: ClassReference(null);
+    thumbUpSkin: ClassReference('com.mindegg.theme.skins.CustomSkinThumb');
+    thumbOverSkin: ClassReference('com.mindegg.theme.skins.CustomSkinThumb');
+    thumbDownSkin: ClassReference('com.mindegg.theme.skins.CustomSkinThumb');
+}
+.propertyFormItem
+{
+	color: #FFFFFF;
+}
+.propertyFormInput
+{
+	color: #000000;
+}

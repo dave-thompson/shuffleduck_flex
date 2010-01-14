@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+				layout="absolute" 
+				width="316"
+				height="112" 
+				backgroundColor="#FFFFFF" 
+				backgroundAlpha="1"
+				borderStyle="solid" 
+				borderColor="#000000" 
+				borderThickness="2"
+				borderAlpha ="1"
+				headerHeight="0" 
+				cornerRadius="0"
+				dropShadowEnabled="true">
+
+	<mx:Label text="Saving..." fontSize="22" fontWeight="bold" color="#25E9EB" fontStyle="italic" x="89.5" y="33"/>
+	
+</mx:TitleWindow>

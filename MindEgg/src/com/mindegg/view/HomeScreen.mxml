@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:VBox	    xmlns:mx="http://www.adobe.com/2006/mxml"
+				xmlns:me="com.mindegg.*"
+				xmlns:me_view="com.mindegg.view.*"
+				paddingLeft="2"
+				paddingRight="2"
+				paddingTop="2"
+				paddingBottom="2"
+				width="100%"
+				height="100%"
+				backgroundAlpha="0.0">
+			
+<!-- Web Services -->
+<mx:HTTPService id="decksIndex" url="{MindEgg.CONTEXT_URL}/decks" resultFormat="e4x" result="decksIndexResult(event)"/>
+<mx:HTTPService id="deckDetailsShowForDuplication" url="{MindEgg.CONTEXT_URL}/decks/{userVisibleDeckIDForDuplication}/deck_details/{userVisibleDeckIDForDuplication}" resultFormat="e4x" result="deckDetailsShowForDuplicationResult(event)"/>
+<mx:HTTPService id="decksCreate" url="{MindEgg.CONTEXT_URL}/decks" method = "POST" resultFormat="e4x" contentType="application/xml" result="decksIndex.send()"/>
+<mx:HTTPService id="decksDelete" url="{MindEgg.CONTEXT_URL}/decks/{userVisibleDeckIDForDeletion}" method="POST" resultFormat="e4x" contentType="application/xml" result="decksDeleteResult(event)" headers="{{X_HTTP_METHOD_OVERRIDE:'delete'}}">
+	<mx:request>
+	   <flex>true</flex>
+	</mx:request>
+</mx:HTTPService>
+						
+<!-- UI -->
+  <mx:Style source="com/mindegg/theme/styles.css"/>
+			
+  <mx:HBox id="topHBox" width="100%" height="33" horizontalGap="0" backgroundColor="#FFFFFF">
+    <mx:Label text="Mind" fontSize="22" fontWeight="bold" color="#25E9EB" fontStyle="italic"/>
+    <mx:Label text="Egg" fontSize="22" fontWeight="bold" color="#FB9221" fontStyle="italic"/>
+    <mx:Spacer width="100%"/>
+    <mx:Label text="username [" height="16" color="#000000" id="usernameLabel" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" width="70"/>
+    <mx:Button label="logout" click="logoutButtonClicked()" height="16" width="41" color="#FB9221" alpha="0.0" fillAlphas="[0.0, 0.0, 0.0, 0.0]" textRollOverColor="0x25e9eb" styleName="StandardButton" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" id="logoutButton"/>
+    <mx:Label text="]" height="16" color="#000000" id="usernameLabel0" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" width="8"/>
+  </mx:HBox>
+  <mx:HBox id="mainHBox" width="100%" height="100%">	
+    <mx:VBox id="decksVBox" width="100%" height="100%" borderStyle="solid" backgroundColor="#09D9F2" paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5">
+      <mx:HBox width="100%">
+        <mx:Label text="Decks" fontSize="22" fontWeight="bold" color="#000000" fontStyle="italic"/>
+        <mx:Spacer width="100%"/>
+        <mx:Button label="+ New Deck" click="newDeckButtonClicked()" id="newDeckButton" styleName="SlimlineButton" height="33" width="86" textRollOverColor="0x25e9eb"/>
+      </mx:HBox>
+      <mx:VBox width="100%" id="deckListingsVBox">
+        <me_view:DeckListing width="100%"/>
+        <me_view:DeckListing width="100%"/>
+      </mx:VBox>
+    </mx:VBox>
+    <mx:VBox id="rightMenuBox" width="100" height="100%" borderStyle="solid" backgroundColor="#60E2F5"/>
+  </mx:HBox>			
+	
+	
+				
+  <mx:Script>
+  	<![CDATA[
+
+		import com.mindegg.utils.CustomEvent;
+		import com.adobe.utils.DateUtil;
+		import mx.rpc.events.ResultEvent;
+
+		// event constants
+		public static const FEEDBACK_BUTTON_CLICKED:String = "feedbackButtonClicked";
+		 
+		 
+		[Bindable] private var userVisibleDeckIDForDeletion:int;
+		[Bindable] private var userVisibleDeckIDForDuplication:int;
+		private var titleOfDeckToBeDuplicated:String;
+  		 
+  		/********************
+  		 * Constructor
+  		 ********************/
+  		 
+  		public function setup():void
+		{	
+			// retrieve user's decks from server
+			decksIndex.send();
+			
+			 // Set up event listeners
+		     this.addEventListener(DeckListing.DECK_DELETE_REQUESTED, deleteDeck);
+		     this.addEventListener(DeckListing.DECK_DUPLICATION_REQUESTED, duplicateDeck);
+
+		}
+		
+		private function logoutButtonClicked():void
+		{
+		}
+		
+		private function newDeckButtonClicked():void
+		{			
+			// retrieve default deck XML string from file and wait for loader to finish
+			var loader:URLLoader = new URLLoader();
+        	loader.dataFormat = URLLoaderDataFormat.TEXT;
+        	loader.addEventListener(Event.COMPLETE, handleTemplateLoadComplete);
+        	loader.load(new URLRequest("com/mindegg/assets/DefaultTemplate.xml"));
+		}
+		
+		private function handleTemplateLoadComplete(event:Event):void
+		{
+			// read XML string
+			var loader:URLLoader = URLLoader(event.target);
+			var xmlString:String = loader.data;
+			
+			// set up new deck details for passing to server
+			var deck:XML = <deck/>;
+			deck['title'] = "New Deck";
+			deck['xml_string'] = xmlString;
+			deck['last_saved_date'] = DateUtil.toW3CDTF(new Date());
+			
+			// send new deck details to server for new deck creation
+			decksCreate.send(deck);
+		}
+
+		private function deleteDeck(e:CustomEvent):void
+		{
+			// delete deck from server
+			userVisibleDeckIDForDeletion = e.params.userVisibleDeckID;
+			decksDelete.send(); 
+			
+			// wait for the response before removing deck from the UI
+		}
+		
+		
+		private function decksDeleteResult(event:ResultEvent):void
+		{
+			// refresh the deck list
+			decksIndex.send();
+		}
+
+
+		private function duplicateDeck(e:CustomEvent):void
+		{
+			// log the deck title
+			titleOfDeckToBeDuplicated = e.params.title;
+
+			// retrieve the deck for duplication from the server
+			userVisibleDeckIDForDuplication = e.params.userVisibleDeckID;
+			deckDetailsShowForDuplication.send()
+			
+			// wait for the response, then duplicate the deck
+		}
+		
+		private function deckDetailsShowForDuplicationResult(event:ResultEvent):void
+		{
+			// Deck xml_string has just been returned from the server
+			// Create a new deck, using this xml_string
+			
+			// copy required data from HTTP response into local variables
+			var server_response:XML = event.result as XML;
+			var deck_xml_string:String = server_response.xml_string[0].toString();
+			var title:String = titleOfDeckToBeDuplicated; //server_response.title[0].toString();
+			
+			// adjust title to reflect that this is a copy
+			title = "(Copy of) " + title;
+						
+			// Send request to server for new deck to be made using these parameters
+			var create_deck_request:XML = <deck/>;
+			create_deck_request['title'] = title;
+			create_deck_request['xml_string'] = deck_xml_string;
+			create_deck_request['last_saved_date'] = DateUtil.toW3CDTF(new Date());
+			
+			// send new deck details to server for new deck creation
+			decksCreate.send(create_deck_request);
+		}
+		
+				
+		private function decksIndexResult(event:ResultEvent):void
+		{
+			var decks:XML = event.result as XML;
+			
+			// clear deck listing
+			deckListingsVBox.removeAllChildren();
+			
+			// loop through XML string, creating deck listings and adding them to the screen
+			var deckListing:DeckListing;
+			for each (var deck:XML in decks.deck)
+			{
+				// create deck listing
+				deckListing = new DeckListing();
+				//deckListing.setup();
+				deckListingsVBox.addChild(deckListing);
+				
+				// update deck listing data model according to XML String (UI bound to data model)
+				deckListing.userVisibleID = deck.user_visible_id;
+				deckListing.title = deck.title;
+		  		deckListing.lastSavedDate = DateUtil.parseW3CDTF(deck.last_saved_date);
+				deckListing.numCards = deck.num_cards;
+				
+				// add deck listing to list
+				deckListingsVBox.addChild(deckListing);
+
+				// set deck listing properties
+				deckListing.percentWidth = 100;
+			}
+  		}
+
+  	]]>
+  </mx:Script>
+
+  
+</mx:VBox>

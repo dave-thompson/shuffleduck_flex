@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="76" height="100%">
+
+	<mx:Style source="com/mindegg/theme/styles.css"/>
+
+	<mx:VBox>
+		<mx:Label text="New" fontSize="14" color="#FFFFFF" width="74" textAlign="center" textDecoration="underline" fontWeight="normal" fontStyle="normal"/>
+		<mx:Button x="27" y="21" label="Text Box" width="75" styleName="StandardButton" alpha="0.0" textRollOverColor="0x25e9eb" click="buttonClicked(event)" id="textBoxButton"/>
+		<mx:Button x="27" y="51" width="75" styleName="StandardButton" alpha="0.0" textRollOverColor="0x25e9eb" id="imageButton" enabled="false"/>
+	</mx:VBox>
+
+<mx:Script>
+	<![CDATA[
+		
+		import com.mindegg.utils.CustomEvent;
+		
+		public static const NEW_TEXT_BOX_CLICKED:String = "newTextBoxClicked";
+		public static const NEW_IMAGE_CLICKED:String = "newImageClicked";		
+		
+		private function buttonClicked(receivedEvent:Event):void
+		{
+			var raisedEvent:CustomEvent;
+    		var params:Object = new Object();
+			
+			// raise the appropriate event to the application to notify it of the click
+			if (receivedEvent.target.id == "textBoxButton")
+    			{
+    				raisedEvent = new CustomEvent(NEW_TEXT_BOX_CLICKED, params, true);
+    			}
+    		else if (receivedEvent.target.id == "imageButton")
+    			{
+    				raisedEvent = new CustomEvent(NEW_IMAGE_CLICKED, params, true);
+    			}
+    		
+    		dispatchEvent(raisedEvent);    		
+		}
+		
+	]]>
+</mx:Script>
+
+
+</mx:Canvas>

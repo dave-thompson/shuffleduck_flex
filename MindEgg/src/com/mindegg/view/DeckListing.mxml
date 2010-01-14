@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" backgroundColor="#3D464B" height="100%" paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5" mouseOver="mouseOverListing(event)" mouseOut="mouseOutListing(event)" click="mouseClickListing(event)">
+   	<mx:Style source="com/mindegg/theme/styles.css"/>
+
+	<mx:Canvas width="182" height="112" backgroundColor="#FFFFFF">
+	</mx:Canvas>
+	<mx:VBox height="100%" verticalGap="0" width="100%">
+		<mx:HBox width="100%">
+			<mx:VBox height="100%" width="100%" verticalGap="0">
+				<mx:Label text="{title}" color="#FFFFFF" fontSize="30" width="100%"/>
+				<mx:Label text="ID: {userVisibleID}" color="#FFFFFF"/>
+				<mx:Label text="{buildNumCardsString()}" color="#FFFFFF" fontStyle="italic"/>
+			</mx:VBox>
+			<mx:VBox height="100%" horizontalGap="0" verticalGap="0">
+			    <mx:Button label="Duplicate" id="duplicateButton" styleName="StandardButton" textRollOverColor="0x25e9eb" alpha="0.0" click="duplicateButtonClicked()"/>
+				<mx:HBox width="100%" paddingRight="0" paddingLeft="0" horizontalGap="0">
+					<mx:Spacer width="100%"/>
+					<mx:Button label="Rename" id="renameButton" styleName="StandardButton" textRollOverColor="0x25e9eb" alpha="0.0" click="renameButtonClicked()"/>
+				</mx:HBox>
+				<mx:HBox width="100%" paddingRight="0" paddingLeft="0" horizontalGap="0">
+					<mx:Spacer width="100%"/>
+					<mx:Button label="Delete" id="deleteButton" styleName="StandardButton" textRollOverColor="0x25e9eb" alpha="0.0" click="deleteButtonClicked()"/>
+				</mx:HBox>
+		</mx:VBox>
+		</mx:HBox>
+		<mx:VBox verticalGap="0" height="100%" width="100%">
+			<mx:Spacer height = "100%"/>
+			<mx:HBox width="100%">
+				<mx:Spacer width = "100%"/>
+				<mx:Label text="Modified: {friendlyDate(lastSavedDate)}" color="#FFFFFF"/>				
+			</mx:HBox>
+		</mx:VBox>
+
+	</mx:VBox>
+
+	<mx:HTTPService id="decksUpdate" url="{MindEgg.CONTEXT_URL}/decks/{userVisibleID}" method="POST" resultFormat="e4x" contentType="application/xml" result="completeTitleChange(event)" headers="{{X_HTTP_METHOD_OVERRIDE:'put'}}"/>
+
+
+<mx:Script>
+	<![CDATA[
+		
+		import com.adobe.utils.DateUtil;
+		import com.mindegg.utils.CustomEvent;
+		import mx.events.CloseEvent;
+		import mx.controls.Alert;
+		import mx.managers.PopUpManager;
+		import mx.rpc.events.ResultEvent;
+		
+		// state variables
+		[Bindable] public var userVisibleID:String;
+		[Bindable] public var title:String;
+  		[Bindable] public var lastSavedDate:Date;
+  		[Bindable] public var numCards:int;
+		
+		private var _stagingTitle:String;
+		
+		// event constants
+		public static const DECK_LISTING_CLICKED:String = "DeckListing_deckListingClicked";
+		public static const DECK_DELETE_REQUESTED:String = "DeckListing_deckDeleteRequested";
+		public static const DECK_DUPLICATION_REQUESTED:String = "DeckListing_deckDuplicationRequested";
+			
+		private function mouseOverListing(event:MouseEvent):void
+		{
+			if (!(event.target is Button))
+			{
+				this.setStyle("backgroundColor", "#6c757a");
+			}
+		}
+		
+		private function mouseOutListing(event:MouseEvent):void
+		{
+				this.setStyle("backgroundColor", "#3D464B");
+		}
+		
+		
+		private function mouseClickListing(event:MouseEvent):void
+		{
+			// as long as event is not on a button
+			if (!(event.target is Button))
+			{
+				// fire event, passing back this deck ID
+				var params:Object = new Object();
+				params.userVisibleDeckID = userVisibleID;
+		    	var newEvent:CustomEvent = new CustomEvent(DECK_LISTING_CLICKED, params, true);
+		    	dispatchEvent(newEvent);
+	  		}
+		}
+		
+		private function deleteButtonClicked():void
+		{
+			Alert.show("Are you sure?", "Confirm Delete", Alert.YES|Alert.CANCEL, this, initiateDeckDeletion, null, Alert.CANCEL);			
+		}
+		
+		private function initiateDeckDeletion(eventObj:CloseEvent):void
+		{
+			 if(eventObj.detail==Alert.YES)
+   			{
+				// fire event, passing back this deck ID
+				var params:Object = new Object();
+				params.userVisibleDeckID = userVisibleID;
+		    	var newEvent:CustomEvent = new CustomEvent(DECK_DELETE_REQUESTED, params, true);
+		    	dispatchEvent(newEvent);
+		   }
+		}
+		
+		private function duplicateButtonClicked():void
+		{
+			// fire event, passing back this deck ID
+			var params:Object = new Object();
+			params.userVisibleDeckID = userVisibleID;
+			params.title = title;
+	    	var newEvent:CustomEvent = new CustomEvent(DECK_DUPLICATION_REQUESTED, params, true);
+	    	dispatchEvent(newEvent);			
+		}
+
+		private function renameButtonClicked():void
+		{
+			// create a deck name dialog and add it to the screen
+			var deckNameDialog:DeckNameDialog = new DeckNameDialog();
+            PopUpManager.addPopUp(deckNameDialog, this, true);
+       		deckNameDialog.setText(title);
+            PopUpManager.centerPopUp(deckNameDialog);
+            
+            // wait for the new deck name event to be fired when the pop up closes
+            deckNameDialog.addEventListener(DeckNameDialog.NEW_DECK_NAME, newDeckName);
+		}
+		
+		
+		private function newDeckName(e:CustomEvent):void
+		{
+			// remember new title - but don't adopt it yet
+			_stagingTitle = e.params.title;
+			
+			// show Saving Dialog to prevent any user interaction
+            //PopUpManager.addPopUp(_savingDialog, this, true);
+            //PopUpManager.centerPopUp(_savingDialog);
+
+        	// prepare server request
+			var request:XML = <deck/>;
+			request['title'] = _stagingTitle;
+
+			// update the server
+			decksUpdate.send(request);
+			
+			// wait for the server to update, then continue with completeTitleChange() below
+			
+		}
+
+		private function completeTitleChange(event:ResultEvent):void
+        {
+			// update the UI
+			title = _stagingTitle;        	
+        }
+
+		private function buildNumCardsString():String
+		{
+			var result:String;
+			if (numCards == 1)
+				result = "1 card";
+			else
+				result = numCards + " cards";
+			return result;
+		}
+		
+		private function friendlyDate(date:Date):String
+		{
+			var now:Date = new Date();
+			var result:String;
+			
+			var dateDifferenceInMilliseconds:int = DateUtil.makeMorning(now).getTime() - DateUtil.makeMorning(date).getTime();
+			var dateDifferenceInDays:int = Math.floor(dateDifferenceInMilliseconds/86400000);
+			
+			switch (dateDifferenceInDays)
+						{
+							case 0: // today
+								result = "Today";
+								break;
+							case 1: // yesterday
+								result = "Yesterday";
+								break;
+							case 2: // one of the 5 days before yesterday
+							case 3:
+							case 4:
+							case 5:
+							case 6:
+								result = DateUtil.getFullDayName(date);
+								break;
+							default: // more than 7 days ago, including today
+								if (date.fullYear == now.fullYear) // if this year, then print day + month
+								{
+									result = date.date + " " + DateUtil.getFullMonthName(date);
+								}
+								else // if before this year, print full date
+								{
+									result = date.date + " " + DateUtil.getFullMonthName(date) + " " + date.fullYear;
+								}
+								break;
+						}
+			return result;
+		}
+		
+	]]>
+</mx:Script>
+	
+</mx:HBox>

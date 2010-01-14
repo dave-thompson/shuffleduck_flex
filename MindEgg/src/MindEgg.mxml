@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+				layout="horizontal"
+				xmlns:me="com.mindegg.*"
+				xmlns:me_view="com.mindegg.view.*"
+				applicationComplete="initialSetup()"
+				paddingLeft="2"
+				paddingRight="2"
+				paddingTop="2"
+				paddingBottom="2"
+				backgroundGradientAlphas="[1.0, 1.0]"
+				backgroundGradientColors="[#202020, #000000]"
+				>
+ 
+ <mx:Spacer id="leftSpacer" width="100%"/>				
+ <me_view:FrontPage id="frontPage" width="950" height="550"/>
+ <mx:Spacer id="rightSpacer" width="100%"/>
+				
+  <mx:states>
+
+    <mx:State name="homeScreen">
+      <mx:AddChild position="lastChild">
+        <me_view:HomeScreen id="homeScreen" backgroundColor="#FFFFFF">
+        </me_view:HomeScreen>
+      </mx:AddChild>
+      <mx:RemoveChild target="{frontPage}"/>
+      <mx:RemoveChild target="{leftSpacer}"/>
+      <mx:RemoveChild target="{rightSpacer}"/>
+      <mx:SetStyle name="backgroundColor" value="#FFFFFF"/>
+      <mx:SetStyle name="backgroundGradientAlphas"/>
+      <mx:SetStyle name="backgroundGradientColors"/>
+    </mx:State>
+    <mx:State name="editScreen">
+      <mx:RemoveChild target="{frontPage}"/>
+      <mx:RemoveChild target="{leftSpacer}"/>
+      <mx:RemoveChild target="{rightSpacer}"/>
+      <mx:AddChild position="lastChild">
+        <me_view:EditScreen id="editScreen" width="100%" height="100%">
+        </me_view:EditScreen>
+      </mx:AddChild>
+    </mx:State>
+  </mx:states>
+ 
+  
+  <mx:Script>
+  	<![CDATA[
+  		import adobe.utils.CustomActions;
+
+		import com.mindegg.view.FrontPage;		
+  		import com.mindegg.utils.CustomEvent;
+  		import mx.managers.PopUpManager;
+  		import com.mindegg.view.DebugDialog;
+  		import com.mindegg.view.DeckListing;
+
+		// Version Numbers
+  		public static const XML_VERSION_NO:String 								= "0.01";
+  		public static const XML_BACKWARD_COMPATIBLE_IPHONE_VERSION_NO:String 	= "0.01";
+
+		// Web Service Configuration
+		public static const CONTEXT_URL:String = "http://localhost:3000";
+		//public static const CONTEXT_URL:String = "http://192.168.183.1:3000";
+
+
+		// event constants
+		public static const USER_LOGGED_IN:String = "userLoggedIn";
+		public static const DEBUG_POP_UP_REQUEST:String = "debugPopUpRequest";
+  		 
+  		/********************
+  		 * Constructor
+  		 ********************/
+  		 
+  		private function initialSetup():void
+		{	
+			// listen for events
+				// Events from FrontPage
+				this.addEventListener(FrontPage.LOGIN_BUTTON_CLICKED, loginButtonClicked);
+				this.addEventListener(FrontPage.SIGN_UP_BUTTON_CLICKED, signUpButtonClicked);
+				this.addEventListener(FrontPage.GUEST_BUTTON_CLICKED, guestButtonClicked);
+				this.addEventListener(MindEgg.USER_LOGGED_IN, userSuccessfullyLoggedIn);
+
+				// Events from DeckListing
+				this.addEventListener(DeckListing.DECK_LISTING_CLICKED, deckListingClicked);
+				
+				// Events from EditScreen
+				this.addEventListener(EditScreen.RETURN_TO_LIBRARY_REQUEST, returnToLibrary);
+				
+				
+				// Other events
+				this.addEventListener(MindEgg.DEBUG_POP_UP_REQUEST, popUpDebugMessage);
+			
+			// set up application
+			currentState="editScreen";
+			currentState="";
+			frontPage.setup();
+		}
+		
+		private function returnToLibrary(e:CustomEvent):void
+		{
+			// go to the home page
+			currentState="homeScreen";
+			homeScreen.setup();
+		}
+		
+		private function popUpDebugMessage(e:CustomEvent):void
+		{
+			var debugDialog:DebugDialog = new DebugDialog;
+  	    	PopUpManager.addPopUp(debugDialog, this, true);
+			PopUpManager.centerPopUp(debugDialog);
+			debugDialog.message = e.params.message;
+		}
+		
+		private function deckListingClicked(e:CustomEvent):void
+		{
+			currentState="editScreen";
+			editScreen.setup();
+			editScreen.loadDeck(e.params.userVisibleDeckID);
+		}
+		
+		private function loginButtonClicked(e:CustomEvent):void
+		{
+			// verify the login 
+			currentState="editScreen";
+			editScreen.setup();
+		}
+		
+		private function signUpButtonClicked(e:CustomEvent):void
+		{
+			currentState="editScreen";
+			editScreen.setup();
+		}
+		
+		private function guestButtonClicked(e:CustomEvent):void
+		{
+			// show the deck editing screen
+			currentState="editScreen";
+			editScreen.setup();
+		}
+  	    
+  	    private function userSuccessfullyLoggedIn(e:CustomEvent):void
+		{
+			// go to the home page
+			currentState="homeScreen";
+			homeScreen.setup();
+		}
+
+  	]]>
+  </mx:Script>
+  
+</mx:Application>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml">
+	<mx:VBox width="100%" height="100%" paddingLeft="10" paddingRight="10" paddingTop="10" paddingBottom="10">
+		<mx:VBox width="100%" height="100%">
+			<mx:Label id='headingLabel' text="Click any Side to Edit" fontSize="20" fontWeight="normal" color="#0B333C"/>
+			<mx:HBox width="100%" height="100%">
+				<mx:Spacer width="100%"/>
+				<mx:Canvas id="editingCanvas" width="260" height="160" color="#FF0000"/>
+				<mx:Spacer width = "100%"/>
+			</mx:HBox>
+
+		</mx:VBox>
+		<mx:HBox width="100%" height="100">
+			<mx:Label text="Add Components:" fontSize="14"/>
+			<mx:Button label="Text Box" click="newTextBox()"/>
+			<mx:Button label="Image" click="newImage()"/>
+		</mx:HBox>
+	</mx:VBox>
+	
+	<mx:Script>
+		<![CDATA[
+			import com.mindegg.data.Component;
+			import com.mindegg.data.TextBox;
+			import com.mindegg.data.Side;
+			import com.mindegg.view.DeckViewer;
+			import com.mindegg.utils.CustomEvent;	
+			
+			private var _side:Side;
+			private var _sideCanvas:UISide;
+			private var _selectedComponent:Component;			
+			
+	  		public static const COMPONENT_ADDED:String = "componentAdded";
+			
+			// Update the side being edited to a supplied side
+				// cardNumber is the side's card's 1-based index in the deck
+				// sideNumber is the side's 1-based index in the card
+				// isTemplate is true iff this is the template rather than a standard card (i.e. there is no card number)
+				// side is the Side object representing this side, and which should be updated by any edits
+			public function useCard(side:Side, cardNumber:int, sideNumber:int, isTemplate:Boolean):void
+			{
+				// store new side reference - all edits will be applied to this object in the model
+				_side = side;
+				
+				// update the header to show the user what they're editing
+				if (isTemplate)
+					{headingLabel.text = "Editing: Template, Side " + sideNumber;}
+				else
+					{headingLabel.text = "Editing: Card " + cardNumber + ", Side " + sideNumber;}
+				
+				// update the view based on the new side
+				this.redraw();
+			}
+			
+			// function to redraw the current view
+			public function redraw():void
+			{
+				// remove any existing side from view
+				this.editingCanvas.removeAllChildren();
+				
+				// create a new canvas based on the existing side and add it to the panel
+				// (The received side will then be represented on two, distinct, canvases - one in the Card Panel and
+				//   one in the EditPane.)
+				var sideCanvas:UISide = new UISide(_side);
+				_sideCanvas = sideCanvas;
+				this.editingCanvas.addChild(_sideCanvas);
+			}
+			
+			
+			public function clearEditPane():void
+			{
+				this.editingCanvas.removeAllChildren();
+				_side = null;
+				headingLabel.text = "Select a Side to Edit Here";
+			}
+			
+			
+			// EVENT HANDLERS
+			
+			// Handle click on Add Text Box
+			private function newTextBox():void
+			{
+				// Only process button press if there is a side canvas to edit
+				if (this.editingCanvas.numChildren > 0)
+				{
+					// create new TextBox data object and add to current side
+					var tb:TextBox = new TextBox(70, 50, 120, 60, 18, TextFormatAlign.CENTER /*, isTemplateComponent!!!!,*/);
+					_side.addComponent(tb);
+					
+					// raise change event
+					var params:Object = new Object();
+            		var componentAddedEvent:CustomEvent = new CustomEvent(COMPONENT_ADDED, params, true);
+            		dispatchEvent(componentAddedEvent);
+					
+				}				
+			}
+			
+			// Handle click on Add Image
+			private function newImage():void
+			{
+				
+			}
+			
+			// Handle user clicking on a component on the side being edited
+			// Raise an event to the application, passing the side in the datamodel and the canvas representing the side on screen
+			private function selectedComponent(e:Event):void
+			{
+				// Retrieve the component that was clicked on
+				_selectedComponent = e.currentTarget as Component;			
+				
+				
+			}
+			
+			
+			
+		]]>
+	</mx:Script>
+	
+</mx:Canvas>
