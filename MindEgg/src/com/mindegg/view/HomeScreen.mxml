@@ -15,7 +15,7 @@
 <mx:HTTPService id="decksIndex" url="{MindEgg.CONTEXT_URL}/decks" resultFormat="e4x" result="decksIndexResult(event)"/>
 <mx:HTTPService id="deckDetailsShowForDuplication" url="{MindEgg.CONTEXT_URL}/decks/{userVisibleDeckIDForDuplication}/deck_details/{userVisibleDeckIDForDuplication}" resultFormat="e4x" result="deckDetailsShowForDuplicationResult(event)"/>
 <mx:HTTPService id="decksCreate" url="{MindEgg.CONTEXT_URL}/decks" method = "POST" resultFormat="e4x" contentType="application/xml" result="decksIndex.send()"/>
-<mx:HTTPService id="decksDelete" url="{MindEgg.CONTEXT_URL}/decks/{userVisibleDeckIDForDeletion}" method="POST" resultFormat="e4x" contentType="application/xml" result="decksDeleteResult(event)" headers="{{X_HTTP_METHOD_OVERRIDE:'delete'}}">
+<mx:HTTPService id="decksDelete" url="{MindEgg.CONTEXT_URL}/decks/{userVisibleDeckIDForDeletion}" method="POST" resultFormat="e4x" contentType="application/xml" result="decksDeleteResult(event)" headers="{deleteHeader}">
 	<mx:request>
 	   <flex>true</flex>
 	</mx:request>
@@ -39,9 +39,7 @@
         <mx:Spacer width="100%"/>
         <mx:Button label="+ New Deck" click="newDeckButtonClicked()" id="newDeckButton" styleName="SlimlineButton" height="33" width="86" textRollOverColor="0x25e9eb"/>
       </mx:HBox>
-      <mx:VBox width="100%" id="deckListingsVBox">
-        <me_view:DeckListing width="100%"/>
-        <me_view:DeckListing width="100%"/>
+      <mx:VBox width="100%" id="deckListingsVBox" minHeight="0" minWidth="0" verticalScrollBarStyleName="customScroll" height="100%">
       </mx:VBox>
     </mx:VBox>
     <mx:VBox id="rightMenuBox" width="100" height="100%" borderStyle="solid" backgroundColor="#60E2F5"/>
@@ -58,7 +56,9 @@
 
 		// event constants
 		public static const FEEDBACK_BUTTON_CLICKED:String = "feedbackButtonClicked";
-		 
+		
+  		// The header to send with the above delete HTTPServices
+  		[Bindable] private var deleteHeader:Object = new Object();
 		 
 		[Bindable] private var userVisibleDeckIDForDeletion:int;
 		[Bindable] private var userVisibleDeckIDForDuplication:int;
@@ -70,6 +70,9 @@
   		 
   		public function setup():void
 		{	
+			// build HTTPService headers
+			deleteHeader["X-HTTP-METHOD-OVERRIDE"] = "delete";
+			
 			// retrieve user's decks from server
 			decksIndex.send();
 			
@@ -174,7 +177,7 @@
 			{
 				// create deck listing
 				deckListing = new DeckListing();
-				//deckListing.setup();
+				deckListing.setup();
 				deckListingsVBox.addChild(deckListing);
 				
 				// update deck listing data model according to XML String (UI bound to data model)

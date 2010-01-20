@@ -12,8 +12,8 @@
   
 <!-- Web Services -->
 <mx:HTTPService id="deckDetailsShow" url="{MindEgg.CONTEXT_URL}/decks/{userVisibleDeckID}/deck_details/{userVisibleDeckID}" resultFormat="e4x" result="deckDetailsShowResult(event)"/>
-<mx:HTTPService id="deckDetailsUpdate" url="{MindEgg.CONTEXT_URL}/decks/{userVisibleDeckID}/deck_details/{userVisibleDeckID}" method="POST" resultFormat="e4x" contentType="application/xml" result="completeSave(event)" headers="{{X_HTTP_METHOD_OVERRIDE:'put'}}"/>
-<mx:HTTPService id="deckDetailsUpdateAndExit" url="{MindEgg.CONTEXT_URL}/decks/{userVisibleDeckID}/deck_details/{userVisibleDeckID}" method="POST" resultFormat="e4x" contentType="application/xml" result="saveConfirmedAndExitRequested(event)" headers="{{X_HTTP_METHOD_OVERRIDE:'put'}}"/>
+<mx:HTTPService id="deckDetailsUpdate" url="{MindEgg.CONTEXT_URL}/decks/{userVisibleDeckID}/deck_details/{userVisibleDeckID}" method="POST" resultFormat="e4x" contentType="application/xml" result="completeSave(event)" headers="{putHeader}"/>
+<mx:HTTPService id="deckDetailsUpdateAndExit" url="{MindEgg.CONTEXT_URL}/decks/{userVisibleDeckID}/deck_details/{userVisibleDeckID}" method="POST" resultFormat="e4x" contentType="application/xml" result="saveConfirmedAndExitRequested(event)" headers="{putHeader}"/>
 
     <mx:XMLList id="mainMenu">
         <menuitem label="File" >
@@ -123,6 +123,9 @@
   		 private static const STATUS_DROPPING_IMAGE:uint = 5; // new image has been clicked, but the image has not yet been placed
   		 private static const STATUS_DRAGGING_CORNER:uint = 6; // the user is currently dragging the corner of a component
   		 
+  		 // The header to send with the above put HTTPServices
+  		 [Bindable] private var putHeader:Object = new Object();
+  		 
   		 private var _lastClickTime:uint = 0; // stores the last time the user clicked on _a component_ for double-click detection
   		 
   		 // selection handling (and highlighting)
@@ -160,6 +163,10 @@
 		{	
 			if (!(_setupCompleted)) // if this is the first time this function has been called
 			{
+				// set up the HTTP headers for the HTTPService components above
+				putHeader["X-HTTP-METHOD-OVERRIDE"] = "put";
+
+				// set up the deck viewer and saving dialog
 				deckViewer.setup();			
 				_savingDialog = new SavingDialog();
 							// listen for events
@@ -704,13 +711,13 @@
 
         	// prepare XML string representation of deck
         	var xmlString:String = deckViewer.deck.toXMLString();
-				// reformat XMLString - THINK THIS CAN BE REMOVED - CHECK LATER
-				var deckXML:XML = new XML(xmlString);
-	  	    	xmlString = deckXML.toXMLString();
+        	
+			// reformat XMLString - uncomment the below 2 lines to aid with debugging the XML string
+			// var deckXML:XML = new XML(xmlString);
+  	    	// xmlString = deckXML.toXMLString();
 
         	// prepare server request
 			var deck_detail:XML = <deck_detail/>;
-			//deck['title'] = deckViewer.deck.deckName;
 			deck_detail['xml_string'] = xmlString;
 			
 			// send server request

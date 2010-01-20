@@ -9,7 +9,7 @@
 				paddingTop="2"
 				paddingBottom="2"
 				width="100%" height="100%"
-				 backgroundAlpha="0.0">
+				 backgroundAlpha="1.0">
   <mx:Script>
   	<![CDATA[
 
@@ -30,7 +30,7 @@
 		{	
 		}
   	    
-  	    private function loginButtonClicked():void
+  	    private function logInButtonClicked():void
   	    {
   	    	// verify the login
   	    	// !!!!!! TO BE DONE  !!!!!!!!!!!
@@ -61,21 +61,35 @@
 
   	]]>
   </mx:Script>
-  <mx:Canvas width="327" height="170" borderStyle="solid" backgroundColor="#09D9F2" x="613" y="10" id="canvas2">
-    <mx:Label x="10" y="10" text="Login" fontSize="30"/>
+  <mx:Canvas width="327" height="170" borderStyle="solid" backgroundColor="#009DFF" x="613" y="10" id="canvas2">
+    <mx:Label x="10" y="10" text="Login" fontSize="30" textDecoration="underline" color="#000000"/>
     <mx:Label x="10" y="60" text="Username" fontSize="20"/>
     <mx:Label x="10" y="98" text="Password" fontSize="20"/>
-    <mx:Button x="196" y="134" label="Log In" width="116" height="24" cornerRadius="10" id="loginButton" click="loginButtonClicked()"/>
+    <mx:Button x="196" y="134" label="Log In" width="116" height="24" cornerRadius="10" id="loginButton" click="logInButtonClicked()"/>
     <mx:TextInput x="135" y="60" height="30" width="180"/>
-    <mx:TextInput x="135" y="96" height="30" width="180"/>
+    <mx:TextInput x="135" y="96" height="30" width="180" displayAsPassword="true" enabled="true" editable="true"/>
   </mx:Canvas>
-  <mx:Canvas width="595" height="530" borderStyle="solid" backgroundColor="#09D9F2" y="10" x="10" id="canvas1">
+  <mx:Canvas width="595" height="530" borderStyle="solid" backgroundColor="#FFFFFF" y="10" x="10" id="canvas1">
+    <mx:Canvas x="10" y="10" width="573" height="508">
+      <mx:Label x="0" y="36" text="Mind" fontSize="127" width="573" height="160" color="#FB9221"/>
+      <mx:Label x="0" y="156" text="Egg" fontSize="127" width="573" height="164" textAlign="right" color="#25E9EB"/>
+      <mx:Label x="0" y="421" text="The Free Flashcard Platform" fontSize="30" width="573" height="53" textAlign="right" color="#000000"/>
+    </mx:Canvas>
   </mx:Canvas>
-  <mx:Canvas width="327" height="170" borderStyle="solid" backgroundColor="#09D9F2" x="613" y="190" id="canvas3">
-    <mx:Button x="0" y="0" label="Sign Up" width="325" height="168" alpha="0.0" fontSize="55" id="signUpButton" click="signUpButtonClicked()" labelPlacement="top"/>
-  </mx:Canvas>
-  <mx:Canvas width="327" height="170" borderStyle="solid" backgroundColor="#09D9F2" x="613" y="370" id="canvas4">
-    <mx:Button x="0" y="0" label="Guest" width="325" height="168" alpha="0.0" fontSize="55" click="guestButtonClicked()" id="guestButton"/>
+  <mx:Canvas width="327" height="350" borderStyle="solid" backgroundColor="#009DFF" x="613" y="190" id="canvas3">
+    <mx:Button x="199" y="252" label="Sign Up" width="116" height="24" cornerRadius="10" id="signUpButton" click="signUpButtonClicked()"/>
+    <mx:Label x="10" y="214" text="Gender" fontSize="20"/>
+    <mx:Label x="10" y="176" text="Age" fontSize="20"/>
+    <mx:ComboBox x="135" y="174" width="180" height="32" dataProvider="{1,2,3,4}"></mx:ComboBox>
+    <mx:ComboBox x="135" y="214" width="180" height="30"></mx:ComboBox>
+    <mx:Label x="10" y="10" text="Instant Sign up" fontSize="30" textDecoration="underline" color="#000000"/>
+    <mx:Label x="10" y="60" text="Email" fontSize="20"/>
+    <mx:TextInput x="135" y="60" height="30" width="180"/>
+    <mx:Label x="10" y="136" text="Password" fontSize="20"/>
+    <mx:TextInput x="135" y="136" height="30" width="180" displayAsPassword="true"/>
+    <mx:Label x="10" y="98" text="Username" fontSize="20"/>
+    <mx:TextInput x="135" y="98" height="30" width="180"/>
+    <mx:TextArea x="10" y="302" text="We don't send spam, sell your data or do any of that funny stuff." width="305" height="36" editable="false" backgroundAlpha="0" borderStyle="none"/>
   </mx:Canvas>
   
 </mx:Canvas>

@@ -33,7 +33,7 @@
 
 	</mx:VBox>
 
-	<mx:HTTPService id="decksUpdate" url="{MindEgg.CONTEXT_URL}/decks/{userVisibleID}" method="POST" resultFormat="e4x" contentType="application/xml" result="completeTitleChange(event)" headers="{{X_HTTP_METHOD_OVERRIDE:'put'}}"/>
+	<mx:HTTPService id="decksUpdate" url="{MindEgg.CONTEXT_URL}/decks/{userVisibleID}" method="POST" resultFormat="e4x" contentType="application/xml" result="completeTitleChange(event)" headers="{putHeader}"/>
 
 
 <mx:Script>
@@ -58,6 +58,15 @@
 		public static const DECK_LISTING_CLICKED:String = "DeckListing_deckListingClicked";
 		public static const DECK_DELETE_REQUESTED:String = "DeckListing_deckDeleteRequested";
 		public static const DECK_DUPLICATION_REQUESTED:String = "DeckListing_deckDuplicationRequested";
+			
+		// The header to send with the above put HTTPService
+  		[Bindable] private var putHeader:Object = new Object();
+
+		public function setup():void
+		{
+			// build HTTPService headers
+			putHeader["X-HTTP-METHOD-OVERRIDE"] = "put";
+		}
 			
 		private function mouseOverListing(event:MouseEvent):void
 		{

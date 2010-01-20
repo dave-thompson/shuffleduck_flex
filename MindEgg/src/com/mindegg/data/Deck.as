@@ -114,9 +114,11 @@ package com.mindegg.data
 
 		// load the given xmlString		
 		public function loadDeck(xmlString:String):void
-		{
+		{			
 				// create XML object from supplied string
+				XML.ignoreWhitespace = false;
 				var deck:XML = new XML(xmlString);
+				deck.ignoreWhitespace = false; // need to keep spaces at start and end of textboxes
 				
 				// read XML version number - will be required in future to determine correct parser for reading (variable currently unused)
 				var version_no:String = deck.attribute("version_no");
