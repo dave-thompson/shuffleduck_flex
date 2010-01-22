@@ -10,17 +10,22 @@
 				paddingBottom="2"
 				width="100%" height="100%"
 				 backgroundAlpha="1.0">
+				 
+<mx:HTTPService id="accountCreate" url="{MindEgg.CONTEXT_URL}/users" method = "POST" resultFormat="e4x" contentType="application/xml" result="loggedIn(event)" fault="failedAccountCreation()"/>
+<mx:HTTPService id="sessionCreate" url="{MindEgg.CONTEXT_URL}/user_session" method = "POST" resultFormat="e4x" contentType="application/xml" result="loggedIn(event)" fault="failedLogIn()"/>
+				 
   <mx:Script>
   	<![CDATA[
 
 
 		import com.mindegg.utils.CustomEvent;
 		import mx.managers.PopUpManager;
+		import mx.rpc.events.ResultEvent;
 
 		// event constants
 		public static const LOGIN_BUTTON_CLICKED:String = "loginButtonClicked";
 		public static const SIGN_UP_BUTTON_CLICKED:String = "signUpButtonClicked";
-		public static const GUEST_BUTTON_CLICKED:String = "guestButtonClicked";  		 
+		//public static const GUEST_BUTTON_CLICKED:String = "guestButtonClicked";  		 
   		 
   		/********************
   		 * Constructor
@@ -32,25 +37,59 @@
   	    
   	    private function logInButtonClicked():void
   	    {
-  	    	// verify the login
-  	    	// !!!!!! TO BE DONE  !!!!!!!!!!!
-  	    	
-  	    	// raise an event with the newly logged in userID to the application
-  	    	var params:Object = new Object();
-			params.userID = 1;
-	    	var event:CustomEvent = new CustomEvent(MindEgg.USER_LOGGED_IN, params, true);
-	    	dispatchEvent(event);
-  	    	
+			var user_session:XML = <user_session/>;
+			user_session['username'] = loginUsernameTextInput.text;			
+			user_session['password'] = loginPasswordTextInput.text;
+			sessionCreate.send(user_session);			  	    	
   	    }
   	    
   	    private function signUpButtonClicked():void
   	    {
   	    	// show the sign up dialog
-  	    	var registrationDialog:RegistrationDialog = new RegistrationDialog;
-  	    	PopUpManager.addPopUp(registrationDialog, this, true);
-			PopUpManager.centerPopUp(registrationDialog);
+  	    	//var registrationDialog:RegistrationDialog = new RegistrationDialog;
+  	    	//PopUpManager.addPopUp(registrationDialog, this, true);
+			//PopUpManager.centerPopUp(registrationDialog);
+			var user:XML = <user/>;
+			user['email'] = signUpEmailTextInput.text;
+			user['username'] = signUpUsernameTextInput.text;			
+			user['password'] = signUpPasswordTextInput.text;
+			user['age_at_signup'] = 30; //signUpAgeComboBox.value;
+			user['gender'] = 'male'; //signUpGenderComboBox.value;
+			accountCreate.send(user);
+  	    }
+  	    
+  	    private function loggedIn(event:ResultEvent):void
+  	    {
+  	    	// clear user data from front page
+  	    	signUpEmailTextInput.text = "";
+			signUpUsernameTextInput.text = "";			
+			signUpPasswordTextInput.text = "";
+			signUpAgeComboBox.selectedIndex = 0;
+			signUpGenderComboBox.selectedIndex = 0;
+			loginUsernameTextInput.text = "";
+			loginPasswordTextInput.text = "";
+			
+			// parse response
+			var user_details:XML = event.result as XML;
+			var username:String = user_details.username[0];
+  	    	// raise an event to the application so it may show the user's decks
+  	    	var params:Object = new Object();
+  	    	params.username = username;
+	    	var newEvent:CustomEvent = new CustomEvent(MindEgg.USER_LOGGED_IN, params, true);
+	    	dispatchEvent(newEvent);
+  	    }
+  	    
+  	    private function failedAccountCreation():void
+  	    {
+  	    	// handle failure - TO BE WRITTEN
   	    }
 
+  	    private function failedLogIn():void
+  	    {
+  	    	// handle failure - TO BE WRITTEN
+  	    }
+
+/*
   	    private function guestButtonClicked():void
   	    {
   	    	// notify the application that button was clicked
@@ -58,16 +97,17 @@
             var event:CustomEvent = new CustomEvent(GUEST_BUTTON_CLICKED, params, true);
             dispatchEvent(event);
   	    }
-
+*/
   	]]>
   </mx:Script>
+  
   <mx:Canvas width="327" height="170" borderStyle="solid" backgroundColor="#009DFF" x="613" y="10" id="canvas2">
     <mx:Label x="10" y="10" text="Login" fontSize="30" textDecoration="underline" color="#000000"/>
     <mx:Label x="10" y="60" text="Username" fontSize="20"/>
     <mx:Label x="10" y="98" text="Password" fontSize="20"/>
     <mx:Button x="196" y="134" label="Log In" width="116" height="24" cornerRadius="10" id="loginButton" click="logInButtonClicked()"/>
-    <mx:TextInput x="135" y="60" height="30" width="180"/>
-    <mx:TextInput x="135" y="96" height="30" width="180" displayAsPassword="true" enabled="true" editable="true"/>
+    <mx:TextInput x="135" y="60" height="30" width="180" tabIndex="1" id="loginUsernameTextInput"/>
+    <mx:TextInput x="135" y="96" height="30" width="180" displayAsPassword="true" enabled="true" editable="true" tabIndex="2" id="loginPasswordTextInput"/>
   </mx:Canvas>
   <mx:Canvas width="595" height="530" borderStyle="solid" backgroundColor="#FFFFFF" y="10" x="10" id="canvas1">
     <mx:Canvas x="10" y="10" width="573" height="508">
@@ -80,16 +120,16 @@
     <mx:Button x="199" y="252" label="Sign Up" width="116" height="24" cornerRadius="10" id="signUpButton" click="signUpButtonClicked()"/>
     <mx:Label x="10" y="214" text="Gender" fontSize="20"/>
     <mx:Label x="10" y="176" text="Age" fontSize="20"/>
-    <mx:ComboBox x="135" y="174" width="180" height="32" dataProvider="{1,2,3,4}"></mx:ComboBox>
-    <mx:ComboBox x="135" y="214" width="180" height="30"></mx:ComboBox>
+    <mx:ComboBox x="135" y="174" width="180" height="32" dataProvider="{1,2,3,4}" id="signUpAgeComboBox" tabIndex="6"></mx:ComboBox>
+    <mx:ComboBox x="135" y="214" width="180" height="30" id="signUpGenderComboBox" tabIndex="7"></mx:ComboBox>
     <mx:Label x="10" y="10" text="Instant Sign up" fontSize="30" textDecoration="underline" color="#000000"/>
     <mx:Label x="10" y="60" text="Email" fontSize="20"/>
-    <mx:TextInput x="135" y="60" height="30" width="180"/>
+    <mx:TextInput x="135" y="60" height="30" width="180" id="signUpEmailTextInput" tabIndex="3"/>
     <mx:Label x="10" y="136" text="Password" fontSize="20"/>
-    <mx:TextInput x="135" y="136" height="30" width="180" displayAsPassword="true"/>
+    <mx:TextInput x="135" y="136" height="30" width="180" displayAsPassword="true" id="signUpPasswordTextInput" tabIndex="5"/>
     <mx:Label x="10" y="98" text="Username" fontSize="20"/>
-    <mx:TextInput x="135" y="98" height="30" width="180"/>
-    <mx:TextArea x="10" y="302" text="We don't send spam, sell your data or do any of that funny stuff." width="305" height="36" editable="false" backgroundAlpha="0" borderStyle="none"/>
+    <mx:TextInput x="135" y="98" height="30" width="180" id="signUpUsernameTextInput" tabIndex="4"/>
+    <mx:TextArea x="10" y="302" text="We don't send spam, steal your data or do any other funny stuff." width="305" height="36" editable="false" backgroundAlpha="0" borderStyle="none"/>
   </mx:Canvas>
   
 </mx:Canvas>

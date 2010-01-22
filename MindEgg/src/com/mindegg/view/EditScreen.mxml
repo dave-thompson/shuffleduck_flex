@@ -749,6 +749,9 @@
         
         private function exitToLibrary():void
         {
+        	// clear the current deck
+        	deckViewer.clearContext();
+        	
         	// raise event so that application may change state back to the library
 			var params:Object = new Object();
 	    	var newEvent:CustomEvent = new CustomEvent(RETURN_TO_LIBRARY_REQUEST, params, true);

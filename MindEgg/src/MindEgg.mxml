@@ -42,9 +42,11 @@
     </mx:State>
   </mx:states>
  
+ <mx:HTTPService id="sessionShow" url="{MindEgg.CONTEXT_URL}/user_session" resultFormat="e4x" result="sessionDetailsReceived(event)"/>
   
   <mx:Script>
   	<![CDATA[
+  		import mx.rpc.events.ResultEvent;
   		import adobe.utils.CustomActions;
 
 		import com.mindegg.view.FrontPage;		
@@ -52,18 +54,20 @@
   		import mx.managers.PopUpManager;
   		import com.mindegg.view.DebugDialog;
   		import com.mindegg.view.DeckListing;
+  		import mx.rpc.events.ResultEvent;
 
 		// Version Numbers
   		public static const XML_VERSION_NO:String 								= "0.01";
   		public static const XML_BACKWARD_COMPATIBLE_IPHONE_VERSION_NO:String 	= "0.01";
 
 		// Web Service Configuration
-		//public static const CONTEXT_URL:String = "http://localhost:3000";
-		public static const CONTEXT_URL:String = "http://mindegg.heroku.com";
+		public static const CONTEXT_URL:String = "http://localhost:3000";
+		//public static const CONTEXT_URL:String = "http://mindegg.heroku.com";
 
 
 		// event constants
 		public static const USER_LOGGED_IN:String = "userLoggedIn";
+		public static const USER_LOGGED_OUT:String = "userLoggedOut";
 		public static const DEBUG_POP_UP_REQUEST:String = "debugPopUpRequest";
   		 
   		/********************
@@ -76,11 +80,14 @@
 				// Events from FrontPage
 				this.addEventListener(FrontPage.LOGIN_BUTTON_CLICKED, loginButtonClicked);
 				this.addEventListener(FrontPage.SIGN_UP_BUTTON_CLICKED, signUpButtonClicked);
-				this.addEventListener(FrontPage.GUEST_BUTTON_CLICKED, guestButtonClicked);
+				//this.addEventListener(FrontPage.GUEST_BUTTON_CLICKED, guestButtonClicked);
 				this.addEventListener(MindEgg.USER_LOGGED_IN, userSuccessfullyLoggedIn);
 
 				// Events from DeckListing
 				this.addEventListener(DeckListing.DECK_LISTING_CLICKED, deckListingClicked);
+
+				// Events from HomePage
+				this.addEventListener(MindEgg.USER_LOGGED_OUT, userLoggedOut);
 				
 				// Events from EditScreen
 				this.addEventListener(EditScreen.RETURN_TO_LIBRARY_REQUEST, returnToLibrary);
@@ -93,6 +100,27 @@
 			currentState="editScreen";
 			currentState="";
 			frontPage.setup();
+			
+			// check to see if there is a session in progress, and if so go to the library screen
+			sessionShow.send();
+		}
+		
+		private function sessionDetailsReceived(e:ResultEvent):void
+		{
+			// parse response
+			var user_details:XML = e.result as XML;
+			if (user_details != null) // if a user was returned (and we're therefore logged in)
+			{
+	  	    	// raise an event to the application (self) so it may show the user's decks
+	  	    	var params:Object = new Object();
+	  	    	params.username = user_details.username
+		    	var newEvent:CustomEvent = new CustomEvent(MindEgg.USER_LOGGED_IN, params, true);
+		    	dispatchEvent(newEvent);
+			}
+			else // a user wasn't returned - therefore we should serve the login page
+			{
+				
+			}
 		}
 		
 		private function returnToLibrary(e:CustomEvent):void
@@ -142,7 +170,15 @@
 			// go to the home page
 			currentState="homeScreen";
 			homeScreen.setup();
+			homeScreen.setUsername(e.params.username);
 		}
+		
+  	    private function userLoggedOut(e:CustomEvent):void
+		{
+			// go to the home page
+			currentState="";
+		}
+		
 
   	]]>
   </mx:Script>

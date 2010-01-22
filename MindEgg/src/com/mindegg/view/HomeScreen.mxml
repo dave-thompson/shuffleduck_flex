@@ -20,6 +20,12 @@
 	   <flex>true</flex>
 	</mx:request>
 </mx:HTTPService>
+<mx:HTTPService id="sessionDelete" url="{MindEgg.CONTEXT_URL}/user_session" method="POST" resultFormat="e4x" contentType="application/xml" result="loggedOut()" headers="{deleteHeader}">
+	<mx:request>
+	   <flex>true</flex>
+	</mx:request>
+</mx:HTTPService>
+
 						
 <!-- UI -->
   <mx:Style source="com/mindegg/theme/styles.css"/>
@@ -28,7 +34,8 @@
     <mx:Label text="Mind" fontSize="22" fontWeight="bold" color="#25E9EB" fontStyle="italic"/>
     <mx:Label text="Egg" fontSize="22" fontWeight="bold" color="#FB9221" fontStyle="italic"/>
     <mx:Spacer width="100%"/>
-    <mx:Label text="username [" height="16" color="#000000" id="usernameLabel" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" width="70"/>
+    <mx:Label text="" height="16" color="#000000" id="usernameLabel" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" width="148" textAlign="right"/>
+    <mx:Label text="[" height="16" color="#000000" id="usernameLabel1" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" width="8"/>
     <mx:Button label="logout" click="logoutButtonClicked()" height="16" width="41" color="#FB9221" alpha="0.0" fillAlphas="[0.0, 0.0, 0.0, 0.0]" textRollOverColor="0x25e9eb" styleName="StandardButton" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" id="logoutButton"/>
     <mx:Label text="]" height="16" color="#000000" id="usernameLabel0" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" width="8"/>
   </mx:HBox>
@@ -63,13 +70,13 @@
 		[Bindable] private var userVisibleDeckIDForDeletion:int;
 		[Bindable] private var userVisibleDeckIDForDuplication:int;
 		private var titleOfDeckToBeDuplicated:String;
-  		 
+		
   		/********************
   		 * Constructor
   		 ********************/
   		 
   		public function setup():void
-		{	
+		{				
 			// build HTTPService headers
 			deleteHeader["X-HTTP-METHOD-OVERRIDE"] = "delete";
 			
@@ -82,17 +89,44 @@
 
 		}
 		
+		public function setUsername(aUsername:String):void
+		{
+			// write username to screen
+			usernameLabel.text = aUsername;
+		}
+		
 		private function logoutButtonClicked():void
 		{
+			sessionDelete.send();
 		}
+		
+		private function loggedOut():void
+  	    {
+  	    	// flush out all data
+  	    	userVisibleDeckIDForDeletion = 0;
+			userVisibleDeckIDForDuplication = 0;
+			titleOfDeckToBeDuplicated = "";
+			deckListingsVBox.removeAllChildren();
+			usernameLabel.text = "";
+
+
+  	    	// raise an event to the application so it can switch back to the login screen
+  	    	var params:Object = new Object();
+	    	var event:CustomEvent = new CustomEvent(MindEgg.USER_LOGGED_OUT, params, true);
+	    	dispatchEvent(event);
+  	    }
+
 		
 		private function newDeckButtonClicked():void
 		{			
+			var i:int = 1;
+			/*
 			// retrieve default deck XML string from file and wait for loader to finish
 			var loader:URLLoader = new URLLoader();
         	loader.dataFormat = URLLoaderDataFormat.TEXT;
         	loader.addEventListener(Event.COMPLETE, handleTemplateLoadComplete);
         	loader.load(new URLRequest("com/mindegg/assets/DefaultTemplate.xml"));
+        	*/
 		}
 		
 		private function handleTemplateLoadComplete(event:Event):void
