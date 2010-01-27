@@ -119,14 +119,11 @@
 		
 		private function newDeckButtonClicked():void
 		{			
-			var i:int = 1;
-			/*
 			// retrieve default deck XML string from file and wait for loader to finish
 			var loader:URLLoader = new URLLoader();
         	loader.dataFormat = URLLoaderDataFormat.TEXT;
         	loader.addEventListener(Event.COMPLETE, handleTemplateLoadComplete);
         	loader.load(new URLRequest("com/mindegg/assets/DefaultTemplate.xml"));
-        	*/
 		}
 		
 		private function handleTemplateLoadComplete(event:Event):void
