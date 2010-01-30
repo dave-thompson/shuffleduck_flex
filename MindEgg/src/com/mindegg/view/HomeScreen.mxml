@@ -40,16 +40,16 @@
     <mx:Label text="]" height="16" color="#000000" id="usernameLabel0" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" width="8"/>
   </mx:HBox>
   <mx:HBox id="mainHBox" width="100%" height="100%">	
+    <mx:VBox id="leftMenuBox" width="100" height="100%" borderStyle="solid" backgroundColor="#60E2F5"/>
     <mx:VBox id="decksVBox" width="100%" height="100%" borderStyle="solid" backgroundColor="#09D9F2" paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5">
       <mx:HBox width="100%">
-        <mx:Label text="Decks" fontSize="22" fontWeight="bold" color="#000000" fontStyle="italic"/>
+        <mx:Label text="Library" fontSize="22" fontWeight="bold" color="#000000" fontStyle="italic"/>
         <mx:Spacer width="100%"/>
         <mx:Button label="+ New Deck" click="newDeckButtonClicked()" id="newDeckButton" styleName="SlimlineButton" height="33" width="86" textRollOverColor="0x25e9eb"/>
       </mx:HBox>
       <mx:VBox width="100%" id="deckListingsVBox" minHeight="0" minWidth="0" verticalScrollBarStyleName="customScroll" height="100%">
       </mx:VBox>
     </mx:VBox>
-    <mx:VBox id="rightMenuBox" width="100" height="100%" borderStyle="solid" backgroundColor="#60E2F5"/>
   </mx:HBox>			
 	
 	
@@ -179,7 +179,7 @@
 			// copy required data from HTTP response into local variables
 			var server_response:XML = event.result as XML;
 			var deck_xml_string:String = server_response.xml_string[0].toString();
-			var title:String = titleOfDeckToBeDuplicated; //server_response.title[0].toString();
+			var title:String = titleOfDeckToBeDuplicated;
 			
 			// adjust title to reflect that this is a copy
 			title = "(Copy of) " + title;

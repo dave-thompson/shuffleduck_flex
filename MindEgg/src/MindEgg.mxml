@@ -4,13 +4,14 @@
 				layout="horizontal"
 				xmlns:me="com.mindegg.*"
 				xmlns:me_view="com.mindegg.view.*"
-				applicationComplete="initialSetup()"
 				paddingLeft="2"
 				paddingRight="2"
 				paddingTop="2"
 				paddingBottom="2"
 				backgroundGradientAlphas="[1.0, 1.0]"
 				backgroundGradientColors="[#202020, #000000]"
+				preloader="com.mindegg.view.preloaders.AppPreloader"
+				applicationComplete="initialSetup()"
 				>
  
  <mx:Spacer id="leftSpacer" width="100%"/>				
@@ -61,8 +62,8 @@
   		public static const XML_BACKWARD_COMPATIBLE_IPHONE_VERSION_NO:String 	= "0.01";
 
 		// Web Service Configuration
-		public static const CONTEXT_URL:String = "http://localhost:3000";
-		//public static const CONTEXT_URL:String = "http://mindegg.heroku.com";
+		//public static const CONTEXT_URL:String = "http://localhost:3000";
+		public static const CONTEXT_URL:String = "http://mindegg.heroku.com";
 
 
 		// event constants
