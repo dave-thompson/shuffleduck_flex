@@ -208,14 +208,11 @@
 			{
 				// create deck listing
 				deckListing = new DeckListing();
+				deckListingsVBox.addChild(deckListing);
 				deckListing.setup(deck);
-				deckListingsVBox.addChild(deckListing);
 				
-				// add deck listing to list
-				deckListingsVBox.addChild(deckListing);
-
 				// set deck listing properties
-				deckListing.percentWidth = 100;
+				//deckListing.percentWidth = 100;
 			}
   		}
 

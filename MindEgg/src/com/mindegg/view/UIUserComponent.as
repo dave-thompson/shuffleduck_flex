@@ -17,9 +17,11 @@ package com.mindegg.view
 	import flash.geom.Rectangle;
 	import flash.utils.*;
 	
+	//import mx.core.Container;
+	import mx.core.ScrollPolicy;
 	import mx.core.UIComponent;
 	
-	public class UIUserComponent extends UIComponent
+	public class UIUserComponent extends UIComponent //Container
 	{
 		
 		private var _component:Component; // reference to the component data object that this UIUserComponent represents on screen
@@ -50,7 +52,15 @@ package com.mindegg.view
 				throw new Error("UIUserComponent is an abstract class&gt and can not be instantiated.");
 			}
 			
-			_component = component;			
+			_component = component;	
+			
+			// This needs to clip content, but to do so means inheriting from Container rather than UIComponent - and this
+			//     brings with it significant problems in text formatting, as UITextField / UITextFormat must then be used in
+			//     place of TextField / TextFormat. These do not seem to work when applying the text format - perhaps something
+			//     to do with object lifecycles....????
+			//clipContent = true;
+			//horizontalScrollPolicy = ScrollPolicy.OFF;		
+			//verticalScrollPolicy = ScrollPolicy.OFF;		
 		}
 		
 		public function redraw():void

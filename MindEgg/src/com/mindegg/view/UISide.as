@@ -15,25 +15,28 @@ package com.mindegg.view
 	public class UISide extends Canvas
 	{			
 		private var _side:Side; // the Side that this UISide represents on screen
+		private var _sizeMultiplier:Number; // the size of the on screen representation as a factor of 260 wide, 160 high
 		
 		/**********************
   	    *   Constructor
   	    ***********************/
-		
 		/**
   	    * 	Purpose:	Creates a UI version of the supplied side. Also draws all components on side, with event listeners.
   	    */
-		public function UISide(side:Side)
+		public function UISide(side:Side, widthInPixels:int = 260)
 		{
 			// call super
 			super();
 			
+			// calculate size multiplier
+			_sizeMultiplier = widthInPixels  / 260.0;
+
 			// retain Side that this UISide will represent
 			_side = side;
 			
 			// set standard properties	
-			this.width = 260;
-			this.height = 160;
+			this.width = 260 * _sizeMultiplier;
+			this.height = 160 * _sizeMultiplier;
 			this.setStyle("backgroundColor", 0xFFFFFF);
 			
 			// draw components
@@ -140,27 +143,6 @@ package com.mindegg.view
   	    *   Internal Functions
   	    ***********************/
 
-  	    /**
-  	    * 	Purpose:	Creates a UI version of the supplied component, draws it on the UISide and adds an event listener for clicks
-  	    */
-		private function drawComponentOnSide(component:Component):UIUserComponent
-		{
-			var drawnComponent:UIUserComponent;
-			
-			// Get UIComponent representation of the component
-			if(getQualifiedClassName(component) == "com.mindegg.data::TextBox")
-			{
-				drawnComponent = new UITextBox(component as TextBox);
-			}
-			else
-			{
-				throw new Error("SideCanvas does not know how to draw this type of component!");
-			}
-			
-			this.addChild(drawnComponent);
-			return drawnComponent;
-		}
-		
 		/**
   	    * 	Purpose:	Loops through each component on the corresponding Side and draws it
   	    */
@@ -173,6 +155,27 @@ package com.mindegg.view
 				var component:Component = _side.getComponentAtIndex(componentIndex);
 				drawComponentOnSide(component);
 			}
+		}
+
+  	    /**
+  	    * 	Purpose:	Creates a UI version of the supplied component, draws it on the UISide and adds an event listener for clicks
+  	    */
+		private function drawComponentOnSide(component:Component):UIUserComponent
+		{
+			var drawnComponent:UIUserComponent;
+			
+			// Get UIComponent representation of the component
+			if(getQualifiedClassName(component) == "com.mindegg.data::TextBox")
+			{
+				drawnComponent = new UITextBox(component as TextBox, _sizeMultiplier);
+			}
+			else
+			{
+				throw new Error("SideCanvas does not know how to draw this type of component!");
+			}
+			
+			this.addChild(drawnComponent);
+			return drawnComponent;
 		}
 		
 		/**

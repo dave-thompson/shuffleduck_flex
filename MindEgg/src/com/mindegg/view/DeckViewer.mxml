@@ -447,8 +447,8 @@
     		// clear the existing deck
 			clearContext();
         	
-        	try
-        	{
+        	//try
+        	//{
 	        	// load the new deck (if there is a loading error, user will be left with an empty deck)
 	        	_deck = new Deck(xmlString);
 	        	
@@ -460,10 +460,10 @@
 	        	
 	        	// show the cards
 				this.currentState = CARDS_STATE;					
-         	}
+         	//}
          	
          	// in case of error loading the XML string, inform the user
-			catch (e:TypeError)
+			/*catch (e:TypeError)
 			{
 				// xmlString couldn't be converted into XML; likely bad formatting
 				Alert.show("Your download couldn't be processed. Please try again. If you continue to have problems, please do let us know!","Oh no! Sorry about this...");
@@ -471,7 +471,7 @@
 				
 				// not sure where the error was, so to cleanup - reset everything for a new deck
 				clearContext();
-			}
+			}*/
 
         }
         

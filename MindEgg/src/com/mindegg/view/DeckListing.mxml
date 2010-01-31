@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" backgroundColor="#3D464B" height="122" paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5" mouseOver="mouseOverListing(event)" mouseOut="mouseOutListing(event)" click="mouseClickListing(event)" width="100%">
    	<mx:Style source="com/mindegg/theme/styles.css"/>
-
-	<mx:Canvas width="182" height="112" backgroundColor="#FFFFFF">
-	</mx:Canvas>
+	<mx:HBox width="182" height="112" backgroundColor="#FFFFFF" id="sidePreviewHBox"/>
 	<mx:VBox height="100%" verticalGap="0" width="100%">
 		<mx:HBox width="100%">
 			<mx:VBox height="100%" width="100%" verticalGap="0">
@@ -38,6 +36,7 @@
 
 <mx:Script>
 	<![CDATA[
+		import com.mindegg.data.Side;
 		
 		import com.adobe.utils.DateUtil;
 		import com.mindegg.utils.CustomEvent;
@@ -62,16 +61,25 @@
 		// The header to send with the above put HTTPService
   		[Bindable] private var putHeader:Object = new Object();
 
-		public function setup(deck:XML):void
+		public function setup(deckXML:XML):void
 		{
 			// build HTTPService headers
 			putHeader["X-HTTP-METHOD-OVERRIDE"] = "put";
 			
 			// update data model according to XML String (UI bound to data model)
-			userVisibleID = deck.user_visible_id;
-			title = deck.title;
-	  		lastSavedDate = DateUtil.parseW3CDTF(deck.last_saved_date);
-			numCards = deck.num_cards;
+			userVisibleID = deckXML.user_visible_id;
+			title = deckXML.title;
+	  		lastSavedDate = DateUtil.parseW3CDTF(deckXML.last_saved_date);
+			numCards = deckXML.num_cards;
+			
+			// create first side preview
+			var side:Side = new Side();
+			var side_xml_string:String = deckXML.cover_xml_string[0].toString();
+			side = side.loadWithXML(new XML(side_xml_string));
+			var uiSide:UISide = new UISide(side, 182);
+			sidePreviewHBox.addChild(uiSide);
+			
+			this.percentWidth = 100;
 		}
 			
 		private function mouseOverListing(event:MouseEvent):void
