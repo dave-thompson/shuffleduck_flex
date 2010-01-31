@@ -9,7 +9,8 @@
 				paddingBottom="2"
 				width="100%"
 				height="100%"
-				backgroundAlpha="0.0">
+				backgroundAlpha="0.0"
+				creationComplete="setup()">
 			
 <!-- Web Services -->
 <mx:HTTPService id="decksIndex" url="{MindEgg.CONTEXT_URL}/decks" resultFormat="e4x" result="decksIndexResult(event)"/>
@@ -47,10 +48,10 @@
         <mx:Spacer width="100%"/>
         <mx:Button label="+ New Deck" click="newDeckButtonClicked()" id="newDeckButton" styleName="SlimlineButton" height="33" width="86" textRollOverColor="0x25e9eb"/>
       </mx:HBox>
-      <mx:VBox width="100%" id="deckListingsVBox" minHeight="0" minWidth="0" verticalScrollBarStyleName="customScroll" height="100%">
+      <mx:VBox width="100%" id="deckListingsVBox" minHeight="0" minWidth="0" verticalScrollBarStyleName="customScroll" height="100%" resize="resizeDeckListingsVBox()" horizontalScrollPolicy="off">
       </mx:VBox>
     </mx:VBox>
-  </mx:HBox>			
+  </mx:HBox>
 	
 	
 				
@@ -194,7 +195,6 @@
 			decksCreate.send(create_deck_request);
 		}
 		
-				
 		private function decksIndexResult(event:ResultEvent):void
 		{
 			var decks:XML = event.result as XML;
@@ -210,10 +210,16 @@
 				deckListing = new DeckListing();
 				deckListingsVBox.addChild(deckListing);
 				deckListing.setup(deck);
-				
-				// set deck listing properties
-				//deckListing.percentWidth = 100;
 			}
+  		}
+  		
+  		private function resizeDeckListingsVBox():void
+  		{
+  			// warn each deck listing so that it can resize its title labels if necessary
+  			for each (var listing:DeckListing in deckListingsVBox.getChildren())
+  			{
+  				listing.resetTitleLabelLength();
+  			}
   		}
 
   	]]>

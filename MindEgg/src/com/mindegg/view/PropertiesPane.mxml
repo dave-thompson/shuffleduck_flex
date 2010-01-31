@@ -55,7 +55,7 @@
 			<mx:TextInput id="textTextInput" width="96" change="onChange(event)" styleName="propertyFormInput"/>
 		</mx:FormItem>
 		<mx:FormItem id="fontSizeFormItem" label="Font Size" styleName="propertyFormItem">
-			<mx:NumericStepper id="fontSizeNumericStepper" minimum="4" maximum="180" stepSize="1" change="onChange(event)" styleName="propertyFormInput"/>
+			<mx:NumericStepper id="fontSizeNumericStepper" minimum="4" maximum="127" stepSize="1" change="onChange(event)" styleName="propertyFormInput"/>
 		</mx:FormItem>
 		<mx:FormItem id="alignmentFormItem" label="Alignment" styleName="propertyFormItem">
 			<mx:ComboBox id="alignmentComboBox" dataProvider="{alignments}" width="93" change="onChange(event)" styleName="propertyFormInput"/>

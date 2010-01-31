@@ -76,7 +76,7 @@
   		 ********************/
   		 
   		private function initialSetup():void
-		{	
+		{
 			// listen for events
 				// Events from FrontPage
 				this.addEventListener(FrontPage.LOGIN_BUTTON_CLICKED, loginButtonClicked);
@@ -170,7 +170,7 @@
 		{
 			// go to the home page
 			currentState="homeScreen";
-			homeScreen.setup();
+			//homeScreen.setup();
 			homeScreen.setUsername(e.params.username);
 		}
 		

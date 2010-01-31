@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" backgroundColor="#3D464B" height="122" paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5" mouseOver="mouseOverListing(event)" mouseOut="mouseOutListing(event)" click="mouseClickListing(event)" width="100%">
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="resetTitleLabelLength()" backgroundColor="#3D464B" height="122" paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5" mouseOver="mouseOverListing(event)" mouseOut="mouseOutListing(event)" click="mouseClickListing(event)" width="100%">
    	<mx:Style source="com/mindegg/theme/styles.css"/>
 	<mx:HBox width="182" height="112" backgroundColor="#FFFFFF" id="sidePreviewHBox"/>
 	<mx:VBox height="100%" verticalGap="0" width="100%">
 		<mx:HBox width="100%">
 			<mx:VBox height="100%" width="100%" verticalGap="0">
-				<mx:Label text="{title}" color="#FFFFFF" fontSize="30" width="100%"/>
+				<mx:HBox width="100%" height="42" verticalScrollPolicy="off" horizontalScrollPolicy="off" autoLayout="false" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0">
+					<mx:HBox id = "titleHBox" click="clickTitle(event)" width="100%" height="42" backgroundColor="#3D464B" verticalScrollPolicy="off" horizontalScrollPolicy="off">
+						<mx:Label id = "titleLabel" color="#FFFFFF" fontSize="30" width="100%" mouseOver="mouseOverTitle(event)" mouseOut="mouseOutTitle(event)" toolTip="Rename this deck"/>
+					</mx:HBox>
+				</mx:HBox>
 				<mx:Label text="ID: {userVisibleID}" color="#FFFFFF"/>
 				<mx:Label text="{numCardsString}" color="#FFFFFF" fontStyle="italic"/>
 			</mx:VBox>
 			<mx:VBox height="100%" horizontalGap="0" verticalGap="0">
-			    <mx:Button label="Duplicate" id="duplicateButton" styleName="StandardButton" textRollOverColor="0x25e9eb" alpha="0.0" click="duplicateButtonClicked()"/>
+			    <mx:Button label="Duplicate" id="duplicateButton" styleName="StandardButton" textRollOverColor="0x25e9eb" alpha="0.0" click="duplicateButtonClicked()" toolTip="Make a copy of this deck"/>
 				<mx:HBox width="100%" paddingRight="0" paddingLeft="0" horizontalGap="0">
 					<mx:Spacer width="100%"/>
-					<mx:Button label="Rename" id="renameButton" styleName="StandardButton" textRollOverColor="0x25e9eb" alpha="0.0" click="renameButtonClicked()"/>
-				</mx:HBox>
-				<mx:HBox width="100%" paddingRight="0" paddingLeft="0" horizontalGap="0">
-					<mx:Spacer width="100%"/>
-					<mx:Button label="Delete" id="deleteButton" styleName="StandardButton" textRollOverColor="0x25e9eb" alpha="0.0" click="deleteButtonClicked()"/>
+					<mx:Button label="Delete" id="deleteButton" styleName="StandardButton" textRollOverColor="0x25e9eb" alpha="0.0" click="deleteButtonClicked()" toolTip="Delete this deck"/>
 				</mx:HBox>
 		</mx:VBox>
 		</mx:HBox>
@@ -47,9 +47,9 @@
 		
 		// state variables
 		[Bindable] public var userVisibleID:String;
-		[Bindable] public var title:String;
   		[Bindable] public var lastSavedDate:Date;
   		[Bindable] public var numCardsString:String;
+  		public var title:String;
 		
 		private var _stagingTitle:String;
 		
@@ -68,10 +68,10 @@
 			
 			// update data model according to XML String (UI bound to data model)
 			userVisibleID = deckXML.user_visible_id;
-			title = deckXML.title;
 	  		lastSavedDate = DateUtil.parseW3CDTF(deckXML.last_saved_date);
 			var numCards:int = deckXML.num_cards;
 			numCardsString = (numCards == 1) ? "1 card" : numCards + " cards";
+			setTitle(deckXML.title);
 			
 			// create first side preview
 			var side:Side = new Side();
@@ -82,18 +82,53 @@
 			
 			this.percentWidth = 100;
 		}
+		
+		private function setTitle(aTitle:String):void
+		{
+			title = aTitle;
+			titleLabel.text = title;
+			resetTitleLabelLength();
+		}
+		
+		public function resetTitleLabelLength():void
+		{
+			titleLabel.validateNow();
+			var metrics:TextLineMetrics = titleLabel.getLineMetrics(0);
+			var i:int =1;
+			titleHBox.width = metrics.width + 4;
 			
+			trace(this.width);
+		}
+					
 		private function mouseOverListing(event:MouseEvent):void
 		{
 			if (!(event.target is Button))
 			{
+				// set listing and title (inside it) to highlighted
 				this.setStyle("backgroundColor", "#6c757a");
+				titleHBox.setStyle("backgroundColor", "#6c757a");
 			}
+		}
+		
+		private function mouseOverTitle(event:MouseEvent):void
+		{
+			// set title to hightlighted and listing to not highlighted
+			titleHBox.setStyle("backgroundColor", "#6c757a");
+			this.setStyle("backgroundColor", "#3D464B");
+			// prevent event from reaching DeckListing (this should not be treated as a mouse over DeckListing)
+			event.stopPropagation();
 		}
 		
 		private function mouseOutListing(event:MouseEvent):void
 		{
 				this.setStyle("backgroundColor", "#3D464B");
+				titleHBox.setStyle("backgroundColor", "#3D464B");
+		}
+		
+		private function mouseOutTitle(event:MouseEvent):void
+		{
+			//this.setStyle("backgroundColor", "#6c757a");
+			titleHBox.setStyle("backgroundColor", "#3D464B");			
 		}
 		
 		
@@ -107,7 +142,22 @@
 				params.userVisibleDeckID = userVisibleID;
 		    	var newEvent:CustomEvent = new CustomEvent(DECK_LISTING_CLICKED, params, true);
 		    	dispatchEvent(newEvent);
-	  		}
+	  		}	  		
+		}
+		
+		private function clickTitle(event:MouseEvent):void
+		{
+			// create a deck name dialog and add it to the screen
+			var deckNameDialog:DeckNameDialog = new DeckNameDialog();
+            PopUpManager.addPopUp(deckNameDialog, this, true);
+       		deckNameDialog.setText(title);
+            PopUpManager.centerPopUp(deckNameDialog);
+            
+            // wait for the new deck name event to be fired when the pop up closes
+            deckNameDialog.addEventListener(DeckNameDialog.NEW_DECK_NAME, newDeckName);
+            
+            // prevent event from reaching DeckListing (this should not be treated as a click on DeckListing)
+			event.stopPropagation();
 		}
 		
 		private function deleteButtonClicked():void
@@ -136,19 +186,6 @@
 	    	var newEvent:CustomEvent = new CustomEvent(DECK_DUPLICATION_REQUESTED, params, true);
 	    	dispatchEvent(newEvent);			
 		}
-
-		private function renameButtonClicked():void
-		{
-			// create a deck name dialog and add it to the screen
-			var deckNameDialog:DeckNameDialog = new DeckNameDialog();
-            PopUpManager.addPopUp(deckNameDialog, this, true);
-       		deckNameDialog.setText(title);
-            PopUpManager.centerPopUp(deckNameDialog);
-            
-            // wait for the new deck name event to be fired when the pop up closes
-            deckNameDialog.addEventListener(DeckNameDialog.NEW_DECK_NAME, newDeckName);
-		}
-		
 		
 		private function newDeckName(e:CustomEvent):void
 		{
@@ -172,8 +209,7 @@
 
 		private function completeTitleChange(event:ResultEvent):void
         {
-			// update the UI
-			title = _stagingTitle;        	
+        	setTitle(_stagingTitle);
         }
 		
 		private function friendlyDate(date:Date):String
