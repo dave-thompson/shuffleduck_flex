@@ -15,7 +15,7 @@
          <mx:RemoveChild target="{templateHBox}"/>
          <mx:AddChild position="lastChild">
          	<mx:VBox id = "CardsHBoxVBox" height="100%" width="100%" minHeight="0" minWidth="0">     	 <!-- This VBox is necessary as a workaround to a suspected Flex bug, which causes cards to be loaded but hidden if a deck was previously loaded which required a scroll of the CardsHBox. -->	
-	            <mx:HBox height="100%" width="100%" horizontalGap="10" id="cardsHBox" minWidth="0" horizontalScrollBarStyleName="customScroll" verticalScrollBarStyleName="customScroll" minHeight="0"/>
+	            <mx:HBox height="100%" width="100%" horizontalGap="10" id="cardsHBox" minWidth="0" horizontalScrollBarStyleName="customScroll" verticalScrollBarStyleName="customScroll" minHeight="0" verticalScrollPolicy="off"/>
          	</mx:VBox>      
          </mx:AddChild>
          <mx:SetStyle name="paddingBottom" value="0"/> 
@@ -120,16 +120,13 @@
 		
 		public function setup():void
 		{
-			// create a new, blank template with 2 cards
-			_deck = new Deck();
-						
 			// instantiate the other states - this is necessary to draw the components of other states, so that they may then be referenced
 			this.currentState = CARDS_STATE;
 			this.currentState = GRID_STATE;
 			
 			// show the blank template
 			this.currentState = TEMPLATE_STATE;
-			drawNewCard(_deck.template, TEMPLATE, false);
+			//drawNewCard(_deck.template, TEMPLATE, false);
 		}
 		
 		public function clearContext():void
@@ -453,7 +450,7 @@
         	try
         	{
 	        	// load the new deck (if there is a loading error, user will be left with an empty deck)
-	        	_deck.loadDeck(xmlString);
+	        	_deck = new Deck(xmlString);
 	        	
 	        	// draw the cards
 	        	drawCardsFromDeck();

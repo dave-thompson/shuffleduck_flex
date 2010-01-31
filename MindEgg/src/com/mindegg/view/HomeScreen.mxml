@@ -166,7 +166,7 @@
 
 			// retrieve the deck for duplication from the server
 			userVisibleDeckIDForDuplication = e.params.userVisibleDeckID;
-			deckDetailsShowForDuplication.send()
+			deckDetailsShowForDuplication.send();
 			
 			// wait for the response, then duplicate the deck
 		}
@@ -208,14 +208,8 @@
 			{
 				// create deck listing
 				deckListing = new DeckListing();
-				deckListing.setup();
+				deckListing.setup(deck);
 				deckListingsVBox.addChild(deckListing);
-				
-				// update deck listing data model according to XML String (UI bound to data model)
-				deckListing.userVisibleID = deck.user_visible_id;
-				deckListing.title = deck.title;
-		  		deckListing.lastSavedDate = DateUtil.parseW3CDTF(deck.last_saved_date);
-				deckListing.numCards = deck.num_cards;
 				
 				// add deck listing to list
 				deckListingsVBox.addChild(deckListing);

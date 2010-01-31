@@ -6,6 +6,34 @@ package com.mindegg.data
 	{
 		private var _sides:Array;
 		
+		// Constructor to create empty card with a given number of sides
+		public function Card(numberSides:int = 0)
+		{
+			_sides = new Array();
+			for (var sidesCreated:int = 0; sidesCreated < numberSides; sidesCreated++)
+			{
+				this.newSide();
+			}
+		}
+		
+		// Constructor to create a new card from an XML representation
+		public function loadWithXML(cardXML:XML):Card
+		{
+			// instantiate the Sides
+			_sides = new Array();
+			
+			// for each Side, load the components
+			var xmlSides:XMLList = cardXML.Side;
+			for each (var xmlSide:XML in xmlSides)
+			{
+				var side:Side = new Side();
+				this.addSide(side.loadWithXML(xmlSide));
+			}
+			return this;
+		}
+
+		
+		/*
 		public function Card(numberSides:int)
 		{
 			_sides = new Array();
@@ -14,13 +42,14 @@ package com.mindegg.data
 				this.newSide();
 			}
 		}
+		*/
 
 		public function clone():Card
 		{
 			var clonedCard:Card = new Card(_sides.length);
 			for (var i:uint = 0; i <_sides.length; i++)
 			{
-				clonedCard._sides[i] = this._sides[i].clone();	
+				clonedCard._sides[i] = this._sides[i].clone();
 			}
 			return clonedCard;
 		}
@@ -45,6 +74,11 @@ package com.mindegg.data
 			var side:Side = new Side();
 			_sides.push(side);
 			return side;
+		}
+		
+		public function addSide(side:Side):void
+		{
+			_sides.push(side);
 		}
 		
 		public function numSides():uint

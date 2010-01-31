@@ -141,7 +141,6 @@
   		 
   		 private var _setupCompleted:Boolean = false;
   		 
-  		 //[Bindable] private var dbDeckID:uint; // the id of the currently edited deck in the rails database
   		 [Bindable] private var userVisibleDeckID:uint; // the user visible deck id of the currently edited deck
   		 
   		 private var _savingDialog:SavingDialog;
@@ -727,7 +726,7 @@
 			}
 			else
 			{
-				deckDetailsUpdate.send(deck_detail);				
+				deckDetailsUpdate.send(deck_detail);
 			}
         }
         

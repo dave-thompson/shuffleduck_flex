@@ -62,10 +62,16 @@
 		// The header to send with the above put HTTPService
   		[Bindable] private var putHeader:Object = new Object();
 
-		public function setup():void
+		public function setup(deck:XML):void
 		{
 			// build HTTPService headers
 			putHeader["X-HTTP-METHOD-OVERRIDE"] = "put";
+			
+			// update data model according to XML String (UI bound to data model)
+			userVisibleID = deck.user_visible_id;
+			title = deck.title;
+	  		lastSavedDate = DateUtil.parseW3CDTF(deck.last_saved_date);
+			numCards = deck.num_cards;
 		}
 			
 		private function mouseOverListing(event:MouseEvent):void
