@@ -50,7 +50,7 @@
   		import mx.rpc.events.ResultEvent;
   		import adobe.utils.CustomActions;
 
-		import com.mindegg.view.FrontPage;		
+		import com.mindegg.view.FrontPage;
   		import com.mindegg.utils.CustomEvent;
   		import mx.managers.PopUpManager;
   		import com.mindegg.view.DebugDialog;

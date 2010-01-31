@@ -7,7 +7,7 @@
 			<mx:VBox height="100%" width="100%" verticalGap="0">
 				<mx:Label text="{title}" color="#FFFFFF" fontSize="30" width="100%"/>
 				<mx:Label text="ID: {userVisibleID}" color="#FFFFFF"/>
-				<mx:Label text="{buildNumCardsString()}" color="#FFFFFF" fontStyle="italic"/>
+				<mx:Label text="{numCardsString}" color="#FFFFFF" fontStyle="italic"/>
 			</mx:VBox>
 			<mx:VBox height="100%" horizontalGap="0" verticalGap="0">
 			    <mx:Button label="Duplicate" id="duplicateButton" styleName="StandardButton" textRollOverColor="0x25e9eb" alpha="0.0" click="duplicateButtonClicked()"/>
@@ -49,7 +49,7 @@
 		[Bindable] public var userVisibleID:String;
 		[Bindable] public var title:String;
   		[Bindable] public var lastSavedDate:Date;
-  		[Bindable] public var numCards:int;
+  		[Bindable] public var numCardsString:String;
 		
 		private var _stagingTitle:String;
 		
@@ -70,7 +70,8 @@
 			userVisibleID = deckXML.user_visible_id;
 			title = deckXML.title;
 	  		lastSavedDate = DateUtil.parseW3CDTF(deckXML.last_saved_date);
-			numCards = deckXML.num_cards;
+			var numCards:int = deckXML.num_cards;
+			numCardsString = (numCards == 1) ? "1 card" : numCards + " cards";
 			
 			// create first side preview
 			var side:Side = new Side();
@@ -174,16 +175,6 @@
 			// update the UI
 			title = _stagingTitle;        	
         }
-
-		private function buildNumCardsString():String
-		{
-			var result:String;
-			if (numCards == 1)
-				result = "1 card";
-			else
-				result = numCards + " cards";
-			return result;
-		}
 		
 		private function friendlyDate(date:Date):String
 		{
