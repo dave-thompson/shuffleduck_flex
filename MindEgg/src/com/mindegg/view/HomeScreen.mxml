@@ -32,8 +32,8 @@
   <mx:Style source="com/mindegg/theme/styles.css"/>
 			
   <mx:HBox id="topHBox" width="100%" height="33" horizontalGap="0" backgroundColor="#FFFFFF">
-    <mx:Label text="Mind" fontSize="22" fontWeight="bold" color="#25E9EB" fontStyle="italic"/>
-    <mx:Label text="Egg" fontSize="22" fontWeight="bold" color="#FB9221" fontStyle="italic"/>
+    <mx:Label text="Shuffle" fontSize="22" fontWeight="bold" color="#25E9EB" fontStyle="italic"/>
+    <mx:Label text="Duck" fontSize="22" fontWeight="bold" color="#FB9221" fontStyle="italic"/>
     <mx:Spacer width="100%"/>
     <mx:Label text="" height="16" color="#000000" id="usernameLabel" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" width="148" textAlign="right"/>
     <mx:Label text="[" height="16" color="#000000" id="usernameLabel1" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" width="8"/>

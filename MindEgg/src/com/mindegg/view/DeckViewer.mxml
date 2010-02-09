@@ -18,9 +18,9 @@
 	            <mx:HBox height="100%" width="100%" horizontalGap="10" id="cardsHBox" minWidth="0" horizontalScrollBarStyleName="customScroll" verticalScrollBarStyleName="customScroll" minHeight="0" verticalScrollPolicy="off"/>
          	</mx:VBox>      
          </mx:AddChild>
-         <mx:SetStyle name="paddingBottom" value="0"/> 
-         <mx:SetStyle name="paddingLeft" value="0"/> 
-         <mx:SetStyle name="paddingRight" value="0"/>
+         <mx:SetStyle name="paddingBottom" value="5"/> 
+         <mx:SetStyle name="paddingLeft" value="5"/> 
+         <mx:SetStyle name="paddingRight" value="5"/>
          <mx:SetStyle name="paddingTop" value="0"/>
          <mx:SetProperty name="height" value="100%"/>
          <mx:RemoveChild target="{newCardButton}"/>

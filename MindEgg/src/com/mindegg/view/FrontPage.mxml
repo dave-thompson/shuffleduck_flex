@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <mx:Canvas	    xmlns:mx="http://www.adobe.com/2006/mxml"
-				backgroundColor="#000000"
+				backgroundColor="#032873"
 				xmlns:me="com.mindegg.*"
 				xmlns:me_view="com.mindegg.view.*"
 				paddingLeft="2"
@@ -9,7 +9,7 @@
 				paddingTop="2"
 				paddingBottom="2"
 				width="100%" height="100%"
-				 backgroundAlpha="1.0">
+				 backgroundAlpha="0.0">
 				 
 <mx:HTTPService id="accountCreate" url="{MindEgg.CONTEXT_URL}/users" method = "POST" resultFormat="e4x" contentType="application/xml" result="loggedIn(event)" fault="failedAccountCreation()"/>
 <mx:HTTPService id="sessionCreate" url="{MindEgg.CONTEXT_URL}/user_session" method = "POST" resultFormat="e4x" contentType="application/xml" result="loggedIn(event)" fault="failedLogIn()"/>
@@ -22,11 +22,6 @@
 		import mx.managers.PopUpManager;
 		import mx.rpc.events.ResultEvent;
 
-		// event constants
-		public static const LOGIN_BUTTON_CLICKED:String = "loginButtonClicked";
-		public static const SIGN_UP_BUTTON_CLICKED:String = "signUpButtonClicked";
-		//public static const GUEST_BUTTON_CLICKED:String = "guestButtonClicked";  		 
-  		 
   		/********************
   		 * Constructor
   		 ********************/
@@ -101,7 +96,7 @@
   	]]>
   </mx:Script>
   
-  <mx:Canvas width="327" height="170" borderStyle="solid" backgroundColor="#009DFF" x="613" y="10" id="canvas2">
+  <mx:Canvas width="327" height="170" backgroundColor="#1E6FC2" x="613" y="10" id="canvas2" cornerRadius="20" borderStyle="solid" borderThickness="0">
     <mx:Label x="10" y="10" text="Login" fontSize="30" textDecoration="underline" color="#000000"/>
     <mx:Label x="10" y="60" text="Username" fontSize="20"/>
     <mx:Label x="10" y="98" text="Password" fontSize="20"/>
@@ -109,20 +104,20 @@
     <mx:TextInput x="135" y="60" height="30" width="180" tabIndex="1" id="loginUsernameTextInput"/>
     <mx:TextInput x="135" y="96" height="30" width="180" displayAsPassword="true" enabled="true" editable="true" tabIndex="2" id="loginPasswordTextInput"/>
   </mx:Canvas>
-  <mx:Canvas width="595" height="530" borderStyle="solid" backgroundColor="#FFFFFF" y="10" x="10" id="canvas1">
+  <mx:Canvas width="595" height="530" borderStyle="solid" backgroundColor="#FFFFFF" y="10" x="10" id="canvas1" cornerRadius="20">
     <mx:Canvas x="10" y="10" width="573" height="508">
-      <mx:Label x="0" y="36" text="Mind" fontSize="127" width="573" height="160" color="#FB9221"/>
-      <mx:Label x="0" y="156" text="Egg" fontSize="127" width="573" height="164" textAlign="right" color="#25E9EB"/>
+      <mx:Label x="0" y="36" text="Shuffle" fontSize="127" width="573" height="160" color="#FB9221"/>
+      <mx:Label x="0" y="184" text="Duck" fontSize="127" width="573" height="164" textAlign="right" color="#25E9EB"/>
       <mx:Label x="0" y="421" text="The Free Flashcard Platform" fontSize="30" width="573" height="53" textAlign="right" color="#000000"/>
     </mx:Canvas>
   </mx:Canvas>
-  <mx:Canvas width="327" height="350" borderStyle="solid" backgroundColor="#009DFF" x="613" y="190" id="canvas3">
+  <mx:Canvas width="327" height="350" borderStyle="solid" backgroundColor="#009DFF" x="613" y="190" id="canvas3" cornerRadius="20" borderThickness="0">
     <mx:Button x="199" y="252" label="Sign Up" width="116" height="24" cornerRadius="10" id="signUpButton" click="signUpButtonClicked()"/>
     <mx:Label x="10" y="214" text="Gender" fontSize="20"/>
     <mx:Label x="10" y="176" text="Age" fontSize="20"/>
     <mx:ComboBox x="135" y="174" width="180" height="32" dataProvider="{1,2,3,4}" id="signUpAgeComboBox" tabIndex="6"></mx:ComboBox>
     <mx:ComboBox x="135" y="214" width="180" height="30" id="signUpGenderComboBox" tabIndex="7"></mx:ComboBox>
-    <mx:Label x="10" y="10" text="Instant Sign up" fontSize="30" textDecoration="underline" color="#000000"/>
+    <mx:Label x="10" y="10" text="Join" fontSize="30" textDecoration="underline" color="#000000"/>
     <mx:Label x="10" y="60" text="Email" fontSize="20"/>
     <mx:TextInput x="135" y="60" height="30" width="180" id="signUpEmailTextInput" tabIndex="3"/>
     <mx:Label x="10" y="136" text="Password" fontSize="20"/>

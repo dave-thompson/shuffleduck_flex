@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="resetTitleLabelLength()" backgroundColor="#3D464B" height="122" paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5" mouseOver="mouseOverListing(event)" mouseOut="mouseOutListing(event)" click="mouseClickListing(event)" width="100%">
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="resetTitleLabelLength()" backgroundColor="#3D464B" height="122" paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5" mouseOver="mouseOverListing(event)" mouseOut="mouseOutListing(event)" click="mouseClickListing(event)" width="100%" borderStyle="solid" borderThickness="0" cornerRadius="10">
    	<mx:Style source="com/mindegg/theme/styles.css"/>
 	<mx:HBox width="182" height="112" backgroundColor="#FFFFFF" id="sidePreviewHBox"/>
 	<mx:VBox height="100%" verticalGap="0" width="100%">
@@ -140,6 +140,7 @@
 				// fire event, passing back this deck ID
 				var params:Object = new Object();
 				params.userVisibleDeckID = userVisibleID;
+				params.title = title;
 		    	var newEvent:CustomEvent = new CustomEvent(DECK_LISTING_CLICKED, params, true);
 		    	dispatchEvent(newEvent);
 	  		}	  		
@@ -216,8 +217,10 @@
 		{
 			var now:Date = new Date();
 			var result:String;
-			
-			var dateDifferenceInMilliseconds:int = DateUtil.makeMorning(now).getTime() - DateUtil.makeMorning(date).getTime();
+
+			//var timeDifferenceInMinutes:int = Math.floor((now.getTime() - date.getTime()) / 60000);
+
+			var dateDifferenceInMilliseconds:int = DateUtil.makeMorning(now).getTime() - DateUtil.makeMorning(date).getTime();			
 			var dateDifferenceInDays:int = Math.floor(dateDifferenceInMilliseconds/86400000);
 			
 			switch (dateDifferenceInDays)
