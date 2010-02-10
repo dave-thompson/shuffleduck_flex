@@ -12,6 +12,7 @@
 </compiler>
 <applications>
 <application path="MindEgg.mxml"/>
+<application path="GridPasteApp.mxml"/>
 </applications>
 <modules/>
 <buildCSSFiles/>

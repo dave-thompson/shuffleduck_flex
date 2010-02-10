@@ -64,7 +64,6 @@
 		
 	</mx:HBox>
 	<mx:HBox width="100%" height="100%">
-			<me_view:NewComponentBar id="newComponentBar" height="100%" backgroundColor="#57666E" cornerRadius="10" borderStyle="solid" borderThickness="0"/>
 			<me_view:DeckViewer id="deckViewer" width="100%" height="100%" backgroundColor="#57666E" cornerRadius="10" borderStyle="solid" borderThickness="0"/>
 			<me_view:PropertiesPane id="propertiesPane" backgroundColor="#57666E" height="100%" borderStyle="solid" borderThickness="0" cornerRadius="10"/>
 	</mx:HBox>
@@ -186,8 +185,8 @@
 				this.addEventListener(PropertiesPane.COMPONENT_NAME_CHANGE, componentNameChange);
 	
 				// Events from NewComponentBar
-				this.addEventListener(NewComponentBar.NEW_TEXT_BOX_CLICKED, newTextBoxClicked);
-				this.addEventListener(NewComponentBar.NEW_IMAGE_CLICKED, newImageClicked);
+				this.addEventListener(DeckViewer.NEW_TEXT_BOX_CLICKED, newTextBoxClicked);
+				this.addEventListener(DeckViewer.NEW_IMAGE_CLICKED, newImageClicked);
 	
 				// Events from Components
 				this.addEventListener(UIUserComponent.COMPONENT_CHANGED, componentChanged);

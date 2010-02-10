@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" width="280" height="430" title="Properties" layout="absolute" styleName="propertyFormItem">
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" height="430" title="Properties" layout="absolute" styleName="propertyFormItem" width="232">
 
 	<mx:states>
 		<mx:State name="off">
@@ -60,13 +60,13 @@
 		<mx:FormItem id="alignmentFormItem" label="Alignment" styleName="propertyFormItem">
 			<mx:ComboBox id="alignmentComboBox" dataProvider="{alignments}" width="93" change="onChange(event)" styleName="propertyFormInput"/>
 		</mx:FormItem>
-		<mx:FormItem id="foregroundColorFormItem" label="Text Color" styleName="propertyFormItem">
+		<mx:FormItem id="foregroundColorFormItem" label="Text" styleName="propertyFormItem">
 			<mx:ColorPicker id="foregroundColorPicker" change="onChange(event)"/>
 		</mx:FormItem>
 		
 		<mx:HRule height="22" width="100%" id="hrule3"/>
 
-		<mx:FormItem id="backgroundColorFormItem" label="Background Color" styleName="propertyFormItem">
+		<mx:FormItem id="backgroundColorFormItem" label="Background" styleName="propertyFormItem">
 			<mx:ColorPicker id="backgroundColorPicker" change="onChange(event)"/>
 		</mx:FormItem>		
 		
