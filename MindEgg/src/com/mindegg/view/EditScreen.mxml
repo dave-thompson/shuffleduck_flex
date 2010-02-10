@@ -51,12 +51,14 @@
 				<mx:Label text="{title}" color="#FFFFFF" id="deckNameLabel" fontSize="25" width="100%" height="36" textAlign="right"/>			
 			</mx:HBox>
 			
-		   <mx:HBox width="100%" horizontalGap="0">
-		    	<mx:Spacer width="100%"/>
-		    	<mx:Label text="Last Saved: {minutesSinceSave} mins ago    [" fontWeight="bold" color="#FFFFFF" fontSize="10" id="lastSavedLabel"/>
-		    	<mx:Button label="save" styleName="StandardButton" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" height="17" textRollOverColor="0x25e9eb" alpha="0.0" click="saveDeckButtonClicked()" width="35"/>
-		    	<mx:Label text="]" fontWeight="bold" color="#FFFFFF" fontSize="10" width="12"/>
-		   </mx:HBox>
+			<mx:HBox width="100%" horizontalGap="0">
+			 	<mx:Spacer width="100%"/>
+			 	<mx:Label text="Last Saved: " fontWeight="bold" color="#FFFFFF" fontSize="10"/>
+			 	<mx:Label text="{minutesSinceSave} mins ago" color="#FFFFFF" fontSize="10" id="lastSavedLabel"/>
+			 	<mx:Label text="[" fontWeight="bold" color="#FFFFFF" fontSize="10" textAlign="right" width="13"/>		    	
+			 	<mx:Button label="save" styleName="StandardButton" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" height="17" textRollOverColor="0x25e9eb" alpha="0.0" click="saveDeckButtonClicked()" width="35"/>
+			 	<mx:Label text="]" fontWeight="bold" color="#FFFFFF" fontSize="10" width="12" textAlign="left"/>
+			</mx:HBox>
 
 		</mx:VBox>
 		
