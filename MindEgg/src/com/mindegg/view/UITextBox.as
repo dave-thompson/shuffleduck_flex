@@ -3,12 +3,15 @@ package com.mindegg.view
 		
     import com.mindegg.data.TextBox;
     
+    import flash.events.Event;
+    import flash.events.MouseEvent;
     import flash.text.TextField;
+    import flash.text.TextFieldType;
     import flash.text.TextFormat;
     
     public class UITextBox extends UIUserComponent
     {
-    	private var _textBox:TextBox; // referene to the textbox that this UITextBox represents on screen
+    	private var _textBox:TextBox; // reference to the textbox that this UITextBox represents on screen
     	
     	// internal representation variables
 		private var _innerTextField:TextField;
@@ -65,7 +68,7 @@ package com.mindegg.view
 	            _innerTextField.x = 0;
 	            _innerTextField.width = _textBox.width * _sizeMultiplier;
 	            _innerTextField.text = _textBox.text;
-	            _innerTextField.alpha = _textBox.alpha;            
+	            _innerTextField.alpha = _textBox.alpha;
 	            // format the text
 		        var textFormat:TextFormat = new TextFormat();
 	            textFormat.color = _textBox.foregroundColor;
@@ -92,9 +95,6 @@ package com.mindegg.view
             //_textField.border = true;
             // WORK REQUIRED HERE
             
-            // textField should show selection even when it doesn't have focus
-            _innerTextField.alwaysShowSelection = true;
-            
             // sub-components should not receive mouse events
             // (can't use mouseChildren as CornerCircle children do need to receive mouse events)
             _innerTextField.mouseEnabled = false;
@@ -103,20 +103,51 @@ package com.mindegg.view
             // draw a selection box around the UITextBox if it is selected
             super.implementSelectedIfTrue();
             
+            // remove any event listeners added during selectText() below
+            _innerTextField.removeEventListener(Event.CHANGE, handleUserTextUpdate);
+            // this.removeEventListener(MouseEvent.CLICK, handleUserClickOnHighlightedText);      
+            
             // force a redraw by Flash Player
             this.invalidateDisplayList();
         }
         
         public function selectText():void
         {
-
-        	// DOESN'T WORK - NEED NEW IMPLEMENTATION FOR SELECTION
-        	/*
-        	stage.focus = _textField;
-        	_textField.setSelection(0, _textField.length);
-        	stage.focus = _textField;	
-        	*/
+        	// set selection (to all text)
+        	_innerTextField.type = TextFieldType.INPUT;
+        	_innerTextField.setSelection(_innerTextField.text.length, _innerTextField.text.length); // this line is required for selection to occur properly in next line - not sure why
+        	_innerTextField.setSelection(0, _innerTextField.text.length);
+        	systemManager.stage.focus = _innerTextField;
+        	       	
+        	// add an event listener for any changes made to the text by the user - these will be propogated to the model
+        	// this event listener will be removed when the component loses selection by the redraw() method above
+        	_innerTextField.addEventListener(Event.CHANGE, handleUserTextUpdate);
+        	this.addEventListener(MouseEvent.CLICK, handleUserClickOnHighlightedText);
         }
+
+		private function handleUserTextUpdate(event:Event):void
+		{
+			// update the data model
+			_textBox.text = _innerTextField.text;
+		}
+		
+		private function handleUserClickOnHighlightedText(event:MouseEvent):void
+		{
+			// find the position clicked on
+			var clickPoint:int = _innerTextField.getCharIndexAtPoint(event.localX, 10);
+			trace ("X: " + event.localX);
+			trace ("Y: " + 1);
+			trace ("Click point: " + clickPoint);
+            if (clickPoint != -1)
+            {
+            	if (clickPoint > 0) {clickPoint++;} // if the user clicked on the first letter, we want to position the caret before it; if the user clicked on any other letter, we want to place the caret after it
+             	// place the caret at the position clicked on
+				_innerTextField.setSelection(clickPoint, clickPoint);
+				systemManager.stage.focus = _innerTextField;
+				// prevent the event from bubbling
+				event.stopPropagation();
+            }
+		}
         
             
     }

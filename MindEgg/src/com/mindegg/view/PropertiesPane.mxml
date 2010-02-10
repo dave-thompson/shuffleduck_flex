@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" height="430" title="Properties" layout="absolute" styleName="propertyFormItem" width="232">
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" title="Properties" layout="absolute" styleName="propertyFormItem" width="232" height="100%">
 
 	<mx:states>
 		<mx:State name="off">
@@ -10,7 +10,6 @@
 			<mx:RemoveChild target="{xFormItem}"/>
 			<mx:RemoveChild target="{yFormItem}"/>
 			<mx:RemoveChild target="{hrule2}"/>
-			<mx:RemoveChild target="{textFormItem}"/>
 			<mx:RemoveChild target="{fontSizeFormItem}"/>
 			<mx:RemoveChild target="{alignmentFormItem}"/>
 			<mx:RemoveChild target="{foregroundColorFormItem}"/>
@@ -51,9 +50,6 @@
 		
 		<mx:HRule height="22" width="100%" id="hrule2"/>
 
-		<mx:FormItem id="textFormItem" label="Text" styleName="propertyFormItem">
-			<mx:TextInput id="textTextInput" width="96" change="onChange(event)" styleName="propertyFormInput"/>
-		</mx:FormItem>
 		<mx:FormItem id="fontSizeFormItem" label="Font Size" styleName="propertyFormItem">
 			<mx:NumericStepper id="fontSizeNumericStepper" minimum="4" maximum="127" stepSize="1" change="onChange(event)" styleName="propertyFormInput"/>
 		</mx:FormItem>
@@ -116,8 +112,7 @@
 			heightNumericStepper.value = textBox.height;
 			xNumericStepper.value = textBox.x;
 			yNumericStepper.value = textBox.y;
-			textTextInput.text = textBox.text;
-			fontSizeNumericStepper.value = textBox.fontSize;			
+			fontSizeNumericStepper.value = textBox.fontSize;
 			foregroundColorPicker.selectedColor = textBox.foregroundColor;
 			backgroundColorPicker.selectedColor = textBox.backgroundColor;
 			// populate alignment combobox - can't set selected item directly by value
@@ -158,7 +153,6 @@
 					
 					// if editing a textbox, also update textbox specific data items
 					var textBox:TextBox = _component as TextBox;
-					textBox.text = textTextInput.text;
 					textBox.fontSize = fontSizeNumericStepper.value;
 					textBox.alignment = alignmentComboBox.selectedItem.data;
 					textBox.foregroundColor = foregroundColorPicker.selectedColor;

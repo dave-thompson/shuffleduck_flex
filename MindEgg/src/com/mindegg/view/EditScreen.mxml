@@ -64,8 +64,8 @@
 		
 	</mx:HBox>
 	<mx:HBox width="100%" height="100%">
-			<me_view:DeckViewer id="deckViewer" width="100%" height="100%" backgroundColor="#57666E" cornerRadius="10" borderStyle="solid" borderThickness="0"/>
-			<me_view:PropertiesPane id="propertiesPane" backgroundColor="#57666E" height="100%" borderStyle="solid" borderThickness="0" cornerRadius="10"/>
+			<me_view:DeckViewer id="deckViewer" width="100%" backgroundColor="#57666E" cornerRadius="10" borderStyle="solid" borderThickness="0" height="100%"/>
+			<me_view:PropertiesPane id="propertiesPane" backgroundColor="#57666E" borderStyle="solid" borderThickness="0" cornerRadius="10" height="100%"/>
 	</mx:HBox>
   
   <mx:Script>
@@ -480,11 +480,11 @@
 				var uiTextBox:UITextBox = e.target as UITextBox;
 				
 				// select the text in the properties pane ready for editing
-				propertiesPane.textTextInput.setSelection(0, propertiesPane.textTextInput.length);
-				propertiesPane.textTextInput.setFocus();
+				//propertiesPane.textTextInput.setSelection(0, propertiesPane.textTextInput.length);
+				//propertiesPane.textTextInput.setFocus();
 				
-				// show the user that they can type directly in the UITextBox - doesn't work
-				//uiTextBox.selectText();
+				// highlight the UITextBox text for editing
+				uiTextBox.selectText();
 				
 				// log the status change
 				_status = STATUS_EDITING_PROPERTIES;
@@ -651,8 +651,7 @@
 	            // set properties pane to point to the selected component
     			propertiesPane.setContext(component as Component, uiUserComponent, deckViewer.areCurrentSidesFromTemplate());
 	        					        	
-	        	// deselect the text in the properties pane
-				propertiesPane.textTextInput.setSelection(0, 0);
+	        	// set the focus to the selected component
 				uiUserComponent.setFocus();
 		}
 
