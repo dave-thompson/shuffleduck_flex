@@ -1,13 +1,15 @@
 package com.mindegg.view
 {
 		
+    import com.mindegg.data.Component;
     import com.mindegg.data.TextBox;
     
     import flash.events.Event;
-    import flash.events.MouseEvent;
+    import flash.events.KeyboardEvent;
     import flash.text.TextField;
     import flash.text.TextFieldType;
     import flash.text.TextFormat;
+    
     
     public class UITextBox extends UIUserComponent
     {
@@ -32,18 +34,27 @@ package com.mindegg.view
         	_textBox = textBox;
         	_sizeMultiplier = sizeMultiplier;
         	
+        	// add event listeners so we know when the component is selected and deselected
+        	_textBox.addEventListener(Component.COMPONENT_SELECTED, handleComponentSelection);
+        	_textBox.addEventListener(Component.COMPONENT_DESELECTED, handleComponentDeselection);
+        	
         	// instantiate sub-components
         	_innerTextField = new TextField();
 	        _outerTextField = new TextField();
+        	
+        	// allow the user to write in the inner text field
+        	_innerTextField.type = TextFieldType.INPUT;
+        	_innerTextField.name = "innerTextField";
+        	
+        	 // _innerTextField and _outerTextField should not receive mouse events
+            _innerTextField.mouseEnabled = false;
+            _outerTextField.mouseEnabled = false;
         	
         	// call super so that it also has reference
         	super(textBox);
 
 			// draw the sub-components
 			this.redraw();
-            
-            // sub-components should be invisible as far as mouse interactions are concerned
-            //this.mouseChildren = false;
         }
         
         public override function redraw():void
@@ -95,60 +106,43 @@ package com.mindegg.view
             //_textField.border = true;
             // WORK REQUIRED HERE
             
-            // sub-components should not receive mouse events
-            // (can't use mouseChildren as CornerCircle children do need to receive mouse events)
-            _innerTextField.mouseEnabled = false;
-            _outerTextField.mouseEnabled = false;
-            
             // draw a selection box around the UITextBox if it is selected
             super.implementSelectedIfTrue();
-            
-            // remove any event listeners added during selectText() below
-            _innerTextField.removeEventListener(Event.CHANGE, handleUserTextUpdate);
-            // this.removeEventListener(MouseEvent.CLICK, handleUserClickOnHighlightedText);      
-            
+                        
             // force a redraw by Flash Player
             this.invalidateDisplayList();
         }
         
-        public function selectText():void
-        {
-        	// set selection (to all text)
-        	_innerTextField.type = TextFieldType.INPUT;
-        	_innerTextField.setSelection(_innerTextField.text.length, _innerTextField.text.length); // this line is required for selection to occur properly in next line - not sure why
-        	_innerTextField.setSelection(0, _innerTextField.text.length);
-        	systemManager.stage.focus = _innerTextField;
-        	       	
-        	// add an event listener for any changes made to the text by the user - these will be propogated to the model
-        	// this event listener will be removed when the component loses selection by the redraw() method above
-        	_innerTextField.addEventListener(Event.CHANGE, handleUserTextUpdate);
-        	this.addEventListener(MouseEvent.CLICK, handleUserClickOnHighlightedText);
-        }
-
 		private function handleUserTextUpdate(event:Event):void
 		{
 			// update the data model
 			_textBox.text = _innerTextField.text;
 		}
 		
-		private function handleUserClickOnHighlightedText(event:MouseEvent):void
-		{
-			// find the position clicked on
-			var clickPoint:int = _innerTextField.getCharIndexAtPoint(event.localX, 10);
-			trace ("X: " + event.localX);
-			trace ("Y: " + 1);
-			trace ("Click point: " + clickPoint);
-            if (clickPoint != -1)
-            {
-            	if (clickPoint > 0) {clickPoint++;} // if the user clicked on the first letter, we want to position the caret before it; if the user clicked on any other letter, we want to place the caret after it
-             	// place the caret at the position clicked on
-				_innerTextField.setSelection(clickPoint, clickPoint);
-				systemManager.stage.focus = _innerTextField;
-				// prevent the event from bubbling
-				event.stopPropagation();
-            }
+		private function handleComponentSelection(event:Event):void
+		{			 
+			 // allow the user to select text
+        	_innerTextField.mouseEnabled = true;
+        	// add an event listener for any changes made to the text by the user - these will be propogated to the model
+        	_innerTextField.addEventListener(Event.CHANGE, handleUserTextUpdate);
+        	// prevent any keys pressed by the user while they're editing text from reaching anywhere else
+        	_innerTextField.addEventListener(KeyboardEvent.KEY_DOWN, consumeInnerTextKeyEvent);
 		}
-        
-            
+		
+		private function handleComponentDeselection(event:Event):void
+		{
+			// undo the component selection
+        	_innerTextField.mouseEnabled = false;
+			_innerTextField.removeEventListener(Event.CHANGE, handleUserTextUpdate);
+        	_innerTextField.removeEventListener(KeyboardEvent.KEY_DOWN, consumeInnerTextKeyEvent);
+		}
+		
+		private function consumeInnerTextKeyEvent(event:KeyboardEvent):void
+		{
+			// only allow keystrokes that are accompanied with the Ctrl key to propogate outside of the user's text editing
+			if (event.ctrlKey != true)
+				event.stopPropagation();
+		}
+		
     }
 }

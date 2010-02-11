@@ -382,7 +382,7 @@
 				{
 					if (_status == STATUS_COMPONENT_SELECTED)
 					{
-						if (this.focusManager.getFocus() == null) // not editing any attributes
+						if (this.focusManager.getFocus() == null) // not editing attributes
 						{
 							deleteCurrentComponent();
 						}
@@ -478,13 +478,6 @@
 			if ((e.target) is com.mindegg.view.UITextBox)
 			{
 				var uiTextBox:UITextBox = e.target as UITextBox;
-				
-				// select the text in the properties pane ready for editing
-				//propertiesPane.textTextInput.setSelection(0, propertiesPane.textTextInput.length);
-				//propertiesPane.textTextInput.setFocus();
-				
-				// highlight the UITextBox text for editing
-				uiTextBox.selectText();
 				
 				// log the status change
 				_status = STATUS_EDITING_PROPERTIES;

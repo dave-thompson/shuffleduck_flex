@@ -1,13 +1,16 @@
 package com.mindegg.data
 {
 	import ascb.util.ArrayUtilities;
-	
 	import com.mindegg.utils.AttributeConstants;
-	
+	import com.mindegg.utils.CustomEvent;
+	import flash.events.EventDispatcher;
 	import flash.utils.getQualifiedClassName;
-	
-	public class Component // abstract class
+
+	public class Component extends EventDispatcher // abstract class
 	{
+		public static const COMPONENT_SELECTED:String = "com.mindegg.data.Component::COMPONENT_SELECTED";
+		public static const COMPONENT_DESELECTED:String = "com.mindegg.data.Component::COMPONENT_DESELECTED";
+		
 		protected var _name:String = null;
 		
 		private var _x:Object = new Object();
@@ -86,16 +89,32 @@ package com.mindegg.data
 		
 		public function setSelected():void
 		{
+			// update state of this component
 			_selected = true;
+			
+			// record this component in the global list of selected components
 			_selectedComponents.push(this);
+			
+			// announce the selection via an event
+			var params:Object = new Object();
+		    var event:CustomEvent = new CustomEvent(COMPONENT_SELECTED, params, false);
+		    dispatchEvent(event);
 		}
 		
 		public static function clearSelection():void
 		{	
 			for each (var selectedComponent:Component in _selectedComponents)
 			{
+				// update state of this component
 				selectedComponent._selected = false;
+				
+				// announce the deselection via an event
+				var params:Object = new Object();
+		   		var event:CustomEvent = new CustomEvent(COMPONENT_DESELECTED, params, false);
+		    	selectedComponent.dispatchEvent(event);
 			}
+			
+			// clear the global list of selected components
 			_selectedComponents = new Array();
 		}
 		
