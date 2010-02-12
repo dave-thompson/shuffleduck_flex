@@ -1,72 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" title="Properties" layout="absolute" styleName="propertyFormItem" width="232" height="100%">
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="166" backgroundColor="#606364" creationComplete="setup()" borderStyle="solid" borderThickness="0" cornerRadius="10" height="507">
 
 	<mx:states>
 		<mx:State name="off">
-			<mx:RemoveChild target="{nameFormItem}"/>
+			<mx:RemoveChild target="{titleLabel}"/>
 			<mx:RemoveChild target="{hrule1}"/>
-			<mx:RemoveChild target="{widthFormItem}"/>
-			<mx:RemoveChild target="{heightFormItem}"/>
-			<mx:RemoveChild target="{xFormItem}"/>
-			<mx:RemoveChild target="{yFormItem}"/>
-			<mx:RemoveChild target="{hrule2}"/>
-			<mx:RemoveChild target="{fontSizeFormItem}"/>
-			<mx:RemoveChild target="{alignmentFormItem}"/>
-			<mx:RemoveChild target="{foregroundColorFormItem}"/>
+			<mx:RemoveChild target="{label1}"/>
+			<mx:RemoveChild target="{nameTextInput}"/>
+			<mx:RemoveChild target="{hrule0}"/>
+			<mx:RemoveChild target="{label2}"/>
+			<mx:RemoveChild target="{foregroundColorPicker}"/>
+			<mx:RemoveChild target="{fontSizeNumericStepper}"/>
+			<mx:RemoveChild target="{alignmentToggleButtonBar}"/>
+			<mx:RemoveChild target="{label3}"/>
+			<mx:RemoveChild target="{backgroundColorPicker}"/>
+			<mx:RemoveChild target="{clearBackgroundButton}"/>
 			<mx:RemoveChild target="{hrule3}"/>
-			<mx:RemoveChild target="{backgroundColorFormItem}"/>
-			<mx:RemoveChild target="{propertiesForm}"/>
-			<mx:SetProperty name="title"/>
+			<mx:RemoveChild target="{label4}"/>
+			<mx:RemoveChild target="{label5}"/>
+			<mx:RemoveChild target="{xLabel}"/>
+			<mx:RemoveChild target="{label7}"/>
+			<mx:RemoveChild target="{yLabel}"/>
+			<mx:RemoveChild target="{label6}"/>
+			<mx:RemoveChild target="{label8}"/>
+			<mx:RemoveChild target="{heightLabel}"/>
+			<mx:RemoveChild target="{widthLabel}"/>
 		</mx:State>
-		<mx:State name="card">
-			<mx:RemoveChild target="{nameFormItem}"/>
+		<mx:State name="textbox">
+			<mx:RemoveChild target="{nameTextInput}"/>
+			<mx:RemoveChild target="{label1}"/>
 			<mx:RemoveChild target="{hrule1}"/>
+			<mx:SetProperty target="{hrule0}" name="y" value="27"/>
+			<mx:SetProperty target="{label2}" name="y" value="57"/>
+			<mx:SetProperty target="{fontSizeNumericStepper}" name="y" value="83"/>
+			<mx:SetProperty target="{foregroundColorPicker}" name="y" value="83"/>
+			<mx:SetProperty target="{label3}" name="y" value="189"/>
+			<mx:SetProperty target="{backgroundColorPicker}" name="y" value="215"/>
+			<mx:SetProperty target="{clearBackgroundButton}" name="y" value="215"/>
+			<mx:SetProperty target="{hrule3}" name="y" value="266"/>
+			<mx:SetProperty target="{alignmentToggleButtonBar}" name="y" value="122"/>
+			<mx:SetProperty target="{label4}" name="y" value="296"/>
+			<mx:SetProperty target="{label5}" name="y" value="322"/>
+			<mx:SetProperty target="{label6}" name="y" value="322"/>
+			<mx:SetProperty target="{xLabel}" name="y" value="322"/>
+			<mx:SetProperty target="{widthLabel}" name="y" value="322"/>
+			<mx:SetProperty target="{label7}" name="y" value="339"/>
+			<mx:SetProperty target="{yLabel}" name="y" value="339"/>
+			<mx:SetProperty target="{label8}" name="y" value="339"/>
+			<mx:SetProperty target="{heightLabel}" name="y" value="339"/>
+			<mx:SetProperty target="{foregroundColorPicker}" name="width" value="31"/>
+			<mx:SetProperty target="{foregroundColorPicker}" name="height" value="31"/>
+			<mx:SetProperty target="{fontSizeNumericStepper}" name="height" value="31"/>
+			<mx:SetProperty target="{fontSizeNumericStepper}" name="width" value="62"/>
+			<mx:SetProperty target="{fontSizeNumericStepper}" name="x" value="88"/>
+			<mx:SetStyle target="{fontSizeNumericStepper}" name="fontSize" value="18"/>
+			<mx:SetProperty target="{backgroundColorPicker}" name="width" value="31"/>
+			<mx:SetProperty target="{backgroundColorPicker}" name="height" value="31"/>
+			<mx:SetProperty target="{clearBackgroundButton}" name="x" value="72"/>
+			<mx:SetProperty target="{clearBackgroundButton}" name="width" value="31"/>
+			<mx:SetProperty target="{clearBackgroundButton}" name="height" value="31"/>
 		</mx:State>
 	</mx:states>
 	
 	<mx:Style source="com/mindegg/theme/styles.css"/>
-	
-	
-	<mx:Form id="propertiesForm">
-	
-		<mx:FormItem id="nameFormItem" label="Name" styleName="propertyFormItem">
-			<mx:TextInput id="nameTextInput" width="96" change="onChange(event)" styleName="propertyFormInput"/>
-		</mx:FormItem>
-		
-		<mx:HRule height="22" width="100%" id="hrule1"/>
-				
-		<mx:FormItem id="widthFormItem" label="Width" styleName="propertyFormItem">
-			<mx:NumericStepper id="widthNumericStepper" minimum="1" maximum="260" value="90" change="onChange(event)" styleName="propertyFormInput"/>
-		</mx:FormItem>
-		<mx:FormItem id="heightFormItem" label="Height" styleName="propertyFormItem">
-			<mx:NumericStepper id="heightNumericStepper" value="30" minimum="1" maximum="160" change="onChange(event)" styleName="propertyFormInput"/>
-		</mx:FormItem>
-		<mx:FormItem id="xFormItem" label="x" styleName="propertyFormItem">
-			<mx:NumericStepper id="xNumericStepper" minimum="0" maximum="259" value="85" change="onChange(event)" styleName="propertyFormInput"/>
-		</mx:FormItem>
-		<mx:FormItem id="yFormItem" label="y" styleName="propertyFormItem">
-			<mx:NumericStepper id="yNumericStepper" minimum="0" maximum="159" value="65" change="onChange(event)" styleName="propertyFormInput"/>
-		</mx:FormItem>
-		
-		<mx:HRule height="22" width="100%" id="hrule2"/>
-
-		<mx:FormItem id="fontSizeFormItem" label="Font Size" styleName="propertyFormItem">
-			<mx:NumericStepper id="fontSizeNumericStepper" minimum="4" maximum="127" stepSize="1" change="onChange(event)" styleName="propertyFormInput"/>
-		</mx:FormItem>
-		<mx:FormItem id="alignmentFormItem" label="Alignment" styleName="propertyFormItem">
-			<mx:ComboBox id="alignmentComboBox" dataProvider="{alignments}" width="93" change="onChange(event)" styleName="propertyFormInput"/>
-		</mx:FormItem>
-		<mx:FormItem id="foregroundColorFormItem" label="Text" styleName="propertyFormItem">
-			<mx:ColorPicker id="foregroundColorPicker" change="onChange(event)"/>
-		</mx:FormItem>
-		
-		<mx:HRule height="22" width="100%" id="hrule3"/>
-
-		<mx:FormItem id="backgroundColorFormItem" label="Background" styleName="propertyFormItem">
-			<mx:ColorPicker id="backgroundColorPicker" change="onChange(event)"/>
-		</mx:FormItem>		
-		
-	</mx:Form>
 	
 	<mx:Script>
 		<![CDATA[
@@ -77,6 +73,7 @@
 		import mx.collections.ArrayCollection;
 		import com.mindegg.utils.CustomEvent;
 		import flash.text.TextFormatAlign;
+		import mx.events.FlexEvent;
 		
 		public static const COMPONENT_NAME_CHANGE:String = "componentNameChange";
 		
@@ -89,6 +86,13 @@
 		private var _component:Component; // the component currently being edited
 		private var _uiUserComponent:UIUserComponent; // the UIUserComponent representing the current component on screen
 			
+		public function setup():void
+		{
+			// This event listener can't be added inline in MXML as it would fire before the component is created
+			// (valueCommit is fired by programmatic changes as well as by the user changing the selectedIndex through clicking)
+			alignmentToggleButtonBar.addEventListener(FlexEvent.VALUE_COMMIT, onChange);			
+		}	
+		
 		public function setContext(component:Component, uiUserComponent:UIUserComponent, isTemplate:Boolean):void
 		{
 			_component = component;
@@ -100,30 +104,34 @@
 			{
 				currentState = "";
 				nameTextInput.text = textBox.name;
+				this.titleLabel.text = "Properties";
 			}
 			else
 			{
-				currentState = "card";
-				this.title = textBox.name;
+				currentState = "textbox";
+				this.titleLabel.text = textBox.name;
 			}
 			
 			// populate values in properties pane, based on existing values for editable properties
-			widthNumericStepper.value = textBox.width;
-			heightNumericStepper.value = textBox.height;
-			xNumericStepper.value = textBox.x;
-			yNumericStepper.value = textBox.y;
 			fontSizeNumericStepper.value = textBox.fontSize;
 			foregroundColorPicker.selectedColor = textBox.foregroundColor;
 			backgroundColorPicker.selectedColor = textBox.backgroundColor;
-			// populate alignment combobox - can't set selected item directly by value
-				for (var i:int = 0; i < alignmentComboBox.dataProvider.length; i++)
-				{
-					if (textBox.alignment == alignmentComboBox.dataProvider[i].data)
-					{
-						alignmentComboBox.selectedIndex = i;
-						break;
-					}
-				}
+			xLabel.text = String(textBox.x);
+			yLabel.text = String(textBox.y);
+			widthLabel.text = String(textBox.width);
+			heightLabel.text = String(textBox.height);
+			switch (textBox.alignment)
+			{
+				case "left":
+					alignmentToggleButtonBar.selectedIndex = 0;
+					break;
+				case "center":
+					alignmentToggleButtonBar.selectedIndex = 1;
+					break;
+				case "right":
+					alignmentToggleButtonBar.selectedIndex = 2;
+					break;	
+			}
 		}
 		
 		public function clearContext():void
@@ -132,6 +140,7 @@
 			currentState = "off";
 		}
 		
+		// All user actions on properties pane - except for clearing the background colour (see backgroundCleared()) - fire this function
 		private function onChange(e:Event):void
 		{
 			if (e.target == nameTextInput) // name changes require special handling - names across all matching components must be changed
@@ -146,26 +155,80 @@
 			else
 			{
 				// update data model
-					_component.width = widthNumericStepper.value;
-					_component.height = heightNumericStepper.value;
-					_component.x = xNumericStepper.value;
-					_component.y = yNumericStepper.value;
-					
-					// if editing a textbox, also update textbox specific data items
+					// if editing a textbox, update textbox specific data items
 					var textBox:TextBox = _component as TextBox;
 					textBox.fontSize = fontSizeNumericStepper.value;
-					textBox.alignment = alignmentComboBox.selectedItem.data;
 					textBox.foregroundColor = foregroundColorPicker.selectedColor;
-					textBox.backgroundColor = backgroundColorPicker.selectedColor;
+				
+					switch (alignmentToggleButtonBar.selectedIndex)
+					{
+						case 0:
+							textBox.alignment = "left";
+							break;
+						case 1:
+							textBox.alignment = "center";
+							break;
+						case 2:
+							textBox.alignment = "right";
+							break;	
+					}
+					
+					// As clearBackgroundButton does not hold its own state, background interactions require special handling
+					if (e.target == backgroundColorPicker)
+					{
+						// set background to opaque and the choosen colour
+						textBox.backgroundTransparent = false;						
+						textBox.backgroundColor = backgroundColorPicker.selectedColor;
+					}
+					if (e.target == clearBackgroundButton)
+					{
+						// set background to transparent
+						textBox.backgroundTransparent = true;
+						
+						// set backgroundColor to light grey to give user feeling that it has no colour
+						textBox.backgroundColor = 0xCCCCCD;
+						backgroundColorPicker.selectedColor = textBox.backgroundColor;
+					}
+
 				
 				// update drawn component on screen
 				_uiUserComponent.redraw();
 			}
 			
-		}			
-			
+		}	
+		
 		]]>
 	</mx:Script>
 	
+		<mx:Label text="Title" x="10" y="10" color="#FFFFFF" fontWeight="bold" textDecoration="normal" fontSize="12" height="24" id="titleLabel"/>
+		<mx:Label text="x:" x="31" y="336" color="#FFFFFF" id="label5"/>
+		<mx:Label text="y:" x="31" y="353" color="#FFFFFF" id="label7"/>
+		<mx:Label text="260" x="46" y="353" id="yLabel" color="#FFFFFF" textAlign="right"/>
+		<mx:Label text="w:" x="88" y="336" color="#FFFFFF" id="label6"/>
+		<mx:Label text="h:" x="88" y="353" color="#FFFFFF" id="label8"/>
+		<mx:Label text="260" x="46" y="336" id="xLabel" color="#FFFFFF" textAlign="right"/>
+		<mx:Label text="260" x="105" y="353" id="heightLabel" color="#FFFFFF" textAlign="right"/>
+		<mx:Label text="260" x="105" y="336" id="widthLabel" color="#FFFFFF" textAlign="right"/>
+		<mx:TextInput id="nameTextInput" width="119" change="onChange(event)" styleName="propertyFormInput" x="31" y="70" toolTip="Set name (for grid view)"/>
+		<mx:Label text="Font" x="10" y="120" color="#FFFFFF" fontWeight="normal" textDecoration="normal" id="label2"/>
+		<mx:NumericStepper id="fontSizeNumericStepper" minimum="4" maximum="127" stepSize="1" change="onChange(event)" styleName="propertyFormInput" x="101" y="146" width="49" value="127" toolTip="Set font size"/>
+		<mx:ColorPicker id="foregroundColorPicker" change="onChange(event)" x="31" y="146" toolTip="Set font color" width="22" height="22"/>
+		<mx:Label text="Background" x="10" y="224" color="#FFFFFF" fontWeight="normal" textDecoration="normal" id="label3"/>
+		<mx:ColorPicker id="backgroundColorPicker" change="onChange(event)" x="31" y="250" toolTip="Choose background color"/>
+		<mx:Label text="Dimensions" x="12" y="310" color="#FFFFFF" fontWeight="normal" textDecoration="normal" id="label4"/>
+		<mx:HRule height="22" width="166" id="hrule3" x="0" y="280"/>
+		<mx:HRule height="22" width="166" id="hrule0" x="0" y="100"/>
+		<mx:Label text="Name" x="10" y="44" color="#FFFFFF" fontWeight="normal" textDecoration="normal" id="label1"/>
+		<mx:Button x="61" y="250" icon="@Embed(source='../assets/clearBG.png')" toolTip="Clear background" id="clearBackgroundButton"  click="onChange(event)" width="22" height="22"/>
+		
+		<mx:ToggleButtonBar id="alignmentToggleButtonBar" dataProvider="{alignmentsArray}" buttonMode="true"  x="31" y="176" width="119"/>
 	
-</mx:Panel>
+	
+    <mx:Array id="alignmentsArray">
+        <mx:Object toolTip="Align left" icon="@Embed(source='com/mindegg/assets/alignmentLeft.png')" />
+        <mx:Object toolTip="Align centre" icon="@Embed(source='com/mindegg/assets/alignmentCenter.png')" />
+        <mx:Object toolTip="Align right" icon="@Embed(source='com/mindegg/assets/alignmentRight.png')" />
+    </mx:Array>
+    <mx:HRule height="22" width="166" id="hrule1" x="0" y="27"/>
+
+</mx:Canvas>

@@ -13,9 +13,10 @@ package com.mindegg.utils
 		public static const BACKGROUND_COLOR:uint = 8;
 		public static const ALPHA:uint = 9;
 		public static const ALIGNMENT:uint = 10;
+		public static const BACKGROUND_TRANSPARENT:uint = 11;
 
 		public static const COMPONENT_ATTRIBUTES:Array = [X, Y, WIDTH, HEIGHT];
-		public static const TEXTBOX_ATTRIBUTES:Array = [TEXT, FONT, FONT_SIZE, FOREGROUND_COLOR, BACKGROUND_COLOR, ALPHA, ALIGNMENT];
+		public static const TEXTBOX_ATTRIBUTES:Array = [TEXT, FONT, FONT_SIZE, FOREGROUND_COLOR, BACKGROUND_COLOR, ALPHA, ALIGNMENT, BACKGROUND_TRANSPARENT];
 
 		public function AttributeConstants()
 		{		
@@ -59,6 +60,9 @@ package com.mindegg.utils
 					break;
 				case AttributeConstants.ALIGNMENT:
 					result = "alignment";
+				case AttributeConstants.BACKGROUND_TRANSPARENT:
+					result = "background_transparent";
+					break;				
 			}
 			return result;
 		}

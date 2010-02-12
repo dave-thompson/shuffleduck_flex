@@ -1,7 +1,8 @@
 package com.mindegg.data
 {
-	import flash.events.EventDispatcher;
 	import com.mindegg.utils.AttributeConstants;
+	
+	import flash.events.EventDispatcher;
 	import flash.text.TextFormatAlign;
 
 	public class Side extends EventDispatcher
@@ -40,6 +41,7 @@ package com.mindegg.data
 					var fontSize:Number = Number(textBox.fontSize);
 					var alpha:Number = Number(textBox.alpha);
 					var alignment:String = textBox.alignment.toString();
+					var backgroundTransparent:Boolean = (textBox.backgroundTransparent.toLowerCase() == "true");
 					
 					var fgRed:Number = Number(textBox.foregroundColor[0].attribute("red"));
 					var fgGreen:Number = Number(textBox.foregroundColor[0].attribute("green"));
@@ -56,6 +58,8 @@ package com.mindegg.data
 					var alignmentVariable:Boolean = (textBox.alignment[0].attribute("variable").toLowerCase() == "true");
 					var fgVariable:Boolean = (textBox.foregroundColor[0].attribute("variable").toLowerCase() == "true");
 					var bgVariable:Boolean = (textBox.backgroundColor[0].attribute("variable").toLowerCase() == "true");
+					var bgTranspVariable:Boolean = (textBox.backgroundTransparent[0].attribute("variable").toLowerCase() == "true");
+					
 					
 					// convert XML values into Actionscript data model values
 					var backgroundColor:uint = (((bgRed * 255)*256*256) + ((bgGreen * 255)*256) + (bgBlue*255));
@@ -81,6 +85,7 @@ package com.mindegg.data
 					tb.font = font;
 					tb.foregroundColor = foregroundColor;
 					tb.backgroundColor = backgroundColor;
+					tb.backgroundTransparent = backgroundTransparent;
 					tb.name = name;
 					tb.templateComponentID = templateComponentID;
 											
@@ -94,6 +99,8 @@ package com.mindegg.data
 					else					{tb.setFixed(AttributeConstants.FOREGROUND_COLOR);}
 					if (bgVariable) 		{tb.setVariable(AttributeConstants.BACKGROUND_COLOR);}
 					else					{tb.setFixed(AttributeConstants.BACKGROUND_COLOR);}
+					if (bgTranspVariable) 	{tb.setVariable(AttributeConstants.BACKGROUND_TRANSPARENT);}
+					else					{tb.setFixed(AttributeConstants.BACKGROUND_TRANSPARENT);}
 					if (alphaVariable) 		{tb.setVariable(AttributeConstants.ALPHA);}
 					else					{tb.setFixed(AttributeConstants.ALPHA);}
 					if (alignmentVariable) 	{tb.setVariable(AttributeConstants.ALIGNMENT);}

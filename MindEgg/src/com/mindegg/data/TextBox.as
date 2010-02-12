@@ -15,7 +15,8 @@ package com.mindegg.data
 		private var _fontSize:Object = new Object();
 		private var _foregroundColor:Object = new Object();
 		private var _backgroundColor:Object = new Object();
-		private var _alpha:Object = new Object();
+		private var _backgroundTransparent:Object = new Object();
+		private var _alpha:Object = new Object(); // not used
 		private var _alignment:Object = new Object();
 				
 		
@@ -26,8 +27,9 @@ package com.mindegg.data
 			super(x, y, width, height, isTemplateComponent);
 			
 			// set defaults
-			this._foregroundColor.value = 0x000000F;
+			this._foregroundColor.value = 0x000000;
 			this._backgroundColor.value = 0xFFFFFF;
+			this._backgroundTransparent.value = true;
 			this._alpha.value = 1.0;
 			this._text.value = "Text";
 			this._font.value = "Arial";
@@ -50,6 +52,7 @@ package com.mindegg.data
 			_fontSize.variable = false;
 			_foregroundColor.variable = false;
 			_backgroundColor.variable = false;
+			_backgroundTransparent.variable = false;
 			_alpha.variable = false;
 			_alignment.variable = false;
 				// except for _text, which should be true iff this is a template side
@@ -65,6 +68,7 @@ package com.mindegg.data
 			clonedTextBox.font = _font.value;
 			clonedTextBox.foregroundColor = _foregroundColor.value;
 			clonedTextBox.backgroundColor = _backgroundColor.value;
+			clonedTextBox.backgroundTransparent = _backgroundTransparent.value;
 			clonedTextBox.alpha = _alpha.value;
 			clonedTextBox._templateComponentID = _templateComponentID;
 			clonedTextBox._name = _name;
@@ -110,6 +114,7 @@ package com.mindegg.data
 					xmlString = xmlString + "<fontSize variable=\"" + _fontSize.variable + "\">" + _fontSize.value + "</fontSize>";
 					xmlString = xmlString + "<foregroundColor variable=\"" + _foregroundColor.variable + "\" red=\"" + foregroundRedFraction + "\" green=\"" + foregroundGreenFraction + "\" blue=\"" + foregroundBlueFraction + "\"/>";
 					xmlString = xmlString + "<backgroundColor variable=\"" + _backgroundColor.variable + "\" red=\"" + backgroundRedFraction + "\" green=\"" + backgroundGreenFraction + "\" blue=\"" + backgroundBlueFraction + "\"/>";
+					xmlString = xmlString + "<backgroundTransparent variable=\"" + _backgroundTransparent.variable + "\">" + _backgroundTransparent.value + "</backgroundTransparent>";
 					xmlString = xmlString + "<alpha variable=\"" + _alpha.variable + "\">" + _alpha.value + "</alpha>";
 					xmlString = xmlString + "<alignment variable=\"" + _alignment.variable + "\">" + _alignment.value + "</alignment>";
 				xmlString = xmlString + "</TextBox>";
@@ -141,6 +146,9 @@ package com.mindegg.data
 					case AttributeConstants.BACKGROUND_COLOR:
 						_backgroundColor.variable = true;
 						break;
+					case AttributeConstants.BACKGROUND_TRANSPARENT:
+						_backgroundTransparent.variable = true;
+						break;						
 					case AttributeConstants.ALPHA:
 						_alpha.variable = true;
 						break;
@@ -173,6 +181,9 @@ package com.mindegg.data
 					case AttributeConstants.BACKGROUND_COLOR:
 						_backgroundColor.variable = false;
 						break;
+					case AttributeConstants.BACKGROUND_TRANSPARENT:
+						_backgroundTransparent.variable = false;
+						break;						
 					case AttributeConstants.ALPHA:
 						_alpha.variable = false;
 						break;
@@ -206,6 +217,9 @@ package com.mindegg.data
 					case AttributeConstants.BACKGROUND_COLOR:
 						result = _backgroundColor.variable;
 						break;
+					case AttributeConstants.BACKGROUND_TRANSPARENT:
+						result = _backgroundTransparent.variable;
+						break;						
 					case AttributeConstants.ALPHA:
 						result = _alpha.variable;
 						break;
@@ -240,6 +254,9 @@ package com.mindegg.data
 					case AttributeConstants.BACKGROUND_COLOR:
 						result = this.backgroundColor.toString(16);
 						break;
+					case AttributeConstants.BACKGROUND_TRANSPARENT:
+						result = this.backgroundTransparent.toString();
+						break;						
 					case AttributeConstants.ALPHA:
 						result = this.alpha.toString();
 						break;
@@ -279,6 +296,9 @@ package com.mindegg.data
 						// TO WRITE
 						break;
 					case AttributeConstants.BACKGROUND_COLOR:
+						// TO WRITE
+						break;
+					case AttributeConstants.BACKGROUND_TRANSPARENT:
 						// TO WRITE
 						break;
 					case AttributeConstants.ALPHA:
@@ -325,6 +345,11 @@ package com.mindegg.data
 		public function set backgroundColor(backgroundColor:uint):void
 		{
 			this._backgroundColor.value = backgroundColor;
+		}
+
+		public function set backgroundTransparent(backgroundTransparency:Boolean):void
+		{
+			this._backgroundTransparent.value = backgroundTransparency;
 		}
 		
 		public function set foregroundColor(foregroundColor:uint):void
@@ -375,6 +400,9 @@ package com.mindegg.data
 		public function get foregroundColor():uint
 		{return _foregroundColor.value;}
 		
+		public function get backgroundTransparent():Boolean
+		{return _backgroundTransparent.value;}
+
 		public function get alpha():Number
 		{return _alpha.value;}
 		

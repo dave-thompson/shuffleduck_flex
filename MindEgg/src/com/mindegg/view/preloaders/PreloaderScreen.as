@@ -27,7 +27,7 @@ package com.mindegg.view.preloaders
 		private static var _progressBarHeight:Number = 10;
 		
 		// Graphics
-		[Embed(source="../../../../../gfx/PreloaderBackground.png")]
+		[Embed(source="../../assets/PreloaderBackground.png")]
 		private var backgroundImage:Class;
 		
 		private var _progress:Number = 0;

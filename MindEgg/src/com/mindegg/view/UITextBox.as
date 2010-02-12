@@ -66,8 +66,12 @@ package com.mindegg.view
         	}
 
 			// Create an outerTextField to represent the TextBox's background
-	            _outerTextField.alpha = _textBox.alpha;
-	            _outerTextField.background = true;
+	            if (_textBox.backgroundTransparent)
+		            _outerTextField.background = false;
+	            else
+		            _outerTextField.background = true;
+			
+	            _outerTextField.alpha = _textBox.alpha;	            
 	            _outerTextField.backgroundColor = _textBox.backgroundColor;
 	            _outerTextField.x = 0;
 	            _outerTextField.y = 0;
