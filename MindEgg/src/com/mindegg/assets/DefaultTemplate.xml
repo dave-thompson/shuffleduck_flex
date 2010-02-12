@@ -1,35 +1,36 @@
+<?xml version="1.0"?>
 <Deck version_no="0.01" backward_compatible_iphone_version_no="0.01">
-  <Template>
-    <Card>
-      <Side>
-        <Component template_component_id="1" name="Question" x="0" y="0" width="260" height="160">
-          <TextBox>
-            <text variable="true">Question</text>
-            <font variable="false">Arial</font>
-            <fontSize variable="false">35</fontSize>
-            <foregroundColor variable="false" red="1" green="1" blue="1"/>
-            <backgroundColor variable="false" red="0" green="0.2" blue="0.4"/>
-            <backgroundTransparent variable="false">false</backgroundTransparent>          
-            <alpha variable="false">1</alpha>
-            <alignment variable="false">center</alignment>
-          </TextBox>
-        </Component>
-      </Side>
-      <Side>
-        <Component template_component_id="2" name="Answer" x="0" y="0" width="260" height="160">
-          <TextBox>
-            <text variable="true">Answer</text>
-            <font variable="false">Arial</font>
-            <fontSize variable="false">35</fontSize>
-            <foregroundColor variable="false" red="1" green="1" blue="1"/>
-            <backgroundColor variable="false" red="0" green="0.2" blue="0.4"/>
-            <backgroundTransparent variable="false">false</backgroundTransparent>          
-            <alpha variable="false">1</alpha>
-            <alignment variable="false">center</alignment>
-          </TextBox>
-        </Component>
-      </Side>
-    </Card>
-  </Template>
-  <Cards/>
+	<Template>
+		<Card>
+			<Side backgroundColor="13158">
+				<Component template_component_id="1" name="Question" x="0" y="0" width="260" height="160">
+					<TextBox>
+						<text variable="true">Question</text>
+						<font variable="false">Arial</font>
+						<fontSize variable="false">35</fontSize>
+						<foregroundColor variable="false" red="1" green="1" blue="1"/>
+						<backgroundColor variable="false" red="0.8" green="0.8" blue="0.803921568627451"/>
+						<backgroundTransparent variable="false">true</backgroundTransparent>
+						<alpha variable="false">1</alpha>
+						<alignment variable="false">center</alignment>
+					</TextBox>
+				</Component>
+			</Side>
+			<Side backgroundColor="13158">
+				<Component template_component_id="2" name="Answer" x="0" y="0" width="260" height="160">
+					<TextBox>
+						<text variable="true">Answer</text>
+						<font variable="false">Arial</font>
+						<fontSize variable="false">35</fontSize>
+						<foregroundColor variable="false" red="1" green="1" blue="1"/>
+						<backgroundColor variable="false" red="0.8" green="0.8" blue="0.803921568627451"/>
+						<backgroundTransparent variable="false">true</backgroundTransparent>
+						<alpha variable="false">1</alpha>
+						<alignment variable="false">center</alignment>
+					</TextBox>
+				</Component>
+			</Side>
+		</Card>
+	</Template>
+	<Cards/>
 </Deck>

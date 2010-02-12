@@ -8,16 +8,21 @@ package com.mindegg.data
 	public class Side extends EventDispatcher
 	{		
 		private var _components:Array;
-				
+		public var backgroundColor:uint;
+		
 		public function Side()
 		{
+			backgroundColor = 0xFFFFFF;
 			 _components = new Array();
 		}
 		
 		public function loadWithXML(xmlSide:XML):Side
 		{
+			// get side data
+			backgroundColor = xmlSide.attribute("backgroundColor");
+			
 			// delete any existing content
-			_components = new Array();
+			_components = new Array();	
 			
 			// for each component, read the attributes and daughter nodes
 			for each (var xmlComponent:XML in xmlSide.Component)
@@ -135,7 +140,7 @@ package com.mindegg.data
 		
 		public function toXMLString():String
 		{
-			var xmlString:String = "<Side>";
+			var xmlString:String = "<Side backgroundColor=\"" + backgroundColor + "\">";
 			
 				for (var i:uint = 0; i < _components.length; i++)
 				{

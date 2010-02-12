@@ -41,7 +41,6 @@
     <mx:Label text="]" height="16" color="#000000" id="usernameLabel0" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" width="8"/>
   </mx:HBox>
   <mx:HBox id="mainHBox" width="100%" height="100%">	
-    <mx:VBox id="leftMenuBox" width="100" height="100%" borderStyle="solid" backgroundColor="#60E2F5"/>
     <mx:VBox id="decksVBox" width="100%" height="100%" borderStyle="solid" backgroundColor="#09D9F2" paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5">
       <mx:HBox width="100%">
         <mx:Label text="Library" fontSize="22" fontWeight="bold" color="#000000" fontStyle="italic"/>

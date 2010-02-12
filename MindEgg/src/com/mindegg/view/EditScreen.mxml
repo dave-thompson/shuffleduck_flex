@@ -557,8 +557,21 @@
 				        	// store click for future detection of double clicks
 				        	_lastClickTime = getTimer();
 		   			}       	
-				}				
-				
+				}
+				// if user clicked on either a side or a card
+				else if ((e.target is UISide)||(e.target is CardViewer))
+				{
+					// get the card viewer clicked on
+					var cardViewer:CardViewer;
+					if (e.target is UISide)
+						cardViewer = (e.target as UISide).parent.parent as CardViewer;
+					else
+						cardViewer = (e.target as CardViewer);
+						
+					// select the card clicked on
+					
+					selectCardViewer(cardViewer);
+				}
 				// when the user clicks in certain areas, the selected component should be forgotten
 				else if (	// user clicked on the deckViewer (or a descendant) but not the scrollbar portion
 				    		(    (e.target.toString().indexOf(".deckViewer") != -1)				// click is within the deck viewer
@@ -615,13 +628,7 @@
 			// Selection handling
 			
 				// clear existing selection
-					Component.clearSelection(); // only one selected component permitted (may change later)
-					// redraw the components on the side previously selected (if there is such a side)
-					if (_currentSelectedUISide != null)
-					{
-						_currentSelectedUISide.redrawExistingComponents();
-						_currentSelectedUISide = null;
-					}
+				clearSelection();
 				
 				// Retrieve the UISide and Component that the user clicked on
 				var uiSide:UISide = uiUserComponent.parent as UISide;
@@ -646,6 +653,35 @@
 	        					        	
 	        	// set the focus to the selected component
 				uiUserComponent.setFocus();
+		}
+
+		/**
+  	    * 	Purpose: 	Selects a given CardViewer
+  	    */    
+
+		private function selectCardViewer(cardViewer:CardViewer):void
+		{
+			// Selection handling
+			clearSelection();
+	
+			// set status
+			setStatus(STATUS_NONE); // treat card selection the same as no selection
+
+			// Properties Pane setup
+	            // set properties pane to point to the selected card
+    			propertiesPane.setCardContext(cardViewer, deckViewer.areCurrentSidesFromTemplate());      	
+		}
+		
+		private function clearSelection():void
+		{
+			// clear existing selection
+			Component.clearSelection(); // only one selected component permitted (may change later)
+			// redraw the components on the side previously selected (if there is such a side)
+			if (_currentSelectedUISide != null)
+			{
+				_currentSelectedUISide.redrawExistingComponents();
+				_currentSelectedUISide = null;
+			}
 		}
 
 

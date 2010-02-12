@@ -37,7 +37,7 @@ package com.mindegg.view
 			// set standard properties	
 			this.width = 260 * _sizeMultiplier;
 			this.height = 160 * _sizeMultiplier;
-			this.setStyle("backgroundColor", 0xFFFFFF);
+			this.setStyle("backgroundColor", _side.backgroundColor);
 			
 			// draw components
 			drawComponents();
@@ -45,6 +45,11 @@ package com.mindegg.view
 			this.clipContent = true;
 			this.horizontalScrollPolicy = "off";
 			this.verticalScrollPolicy = "off";
+		}
+		
+		public function get side():Side
+		{
+			return _side;
 		}
 		
 		/**

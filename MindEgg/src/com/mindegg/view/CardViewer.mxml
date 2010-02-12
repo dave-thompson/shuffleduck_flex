@@ -4,7 +4,7 @@
 	<mx:Style source="com/mindegg/theme/styles.css"/>
 
 	<mx:VBox id="titleVBox" verticalGap="10" width="100%">
-		<mx:Label id="titleLabel" text="Header" color="#FFFFFF" fontSize="10" textDecoration="underline"/>
+		<mx:Label id="titleLabel" text="{cardTitle}" color="#FFFFFF" fontSize="10" textDecoration="underline"/>
 	</mx:VBox>
    
 	<mx:VBox id="SidesVBox" verticalGap="10" width="100%" paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10"/>
@@ -13,7 +13,6 @@
 	   
 	<mx:HBox id="bottomHBox" width="100%" horizontalGap="0">
 		<mx:Spacer id="bottomMiddleLeftSpacer" width="100%"/>
-		<!-- <mx:Button label="+ Side" click="newSide()" id="newSideButton" styleName="SlimlineButton" height="17" width="47" textRollOverColor="0x25e9eb"/> -->
 	</mx:HBox>
 	   	
 <mx:Script>
@@ -25,6 +24,8 @@
 		private var _isTemplate:Boolean;
 		private var _cardNumber:uint;
 		private var _card:Card;
+		
+		[Bindable] public var cardTitle:String = "";
 		
 		/**
 		 * 	Draw the sides of a given card
@@ -49,9 +50,9 @@
 			
 			// set heading
 			if (!_isTemplate)
-				{titleLabel.text = "Card " + _cardNumber;}
+				{cardTitle = "Card " + _cardNumber;}
 			else
-				{titleLabel.text = "Template";}
+				{cardTitle = "Template";}
 		}
 		
 		public function redraw():void
