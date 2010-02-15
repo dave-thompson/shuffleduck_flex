@@ -47,15 +47,9 @@ package com.mindegg.data
 					var alpha:Number = Number(textBox.alpha);
 					var alignment:String = textBox.alignment.toString();
 					var backgroundTransparent:Boolean = (textBox.backgroundTransparent.toLowerCase() == "true");
-					
-					var fgRed:Number = Number(textBox.foregroundColor[0].attribute("red"));
-					var fgGreen:Number = Number(textBox.foregroundColor[0].attribute("green"));
-					var fgBlue:Number = Number(textBox.foregroundColor[0].attribute("blue"));
-					
-					var bgRed:Number = Number(textBox.backgroundColor[0].attribute("red"));
-					var bgGreen:Number = Number(textBox.backgroundColor[0].attribute("green"));
-					var bgBlue:Number = Number(textBox.backgroundColor[0].attribute("blue"));
-					
+					var foregroundColor:uint = textBox.foregroundColor;
+					var backgroundColor:uint = textBox.backgroundColor;
+										
 					var textVariable:Boolean = (textBox.text[0].attribute("variable").toLowerCase() == "true");
 					var fontVariable:Boolean = (textBox.font[0].attribute("variable").toLowerCase() == "true");
 					var fontSizeVariable:Boolean = (textBox.fontSize[0].attribute("variable").toLowerCase() == "true");
@@ -65,10 +59,7 @@ package com.mindegg.data
 					var bgVariable:Boolean = (textBox.backgroundColor[0].attribute("variable").toLowerCase() == "true");
 					var bgTranspVariable:Boolean = (textBox.backgroundTransparent[0].attribute("variable").toLowerCase() == "true");
 					
-					
 					// convert XML values into Actionscript data model values
-					var backgroundColor:uint = (((bgRed * 255)*256*256) + ((bgGreen * 255)*256) + (bgBlue*255));
-					var foregroundColor:uint = (((fgRed * 255)*256*256) + ((fgGreen * 255)*256) + (fgBlue*255));
 					var alignmentConstant:String;
 					switch (alignment)
 					{
@@ -125,6 +116,7 @@ package com.mindegg.data
 		public function clone():Side
 		{
 			var clonedSide:Side = new Side();
+			clonedSide.backgroundColor = this.backgroundColor;
 			for (var i:uint = 0; i <_components.length; i++)
 			{
 				clonedSide.addComponent(this._components[i].clone());	

@@ -91,29 +91,14 @@ package com.mindegg.data
 		
 		public override function toXMLString():String
 		{
-			// calculate color values in RGB notation
-			var backgroundRedInt:uint = Math.floor(_backgroundColor.value / (256*256));
-			var backgroundGreenInt:uint = Math.floor((_backgroundColor.value - (backgroundRedInt*256*256))/256);
-			var backgroundBlueInt:uint = _backgroundColor.value % 256;
-			var backgroundRedFraction:Number = backgroundRedInt / 255;
-			var backgroundGreenFraction:Number = backgroundGreenInt / 255;
-			var backgroundBlueFraction:Number = backgroundBlueInt / 255;
-			
-			var foregroundRedInt:uint = Math.floor(_foregroundColor.value / (256*256));
-			var foregroundGreenInt:uint = Math.floor((_foregroundColor.value - (foregroundRedInt*256*256))/256);
-			var foregroundBlueInt:uint = _foregroundColor.value % 256;
-			var foregroundRedFraction:Number = foregroundRedInt / 255;
-			var foregroundGreenFraction:Number = foregroundGreenInt / 255;
-			var foregroundBlueFraction:Number = foregroundBlueInt / 255;
-			
 			// construct XML string with TextBox's values
 			var xmlString:String = "<Component template_component_id=\"" + this.templateComponentID + "\" name=\"" + this.name + "\" x=\"" + this.x + "\" y=\"" + this.y + "\" width=\"" + this.width + "\" height=\"" + this.height + "\">";
 				xmlString = xmlString + "<TextBox>"
 					xmlString = xmlString + "<text variable=\"" + _text.variable + "\">" + XMLFormatter.makeStringXMLReady(_text.value) + "</text>";
 					xmlString = xmlString + "<font variable=\"" + _font.variable + "\">" + _font.value + "</font>";
 					xmlString = xmlString + "<fontSize variable=\"" + _fontSize.variable + "\">" + _fontSize.value + "</fontSize>";
-					xmlString = xmlString + "<foregroundColor variable=\"" + _foregroundColor.variable + "\" red=\"" + foregroundRedFraction + "\" green=\"" + foregroundGreenFraction + "\" blue=\"" + foregroundBlueFraction + "\"/>";
-					xmlString = xmlString + "<backgroundColor variable=\"" + _backgroundColor.variable + "\" red=\"" + backgroundRedFraction + "\" green=\"" + backgroundGreenFraction + "\" blue=\"" + backgroundBlueFraction + "\"/>";
+					xmlString = xmlString + "<foregroundColor variable=\"" + _foregroundColor.variable + "\">" + _foregroundColor.value + "</foregroundColor>";
+					xmlString = xmlString + "<backgroundColor variable=\"" + _backgroundColor.variable + "\">" + _backgroundColor.value + "</backgroundColor>";
 					xmlString = xmlString + "<backgroundTransparent variable=\"" + _backgroundTransparent.variable + "\">" + _backgroundTransparent.value + "</backgroundTransparent>";
 					xmlString = xmlString + "<alpha variable=\"" + _alpha.variable + "\">" + _alpha.value + "</alpha>";
 					xmlString = xmlString + "<alignment variable=\"" + _alignment.variable + "\">" + _alignment.value + "</alignment>";

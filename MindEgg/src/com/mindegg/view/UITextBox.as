@@ -40,11 +40,8 @@ package com.mindegg.view
         	
         	// instantiate sub-components
         	_innerTextField = new TextField();
-	        _outerTextField = new TextField();
-        	
-        	// allow the user to write in the inner text field
-        	_innerTextField.type = TextFieldType.INPUT;
         	_innerTextField.name = "innerTextField";
+	        _outerTextField = new TextField();
         	
         	 // _innerTextField and _outerTextField should not receive mouse events
             _innerTextField.mouseEnabled = false;
@@ -125,7 +122,8 @@ package com.mindegg.view
 		
 		private function handleComponentSelection(event:Event):void
 		{			 
-			 // allow the user to select text
+			 // allow the user to select and edit text
+        	_innerTextField.type = TextFieldType.INPUT;
         	_innerTextField.mouseEnabled = true;
         	// add an event listener for any changes made to the text by the user - these will be propogated to the model
         	_innerTextField.addEventListener(Event.CHANGE, handleUserTextUpdate);
@@ -139,6 +137,10 @@ package com.mindegg.view
         	_innerTextField.mouseEnabled = false;
 			_innerTextField.removeEventListener(Event.CHANGE, handleUserTextUpdate);
         	_innerTextField.removeEventListener(KeyboardEvent.KEY_DOWN, consumeInnerTextKeyEvent);
+        	
+        	// clear any selection from the text field and remove the caret
+        	_innerTextField.setSelection(0,0);
+        	_innerTextField.type = TextFieldType.DYNAMIC;
 		}
 		
 		private function consumeInnerTextKeyEvent(event:KeyboardEvent):void

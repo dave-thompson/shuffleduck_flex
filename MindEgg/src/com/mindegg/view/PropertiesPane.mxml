@@ -37,7 +37,7 @@
 			<mx:RemoveChild target="{widthLabel}"/>
 			<mx:RemoveChild target="{heightLabel}"/>
 			<mx:AddChild position="lastChild">
-				<mx:ColorPicker id="side1ColorPicker" change="onChange(event)" x="31" y="88" toolTip="Set font color" width="31" height="31"/>
+				<mx:ColorPicker id="side1ColorPicker" change="onChange(event)" x="34" y="88" toolTip="Set background color" width="31" height="31"/>
 			</mx:AddChild>
 			<mx:RemoveChild target="{clearBackgroundButton}"/>
 			<mx:RemoveChild target="{alignmentToggleButtonBar}"/>
@@ -48,15 +48,21 @@
 			<mx:RemoveChild target="{label1}"/>
 			<mx:SetProperty target="{titleLabel}" name="text" value="Card X"/>
 			<mx:SetProperty target="{label2}" name="y" value="59"/>
-			<mx:SetProperty target="{label2}" name="text" value="Side 1 Background"/>
-			<mx:SetProperty target="{hrule0}" name="y" value="127"/>
-			<mx:SetProperty target="{label3}" name="text" value="Side 2 Background"/>
-			<mx:SetProperty target="{label3}" name="y" value="157"/>
+			<mx:SetProperty target="{label2}" name="text" value="Background"/>
+			<mx:SetProperty target="{label3}" name="text" value="Side 1"/>
+			<mx:SetProperty target="{label3}" name="y" value="127"/>
 			<mx:AddChild position="lastChild">
-				<mx:ColorPicker id="side2ColorPicker" change="onChange(event)" x="31" y="186" toolTip="Set font color" width="31" height="31"/>
+				<mx:ColorPicker id="side2ColorPicker" change="onChange(event)" x="112" y="88" toolTip="Set background color" width="31" height="31"/>
 			</mx:AddChild>
-			<mx:SetProperty target="{hrule3}" name="y" value="225"/>
 			<mx:SetProperty target="{hrule1}" name="y" value="29"/>
+			<mx:RemoveChild target="{hrule0}"/>
+			<mx:RemoveChild target="{hrule3}"/>
+			<mx:AddChild position="lastChild">
+				<mx:Label text="Side 2" x="107" y="127" color="#FFFFFF" fontWeight="normal" textDecoration="normal" id="label0" fontSize="12" fontStyle="italic"/>
+			</mx:AddChild>
+			<mx:SetStyle target="{label2}" name="fontStyle" value="normal"/>
+			<mx:SetStyle target="{label3}" name="fontStyle" value="italic"/>
+			<mx:SetProperty target="{label3}" name="x" value="29"/>
 		</mx:State>
 		<mx:State name="textbox">
 			<mx:RemoveChild target="{nameTextInput}"/>
