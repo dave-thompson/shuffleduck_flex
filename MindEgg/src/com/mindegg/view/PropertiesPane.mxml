@@ -98,19 +98,12 @@
 		import com.mindegg.data.Component;
 		import com.mindegg.data.TextBox;
 		import flash.display.DisplayObject;
-		import mx.collections.ArrayCollection;
 		import com.mindegg.utils.CustomEvent;
 		import flash.text.TextFormatAlign;
 		import mx.events.FlexEvent;
 		
 		public static const COMPONENT_NAME_CHANGE:String = "componentNameChange";
-		
-		[Bindable]
-         public var alignments:ArrayCollection = new ArrayCollection([ 	{label:"Left", data:"left"},
-                  														{label:"Center", data:"center"},
-                  														{label:"Right", data:"right"}
-                  													 ]);
-			
+					
 		private var _component:Component; // the component currently being edited
 		private var _uiUserComponent:UIUserComponent; // the UIUserComponent representing the current component on screen
 		private var _cardViewer:CardViewer; // the CardViewer being edited (when in "card" status only)

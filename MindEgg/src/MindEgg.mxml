@@ -15,7 +15,7 @@
 				 backgroundColor="#062C7A">
  
  <mx:Spacer id="leftSpacer" width="100%"/>				
- <me_view:FrontPage id="frontPage" width="950" height="550"/>
+ <me_view:FrontPage id="frontPage" height="100%" width="950"/>
  <mx:Spacer id="rightSpacer" width="100%"/>
 				
   <mx:states>
@@ -43,7 +43,7 @@
     </mx:State>
   </mx:states>
  
- <mx:HTTPService id="sessionShow" url="{MindEgg.CONTEXT_URL}/user_session" resultFormat="e4x" result="sessionDetailsReceived(event)"/>
+ <mx:HTTPService id="sessionShow" url="{MindEgg.CONTEXT_URL}/user_session" resultFormat="e4x" result="sessionDetailsReceived(event)" fault="sessionDetailsFault(event)"/>
   
   <mx:Script>
   	<![CDATA[
@@ -120,6 +120,13 @@
 			}
 		}
 		
+		private function sessionDetailsFault(event:Event):void
+  	    {
+  	    	// for some reason the server wasn't reached to provide a session or otherwise - most likely the user has no connectivity of ShuffleDuck is down
+			// serve the login page (do nothing)
+  	    }
+
+		
 		private function returnToLibrary(e:CustomEvent):void
 		{
 			// go to the home page
@@ -146,7 +153,7 @@
 		{
 			// go to the home page
 			currentState="homeScreen";
-			//homeScreen.setup();
+			homeScreen.setup();
 			homeScreen.setUsername(e.params.username);
 		}
 		

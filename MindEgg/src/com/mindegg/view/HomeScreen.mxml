@@ -86,7 +86,6 @@
 			 // Set up event listeners
 		     this.addEventListener(DeckListing.DECK_DELETE_REQUESTED, deleteDeck);
 		     this.addEventListener(DeckListing.DECK_DUPLICATION_REQUESTED, duplicateDeck);
-
 		}
 		
 		public function setUsername(aUsername:String):void
