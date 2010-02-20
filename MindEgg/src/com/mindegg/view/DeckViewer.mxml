@@ -28,7 +28,6 @@
          <mx:SetStyle target="{newCardButton}" name="textRollOverColor" value="0x25e9eb"/>
          <mx:SetStyle target="{newCardButton}" name="fontSize" value="15"/>
          <mx:SetProperty target="{newCardButton}" name="width" value="30"/>
-         <mx:RemoveChild target="{label1}"/>
          <mx:SetProperty target="{cardsButton}" name="toolTip" value=""/>
       </mx:State>
       <mx:State name="grid">
@@ -64,7 +63,6 @@
     	<mx:Button id="textBoxButton" label="T" styleName="SlimlineButton" textRollOverColor="0x25e9eb" click="newComponentButtonClicked(event)" fontSize="15" width="30" toolTip="Add a new textbox"/>
 		<!-- IMAGE BUTTON <mx:Button x="27" y="51" width="75" styleName="StandardButton" alpha="0.0" textRollOverColor="0x25e9eb" id="imageButton" enabled="false"/> -->
     	<mx:Spacer width="100%"/>
-    	<mx:Label text="View:" fontWeight="bold" color="#FFFFFF" fontSize="10" width="39" id="label1"/>
     	<mx:Button label="Template" id="templateButton" styleName="StandardButton" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" height="17" textRollOverColor="0x25e9eb" alpha="0.0" click="changeView(TEMPLATE_STATE)">
     	 	<mx:toolTip>Edit the template on which all new cards are based</mx:toolTip>
     	</mx:Button>
@@ -114,6 +112,10 @@
 		private static const TEMPLATE_STATE:String = "template";
 		private static const GRID_STATE:String = "grid";
 
+		// scroll type constants
+		private static const RETAIN_POSTION:int = 0;
+		private static const SCROLL_TO_END:int = 1;
+		
 		// card type constants
 		private static const TEMPLATE:uint = 0;
 		private static const CARD:uint = 1;
@@ -222,7 +224,7 @@
 		}
 
 		
-		private function prepareGrid():void
+		private function prepareGrid(scrollType:int = RETAIN_POSTION):void
 		{
 			// get list of all variable atributes
 			var componentIDsAttributeConstants:Array = _deck.template.getVariableAttributes();
@@ -241,7 +243,7 @@
 			var dataGridColumn:DataGridColumn;
 			var dataGridColumns:Array = new Array();
 			
-			//loop through each column
+			// loop through each column
 			for (var i:uint = 0; i < numColumns; i ++)
 			{
 				// derive the column names
@@ -280,7 +282,7 @@
 							// set value to <N/A>
 							cardAttributeValue = "<N/A>";
 						}
-						else	
+						else
 						{
 							cardAttributeValue = cardComponent.getAttributeAsString(componentIDsAttributeConstants[columnIndex].attributeConstant);
 						}
@@ -301,6 +303,11 @@
 			// setup event listener on data collection
 				_dataProviderCollection = datagrid.dataProvider as ArrayCollection;
 				_dataProviderCollection.addEventListener(CollectionEvent.COLLECTION_CHANGE, gridDataChanged);
+			// if requested, setup event listener to scroll to end of datagrid once loading is complete
+				if (scrollType == SCROLL_TO_END)
+				{
+					datagrid.addEventListener(FlexEvent.UPDATE_COMPLETE, datagridScrollToBottom);
+				}
 		}
 
 		/**
@@ -336,6 +343,14 @@
                 	}
 				}
 			}
+		}
+		
+		private function datagridScrollToBottom(event:FlexEvent):void
+		{
+			//scroll to bottom
+			datagrid.verticalScrollPosition = datagrid.maxVerticalScrollPosition;
+			// remove event listener so that subsequent updates (i.e. user edits) will not cause a scroll
+			datagrid.removeEventListener(FlexEvent.UPDATE_COMPLETE, datagridScrollToBottom);
 		}
 		
 		/**
@@ -382,10 +397,17 @@
 				// draw the new card on screen
 				drawNewCard(_deck.getCardAtIndex(_deck.numCards() - 1), CARD, false, _deck.numCards());
 			}
-			else // currentState is TEMPLATE_STATE
+			else if (currentState == TEMPLATE_STATE)
 			{
 				// defer drawing until later, but set flag for it to be done
 				_cardsRequireFullRedraw = true;
+			}
+			else // currentState is GRID_STATE
+			{
+				// defer drawing until later, but set flag for it to be done
+				_cardsRequireFullRedraw = true;
+				// update grid
+				prepareGrid(SCROLL_TO_END);
 			}
 		}
 		

@@ -1,5 +1,23 @@
 /* CSS file */
 
+DataGrid
+{
+  vertical-grid-lines: false;
+  border-style: none;
+  selection-color: #C1FFC5;
+  roll-over-color: #7CFF77;
+  alternating-item-colors: #F4FBFF, #FFFFFF;
+}
+
+VScrollBar
+{
+	upArrowSkin: ClassReference(null);
+    downArrowSkin: ClassReference(null);
+    thumbUpSkin: ClassReference('com.mindegg.theme.skins.CustomSkinThumb');
+    thumbOverSkin: ClassReference('com.mindegg.theme.skins.CustomSkinThumb');
+    thumbDownSkin: ClassReference('com.mindegg.theme.skins.CustomSkinThumb');
+}
+
 Button.StandardButton
 {
 	borderColor: #000000;
