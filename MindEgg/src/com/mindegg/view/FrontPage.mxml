@@ -1,38 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<mx:Canvas	    xmlns:mx="http://www.adobe.com/2006/mxml"
-				backgroundColor="#032873"
+<mx:VBox	    xmlns:mx="http://www.adobe.com/2006/mxml"
 				xmlns:me="com.mindegg.*"
 				xmlns:me_view="com.mindegg.view.*"
 				paddingLeft="2"
 				paddingRight="2"
 				paddingTop="2"
 				paddingBottom="2"
-				width="100%" height="100%"
+				width="100%"
+				height="100%"
 				backgroundAlpha="0.0">
+		 
+<mx:HTTPService id="accountCreate" url="{MindEgg.CONTEXT_URL}/users" method = "POST" resultFormat="e4x" contentType="application/xml" result="loggedIn(true, event)" fault="failedAccountCreation(event)"/>
+<mx:HTTPService id="sessionCreate" url="{MindEgg.CONTEXT_URL}/user_session" method = "POST" resultFormat="e4x" contentType="application/xml" result="loggedIn(false, event)" fault="failedLogIn(event)"/>
+<mx:Style source="com/mindegg/theme/styles.css"/>
+
 	<mx:states>
 		<mx:State name="error">
-			<mx:SetProperty target="{canvas1}" name="y" value="48"/>
-			<mx:SetProperty target="{canvas2}" name="y" value="48"/>
-			<mx:SetProperty target="{canvas3}" name="y" value="328"/>
-			<mx:AddChild position="lastChild">
-				<mx:Canvas width="930" height="30" backgroundColor="#A5A7A9" x="10" y="10" id="canvas0" cornerRadius="20" borderStyle="solid" borderThickness="0">
-				  <mx:Label x="10" y="6" text="Could not reach server - please check your network connection and let us know if the problem persists." fontSize="12" textDecoration="normal" color="#EC0616" height="20" width="910" textAlign="center" id="errorLabel"/>
-				</mx:Canvas>
+			<mx:AddChild position="firstChild">
+					<mx:HBox>
+						<mx:Spacer width="5"/>						
+						<mx:VBox id ="errorsVBox" width="927" backgroundColor="#A5A7A9" cornerRadius="20" borderStyle="solid" borderThickness="0">
+						  <mx:Label text="Could not reach server - please check your network connection and let us know if the problem persists." fontSize="12" textDecoration="normal" color="#EC0616" height="20" width="100%" textAlign="center" id="errorLabel"/>
+						</mx:VBox>
+					</mx:HBox>
 			</mx:AddChild>
 		</mx:State>
 	</mx:states>
 				 
-<mx:HTTPService id="accountCreate" url="{MindEgg.CONTEXT_URL}/users" method = "POST" resultFormat="e4x" contentType="application/xml" result="loggedIn(event)" fault="failedAccountCreation(event)"/>
-<mx:HTTPService id="sessionCreate" url="{MindEgg.CONTEXT_URL}/user_session" method = "POST" resultFormat="e4x" contentType="application/xml" result="loggedIn(event)" fault="failedLogIn(event)"/>
+<mx:Canvas		paddingLeft="0"
+				paddingRight="0"
+				paddingTop="0"
+				paddingBottom="0"
+				width="100%"
+				height="100%"
+				backgroundAlpha="0.0" horizontalScrollPolicy="off" verticalScrollBarStyleName="customScroll">
+				 
+  <mx:Canvas width="327" height="170" backgroundColor="#1E6FC2" x="613" y="10" id="canvas2" cornerRadius="20" borderStyle="solid" borderThickness="0">
+    <mx:Label x="10" y="10" text="Log In" fontSize="30" textDecoration="underline" color="#000000"/>
+    <mx:Label x="10" y="60" text="Username" fontSize="20"/>
+    <mx:Label x="10" y="98" text="Password" fontSize="20"/>
+    <mx:Button x="196" y="134" label="Log In" width="116" height="24" cornerRadius="10" id="loginButton" click="logInButtonClicked()"/>
+    <mx:TextInput x="135" y="60" height="30" width="180" tabIndex="1" id="loginUsernameTextInput"/>
+    <mx:TextInput x="135" y="96" height="30" width="180" displayAsPassword="true" enabled="true" editable="true" tabIndex="2" id="loginPasswordTextInput"/>
+  </mx:Canvas>
+  <mx:Canvas width="595" height="530" borderStyle="solid" backgroundColor="#FFFFFF" y="10" x="10" id="canvas1" cornerRadius="20">
+    <mx:Canvas x="10" y="10" width="573" height="508">
+      <mx:Label x="0" y="36" text="Shuffle" fontSize="127" width="573" height="160" color="#FB9221"/>
+      <mx:Label x="0" y="184" text="Duck" fontSize="127" width="573" height="164" textAlign="right" color="#25E9EB"/>
+      <mx:Label x="0" y="421" text="The Free Flashcard Platform" fontSize="30" width="573" height="53" textAlign="right" color="#000000"/>
+    </mx:Canvas>
+  </mx:Canvas>
+  <mx:Canvas width="327" height="250" borderStyle="solid" backgroundColor="#1E6FC2" x="613" y="290" id="canvas3" cornerRadius="20" borderThickness="0">
+    <mx:Button x="201" y="214" label="Join" width="116" height="24" cornerRadius="10" id="signUpButton" click="signUpButtonClicked()"/>
+    <mx:Label x="10" y="176" text="Age" fontSize="20"/>
+    <mx:ComboBox x="135" y="174" width="180" height="32" dataProvider="{ages}" id="signUpAgeComboBox" tabIndex="6" prompt="select age"></mx:ComboBox>
+    <mx:Label x="10" y="10" text="Join in Seconds" fontSize="30" textDecoration="underline" color="#000000"/>
+    <mx:Label x="10" y="60" text="Email" fontSize="20"/>
+    <mx:TextInput x="135" y="60" height="30" width="180" id="signUpEmailTextInput" tabIndex="3"/>
+    <mx:Label x="10" y="136" text="Password" fontSize="20"/>
+    <mx:TextInput x="135" y="136" height="30" width="180" displayAsPassword="true" id="signUpPasswordTextInput" tabIndex="5"/>
+    <mx:Label x="10" y="98" text="Username" fontSize="20"/>
+    <mx:TextInput x="135" y="98" height="30" width="180" id="signUpUsernameTextInput" tabIndex="4"/>
+  </mx:Canvas>
 				 
   <mx:Script>
   	<![CDATA[
+  		import mx.controls.Spacer;
 
 
 		import com.mindegg.utils.CustomEvent;
 		import mx.managers.PopUpManager;
 		import mx.rpc.events.ResultEvent;
+		import mx.rpc.events.FaultEvent;
 		import mx.collections.ArrayCollection;
 
 		[Bindable]
@@ -186,42 +226,84 @@
 			accountCreate.send(user);
   	    }
   	    
-  	    private function loggedIn(event:ResultEvent):void
-  	    {
-  	    	// NEED TO EXAMINE THE EVENT HERE AND PROVIDE ERROR HANDLING FOR EACH OF FAILED LOGIN AND FAILED REGISTRATION
-  	    	// (ERROR RESPONSES ALSO TO BE CODED AT RAILS END)
-  	    	
-  	    	
-  	    	
-  	    	// clear user data from front page
-  	    	signUpEmailTextInput.text = "";
-			signUpUsernameTextInput.text = "";			
-			signUpPasswordTextInput.text = "";
-			signUpAgeComboBox.selectedIndex = 0;
-			loginUsernameTextInput.text = "";
-			loginPasswordTextInput.text = "";
-			
-			// parse response
-			var user_details:XML = event.result as XML;
-			var username:String = user_details.username[0];
-  	    	// raise an event to the application so it may show the user's decks
-  	    	var params:Object = new Object();
-  	    	params.username = username;
-	    	var newEvent:CustomEvent = new CustomEvent(MindEgg.USER_LOGGED_IN, params, true);
-	    	dispatchEvent(newEvent);
+  	    private function loggedIn(followingRegistration:Boolean, event:ResultEvent):void
+  	    {  		
+  	    	// check the response
+  	    	var result_xml:XML = event.result as XML;
+  	    	if (result_xml.localName() == "errors")
+  	    	{
+  	    		if (!(followingRegistration))	loginPasswordTextInput.text = ""; // this is likely because the username / password was invalid - therefore clear the password box
+  	    		showErrors(result_xml);
+  	    	}
+  	    	else
+  	    	{
+	  	    	// clear user data from front page
+	  	    	signUpEmailTextInput.text = "";
+				signUpUsernameTextInput.text = "";			
+				signUpPasswordTextInput.text = "";
+				signUpAgeComboBox.selectedIndex = -1;
+				loginUsernameTextInput.text = "";
+				loginPasswordTextInput.text = "";
+				
+				// parse response
+				var user_details:XML = event.result as XML;
+				var username:String = user_details.username[0];
+				
+	  	    	// raise an event to the application so it may show the user's decks
+	  	    	var params:Object = new Object();
+	  	    	params.username = username;
+		    	var newEvent:CustomEvent = new CustomEvent(MindEgg.USER_LOGGED_IN, params, true);
+		    	dispatchEvent(newEvent);
+  	    	}
   	    }
   	    
-  	    private function failedAccountCreation(event:Event):void
+  	    private function failedAccountCreation(event:FaultEvent):void
   	    {
-  	    	currentState = "error";
-  	    	errorLabel.text = "Couldn't reach server. Please check your network connection and let us know if the problem persists."
+  	    	var errors:XML = <errors/>;
+  	    	errors['error'] = "Couldn't reach server. Please check your network connection and let us know if the problem persists.";
   	    }
 
-  	    private function failedLogIn(event:Event):void
+  	    private function failedLogIn(event:FaultEvent):void
   	    {
-  	    	currentState = "error";
-  	    	errorLabel.text = "Couldn't reach server. Please check your network connection and let us know if the problem persists."
+  	    	var errors:XML = <errors/>;
+  	    	errors['error'] = "Couldn't reach server. Please check your network connection and let us know if the problem persists.";			
   	    }
+  	    
+  	    private function showErrors(error_xml:XML):void
+  	    {
+  	    	// set up the error box
+			currentState = "error";
+			errorsVBox.removeAllChildren();
+			var spacer1:Spacer = new Spacer();
+			spacer1.height = 5;
+			var spacer2:Spacer = new Spacer();
+			spacer2.height = 5;
+			errorsVBox.addChild(spacer1);
+			
+			var headerLabel:Label = new Label();
+			  	headerLabel.text = "     Sorry, there were some problems:";
+  	    		headerLabel.height = 20;
+  	    		headerLabel.width = 910;
+  	    		headerLabel.setStyle("fontSize", 12);
+  	    		headerLabel.setStyle("color", "#FFFFFF");
+  	    		headerLabel.setStyle("textAlign", "left");
+  	    		errorsVBox.addChild(headerLabel);
+			
+			// add the errors
+  	    	for each (var error:XML in error_xml.error)
+  	    	{
+  	    		var label:Label = new Label();
+  	    		label.text = error.toString();
+  	    		label.height = 20;
+  	    		label.width = 910;
+  	    		label.setStyle("fontSize", 12);
+  	    		label.setStyle("color", "#EC0616");
+  	    		label.setStyle("textAlign", "center");
+  	    		errorsVBox.addChild(label);
+  	    	}
+			errorsVBox.addChild(spacer2);  	    	
+  	    }
+  	    
 
 /*
   	    private function guestButtonClicked():void
@@ -235,32 +317,5 @@
   	]]>
   </mx:Script>
   
-  <mx:Canvas width="327" height="170" backgroundColor="#1E6FC2" x="613" y="10" id="canvas2" cornerRadius="20" borderStyle="solid" borderThickness="0">
-    <mx:Label x="10" y="10" text="Log In" fontSize="30" textDecoration="underline" color="#000000"/>
-    <mx:Label x="10" y="60" text="Username" fontSize="20"/>
-    <mx:Label x="10" y="98" text="Password" fontSize="20"/>
-    <mx:Button x="196" y="134" label="Log In" width="116" height="24" cornerRadius="10" id="loginButton" click="logInButtonClicked()"/>
-    <mx:TextInput x="135" y="60" height="30" width="180" tabIndex="1" id="loginUsernameTextInput"/>
-    <mx:TextInput x="135" y="96" height="30" width="180" displayAsPassword="true" enabled="true" editable="true" tabIndex="2" id="loginPasswordTextInput"/>
-  </mx:Canvas>
-  <mx:Canvas width="595" height="530" borderStyle="solid" backgroundColor="#FFFFFF" y="10" x="10" id="canvas1" cornerRadius="20">
-    <mx:Canvas x="10" y="10" width="573" height="508">
-      <mx:Label x="0" y="36" text="Shuffle" fontSize="127" width="573" height="160" color="#FB9221"/>
-      <mx:Label x="0" y="184" text="Duck" fontSize="127" width="573" height="164" textAlign="right" color="#25E9EB"/>
-      <mx:Label x="0" y="421" text="The Free Flashcard Platform" fontSize="30" width="573" height="53" textAlign="right" color="#000000"/>
-    </mx:Canvas>
-  </mx:Canvas>
-  <mx:Canvas width="327" height="250" borderStyle="solid" backgroundColor="#1E6FC2" x="613" y="290" id="canvas3" cornerRadius="20" borderThickness="0">
-    <mx:Button x="201" y="214" label="Join" width="116" height="24" cornerRadius="10" id="signUpButton" click="signUpButtonClicked()"/>
-    <mx:Label x="10" y="176" text="Age" fontSize="20"/>
-    <mx:ComboBox x="135" y="174" width="180" height="32" dataProvider="{ages}" id="signUpAgeComboBox" tabIndex="6" prompt="select age"></mx:ComboBox>
-    <mx:Label x="10" y="10" text="Join in Seconds" fontSize="30" textDecoration="underline" color="#000000"/>
-    <mx:Label x="10" y="60" text="Email" fontSize="20"/>
-    <mx:TextInput x="135" y="60" height="30" width="180" id="signUpEmailTextInput" tabIndex="3"/>
-    <mx:Label x="10" y="136" text="Password" fontSize="20"/>
-    <mx:TextInput x="135" y="136" height="30" width="180" displayAsPassword="true" id="signUpPasswordTextInput" tabIndex="5"/>
-    <mx:Label x="10" y="98" text="Username" fontSize="20"/>
-    <mx:TextInput x="135" y="98" height="30" width="180" id="signUpUsernameTextInput" tabIndex="4"/>
-  </mx:Canvas>
-  
-</mx:Canvas>
+ </mx:Canvas>
+</mx:VBox>
