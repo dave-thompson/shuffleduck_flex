@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" verticalGap="10" backgroundColor="#3D464B" height="390" paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5" verticalScrollPolicy="off" horizontalScrollPolicy="off">
 
-	<mx:Style source="com/mindegg/theme/styles.css"/>
-
 	<mx:VBox id="titleVBox" verticalGap="10" width="100%">
 		<mx:Label id="titleLabel" text="{cardTitle}" color="#FFFFFF" fontSize="10" textDecoration="underline"/>
 	</mx:VBox>

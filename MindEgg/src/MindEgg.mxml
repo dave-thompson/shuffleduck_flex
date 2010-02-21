@@ -13,6 +13,8 @@
 				preloader="com.mindegg.view.preloaders.AppPreloader"
 				applicationComplete="initialSetup()"
 				 backgroundColor="#062C7A">
+				 
+ <mx:Style source="com/mindegg/theme/styles.css"/>
  
  <mx:Spacer id="leftSpacer" width="100%"/>				
  <me_view:FrontPage id="frontPage" height="100%" width="950"/>

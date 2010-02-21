@@ -40,7 +40,7 @@
             <mx:HBox horizontalGap="10" width="100%" height = "100%" id="gridHBox">
                <mx:horizontalScrollBarStyleName/>
                <mx:verticalScrollBarStyleName/>
-               <mx:DataGrid width="100%" height="100%" id="datagrid">
+               <mx:DataGrid styleName="cardsDatagrid" horizontalScrollBarStyleName="customScroll" verticalScrollBarStyleName="customScroll" width="100%" height="100%" id="datagrid" sortableColumns="false">
                   <mx:columns>
                      <mx:DataGridColumn headerText="Column 1" dataField="col1"/>
                      <mx:DataGridColumn headerText="Column 2" dataField="col2"/>
@@ -104,8 +104,10 @@
 		public static const SIDE_SELECTED:String = "sideSelected";
 		public static const DECK_CLEARED:String = "deckCleared";
 		public static const CARD_DELETED:String = "cardDeleted";
+		public static const CARD_MOVED:String = "cardMoved";
 		public static const NEW_TEXT_BOX_CLICKED:String = "newTextBoxClicked";
 		public static const NEW_IMAGE_CLICKED:String = "newImageClicked";		
+		public static const SCROLLED_TO_CARD_NUMBER:String = "scrolledToCardNumber";		
 		
 		// state constants
 		private static const CARDS_STATE:String = "cards";
@@ -113,12 +115,18 @@
 		private static const GRID_STATE:String = "grid";
 
 		// scroll type constants
-		private static const RETAIN_POSTION:int = 0;
-		private static const SCROLL_TO_END:int = 1;
+		private static const RETAIN_POSITION:uint = 0;
+		private static const SCROLL_TO_END:uint = 1;
+		private static const SCROLL_TO_BEGINNING:uint = 2;
+		private static const SCROLL_TO_CARD_NUMBER:uint = 3; // when using this constant, cardNumberToScrollTo should be set to the desired index
+		
+		private var _cardNumberToScrollTo:uint = 0;
 		
 		// card type constants
 		private static const TEMPLATE:uint = 0;
 		private static const CARD:uint = 1;
+		
+		private static const PIXELS_BETWEEN_CARDS:uint = 300;
 		
 		// data in the grid (if in grid view)
 		private var _dataProviderCollection:ArrayCollection = null;
@@ -137,7 +145,6 @@
 			
 			// show the blank template
 			this.currentState = TEMPLATE_STATE;
-			//drawNewCard(_deck.template, TEMPLATE, false);
 		}
 		
 		public function clearContext():void
@@ -224,7 +231,7 @@
 		}
 
 		
-		private function prepareGrid(scrollType:int = RETAIN_POSTION):void
+		private function prepareGrid(scrollType:int = RETAIN_POSITION):void
 		{
 			// get list of all variable atributes
 			var componentIDsAttributeConstants:Array = _deck.template.getVariableAttributes();
@@ -334,8 +341,12 @@
                 	var newValue:String = propertyChangeEvent.source[propertyChangeEvent.property];
                 	
                 	// update the value in the data model
-                	var errorString:String = card.getComponentWithTemplateComponentID(templateComponentID).setAttributeFromString(attribute, newValue);
-                	
+                	var updatedComponent:Component = card.getComponentWithTemplateComponentID(templateComponentID);
+                	var errorString:String = "";
+                	if (updatedComponent != null) // if the updated component exists (if it does not exist, it is because the user has edited a <N/A> value in the table)
+                	{
+                		errorString = updatedComponent.setAttributeFromString(attribute, newValue); // returns "" unless there was an error
+                	}
                 	// if there was a problem, report it to the user and roll back the value
                 	if (errorString != "")
                 	{
@@ -395,7 +406,7 @@
 			if (currentState == CARDS_STATE)
 			{
 				// draw the new card on screen
-				drawNewCard(_deck.getCardAtIndex(_deck.numCards() - 1), CARD, false, _deck.numCards());
+				drawNewCard(_deck.getCardAtIndex(_deck.numCards() - 1), CARD, SCROLL_TO_END, _deck.numCards());
 			}
 			else if (currentState == TEMPLATE_STATE)
 			{
@@ -418,24 +429,17 @@
 
 		public function scrollLeft():void
 		{			
-			cardsHBox.horizontalScrollPosition = cardsHBox.horizontalScrollPosition - 298;
+			cardsHBox.horizontalScrollPosition = cardsHBox.horizontalScrollPosition - PIXELS_BETWEEN_CARDS;
 		}
 		
 		public function scrollRight():void
 		{
-			cardsHBox.horizontalScrollPosition = cardsHBox.horizontalScrollPosition + 298;				
+			cardsHBox.horizontalScrollPosition = cardsHBox.horizontalScrollPosition + PIXELS_BETWEEN_CARDS;				
 		}
 		
 		public function scrollToEnd(e:FlexEvent):void
-		{			
-			var fullWidth:int = _deck.numCards() * 298;
-			var viewableWidth:int = cardsHBox.width;
-			var scrollPosition:int = fullWidth - viewableWidth;
-			if (scrollPosition < 0)
-			{
-				scrollPosition = 0;
-			}
-			cardsHBox.horizontalScrollPosition = scrollPosition + 298;
+		{
+			cardsHBox.horizontalScrollPosition = cardsHBox.maxHorizontalScrollPosition;
 		}
 		
 		public function scrollToBeginning(e:FlexEvent):void
@@ -443,6 +447,33 @@
 			cardsHBox.horizontalScrollPosition = 0;
 		}
 		
+		public function scrollToCardNumber(e:FlexEvent):void
+		{
+			var pixelsToStartOfCard:int = (_cardNumberToScrollTo - 1) * PIXELS_BETWEEN_CARDS;	
+			var viewableWidth:int = cardsHBox.width;
+			
+			var cardIsLeftOfScreen:Boolean = cardsHBox.horizontalScrollPosition > pixelsToStartOfCard;
+			var cardIsRightOfScreen:Boolean = (cardsHBox.horizontalScrollPosition + viewableWidth) < (pixelsToStartOfCard + PIXELS_BETWEEN_CARDS);
+			
+			if (cardIsLeftOfScreen || cardIsRightOfScreen)
+			{
+				// if card starts left of screen, place card at far left of screen
+				if (cardIsLeftOfScreen)
+				{
+					cardsHBox.horizontalScrollPosition = Math.min(pixelsToStartOfCard, cardsHBox.maxHorizontalScrollPosition);
+				}
+				else // else place it at far right of screen
+				{
+					cardsHBox.horizontalScrollPosition = Math.max(((pixelsToStartOfCard + PIXELS_BETWEEN_CARDS) - (viewableWidth + 10)),0);
+				}
+			}
+			
+			// select the card scrolled to
+        	var params:Object = new Object();
+        	params.newCardNumber = _cardNumberToScrollTo;
+			var scrolledToCardNumberEvent:CustomEvent = new CustomEvent(SCROLLED_TO_CARD_NUMBER, params, true);
+	        dispatchEvent(scrolledToCardNumberEvent);
+		}
 
 
 		// returns true if the deck viewer is looking at template sides; false otherwise
@@ -506,7 +537,7 @@
 	        	drawCardsFromDeck();
 	        	
 	        	// draw the template
-	        	drawNewCard(_deck.template, TEMPLATE, true);
+	        	drawNewCard(_deck.template, TEMPLATE, SCROLL_TO_BEGINNING);
 	        	
 	        	// show the cards
 				this.currentState = CARDS_STATE;					
@@ -529,38 +560,58 @@
         * 	Purpose: draws all cards in a deck
         * 
         */
-        private function drawCardsFromDeck():void
+        private function drawCardsFromDeck(cardToScrollTo:int = -1):void
         {
-        	// loop through deck, drawing cards
-	        for (var i:uint = 0; i < _deck.numCards(); i++)
-		        	{
-		        		drawNewCard(_deck.getCardAtIndex(i), CARD, true, i + 1);
-		        	}
+        	var i:uint;
+			if (cardToScrollTo == -1) // no card specified to scroll to: draw the cards and scroll to the beginning
+			{
+		        for (i = 0; i < _deck.numCards(); i++)
+			        	{
+			        		drawNewCard(_deck.getCardAtIndex(i), CARD, SCROLL_TO_BEGINNING, i + 1);
+			        	}
+		 	}
+		 	else // draw the cards and scroll to the requested card
+		 	{
+		 		_cardNumberToScrollTo = cardToScrollTo;
+ 				for (i = 0; i < _deck.numCards(); i++)
+	        	{
+	        		drawNewCard(_deck.getCardAtIndex(i), CARD, SCROLL_TO_CARD_NUMBER, i + 1);
+	        	}
+		 	}
         }
         
         /**
         * 	Purpose:	Create a new CardViewer containing the specified card
         * 				and add it to the end of the shown cards.
         */
-        private function drawNewCard(card:Card, cardType:uint, partOfLoadProcess:Boolean, cardNumber:uint = 0):void
+        private function drawNewCard(card:Card, cardType:uint, scrollType:uint, cardNumber:uint = 0):void
         {
         	var cardViewer:CardViewer = new CardViewer();
         	if (cardType == CARD)
         	{
         		// add the supplied card to the cards view
 	        	cardsHBox.addChild(cardViewer);
-	        	if (partOfLoadProcess)
+	        	
+	        	// scroll to the requsted position
+	        	if (scrollType == SCROLL_TO_BEGINNING)
 	        	{
-	        		cardViewer.addEventListener(FlexEvent.CREATION_COMPLETE, scrollToBeginning);	        		
+	        		cardViewer.addEventListener(FlexEvent.CREATION_COMPLETE, scrollToBeginning);
 	        	}
-	        	else
+	        	else if (scrollType == SCROLL_TO_END)
 	        	{
 	        		cardViewer.addEventListener(FlexEvent.CREATION_COMPLETE, scrollToEnd);
 	        	}
+	        	else // ScrollType == SCROLL_TO_CARD_NUMBER
+	        	{
+	        		cardViewer.addEventListener(FlexEvent.CREATION_COMPLETE, scrollToCardNumber);
+	        	}
 	        	
+	        	// draw card
 	        	cardViewer.draw(card, cardNumber, false);
 	        	
+	        	// set up right click menu
 	        	var contextualMenu:ContextualMenu = new ContextualMenu();
+	        	contextualMenu.AddItem("Move Card " + cardNumber, moveCard);	        	
 	        	contextualMenu.AddItem("Delete Card " + cardNumber, deleteCard);
 	        	contextualMenu.AssignRightClick(cardViewer);
 	        }
@@ -592,9 +643,6 @@
         	_deck.deleteCard(zeroBasedCardIndex);
         	cardsHBox.removeChildAt(zeroBasedCardIndex);
         	
-        	// redraw the cards on the screen to update their card numbers (this could be made more efficient later if required)
-        	//redrawAllCards();
-        	
         	// remove all cards and redraw them (can't simply redrawAllCards() as the contextual menus must be updated with the new card numbers)
         	cardsHBox.removeAllChildren();
         	drawCardsFromDeck();
@@ -604,6 +652,50 @@
 			var cardDeletedEvent:CustomEvent = new CustomEvent(CARD_DELETED, params, true);
 	        dispatchEvent(cardDeletedEvent); 
         }
+        
+        private function moveCard(event:ContextMenuEvent):void
+        {
+        	// find out which card was moved
+        	var caption:String = event.target.caption;
+        	var words:Array = caption.split(" ");
+        	var oneBasedCardIndex:uint = words[words.length - 1];
+        	
+        	// create a move card dialog and add it to the screen
+			var moveCardDialog:MoveCardDialog = new MoveCardDialog();
+            PopUpManager.addPopUp(moveCardDialog, this, true);
+       		moveCardDialog.setOriginalCardNumber(oneBasedCardIndex);
+            PopUpManager.centerPopUp(moveCardDialog);
+            
+            // wait for the new deck name event to be fired when the pop up closes
+            moveCardDialog.addEventListener(MoveCardDialog.NEW_CARD_INDEX, newCardIndex);
+        }
+        
+        private function newCardIndex(event:CustomEvent):void
+        {
+        	// get the old and new card numbers; if the new card number is < 1 or > max, then use 1 and max respectively
+        	var oldCardNumber:uint = event.params.oldCardNumber;
+        	var newCardNumber:uint = event.params.newCardNumber;
+        	if (newCardNumber < 1) newCardNumber = 1;
+        	if (newCardNumber > _deck.numCards()) newCardNumber = _deck.numCards();
+        	
+        	// move the card to the new position
+        	_deck.changeCardPosition(oldCardNumber, newCardNumber);
+        	
+        	// clear any selection
+        	Component.clearSelection();
+        	
+        	// remove all cards and redraw them (can't simply redrawAllCards() as the contextual menus must be updated with the new card numbers)
+        	cardsHBox.removeAllChildren();
+        	drawCardsFromDeck(newCardNumber);
+        	
+        	// fire CARD_MOVED event so that the application can clear the properties pane
+        	var params:Object = new Object();
+        	params.newCardNumber = newCardNumber;
+			var cardMovedEvent:CustomEvent = new CustomEvent(CARD_MOVED, params, true);
+	        dispatchEvent(cardMovedEvent); 
+        }
+        
+        
         
         public function loadDefaultTemplate():void
         {

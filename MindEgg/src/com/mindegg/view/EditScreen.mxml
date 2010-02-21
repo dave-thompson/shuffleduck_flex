@@ -179,7 +179,9 @@
 				// listen for events
 				// Events from DeckViewer
 				this.addEventListener(DeckViewer.DECK_CLEARED, deckCleared);
-				this.addEventListener(DeckViewer.CARD_DELETED, cardDeleted);				
+				this.addEventListener(DeckViewer.CARD_DELETED, cardDeleted);
+				this.addEventListener(DeckViewer.CARD_MOVED, cardMoved);
+				this.addEventListener(DeckViewer.SCROLLED_TO_CARD_NUMBER, selectCardViewerByCardNumber);
 	
 				// Events from PropertiesPane
 				this.addEventListener(PropertiesPane.COMPONENT_NAME_CHANGE, componentNameChange);
@@ -217,7 +219,7 @@
   	    private function mindEggLogoClicked():void
   	    {
   	    	// show a dialog asking if the user would like to save or not, and act on their choice (via function processUserExitChoice)
-			Alert.show("Save Changes to " + deckViewer.deck.deckName + "?", "Save", Alert.YES|Alert.NO|Alert.CANCEL, this, processUserExitChoice, null, Alert.CANCEL);
+			Alert.show("Save Changes before closing?", "Save", Alert.YES|Alert.NO|Alert.CANCEL, this, processUserExitChoice, null, Alert.CANCEL);
   	    }
   	    
 		private function processUserExitChoice(eventObj:CloseEvent):void
@@ -569,7 +571,6 @@
 						cardViewer = (e.target as CardViewer);
 						
 					// select the card clicked on
-					
 					selectCardViewer(cardViewer);
 				}
 				// when the user clicks in certain areas, the selected component should be forgotten
@@ -587,18 +588,7 @@
 					// if a component is selected, forget it
 					if (Component.selectionExists())
 					{
-						// turn the properties pane off
-						propertiesPane.clearContext();
-						
-						// clear any current selection
-						Component.clearSelection();
-						
-				        // redraw the components on the side containing the selection, to reflect that selection
-				       	_currentSelectedUISide.redrawExistingComponents();
-				       	_currentSelectedUISide = null;
-				       	
-				       	// set the status
-				       	setStatus(STATUS_NONE);
+						dropSelection();
 					}
 				}
 				
@@ -609,6 +599,22 @@
 					_lastUISideClickedOn = uiSideJustClickedOn;
 					_lastUISideClickedOnIsFromTemplate = deckViewer.areCurrentSidesFromTemplate();
 				}
+		}
+
+		private function dropSelection():void
+		{
+			// turn the properties pane off
+			propertiesPane.clearContext();
+			
+			// clear any current selection
+			Component.clearSelection();
+			
+	        // redraw the components on the side containing the selection, to reflect that selection
+	       	_currentSelectedUISide.redrawExistingComponents();
+	       	_currentSelectedUISide = null;
+	       	
+	       	// set the status
+	       	setStatus(STATUS_NONE);
 		}
 
 		private function mouseUp(e:Event):void
@@ -672,6 +678,11 @@
     			propertiesPane.setCardContext(cardViewer, deckViewer.areCurrentSidesFromTemplate());      	
 		}
 		
+		private function selectCardViewerByCardNumber(event:CustomEvent):void
+		{
+			selectCardViewer(deckViewer.getCardViewerNumber(event.params.newCardNumber));
+		}
+		
 		private function clearSelection():void
 		{
 			// clear existing selection
@@ -705,6 +716,16 @@
         	propertiesPane.currentState = "off";
         } 
           
+        /**
+  	    * 	From: 		DeckViewer
+  	    *	Trigger:	User moved a card
+  	    */
+        private function cardMoved(e:CustomEvent):void
+        {
+        	// clear properties pane
+        	propertiesPane.currentState = "off";
+        } 
+
         /**
   	    * 	From: 		EditPane
   	    *	Trigger:	User added a new component to the edited side

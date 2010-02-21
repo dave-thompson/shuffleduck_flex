@@ -1,21 +1,21 @@
 /* CSS file */
 
-DataGrid
+.cardsDatagrid
 {
-  vertical-grid-lines: false;
-  border-style: none;
-  selection-color: #C1FFC5;
-  roll-over-color: #7CFF77;
-  alternating-item-colors: #F4FBFF, #FFFFFF;
-}
-
-VScrollBar
-{
-	upArrowSkin: ClassReference(null);
-    downArrowSkin: ClassReference(null);
-    thumbUpSkin: ClassReference('com.mindegg.theme.skins.CustomSkinThumb');
-    thumbOverSkin: ClassReference('com.mindegg.theme.skins.CustomSkinThumb');
-    thumbDownSkin: ClassReference('com.mindegg.theme.skins.CustomSkinThumb');
+  vertical-grid-lines: true;
+  border-style: solid;
+  selection-color: #F6D29F;
+  roll-over-color: #F0BC73;
+  alternating-item-colors: #CCCCCC, #E1E4E5;
+  headerColors: #3D464B, #57666E;
+	horizontalGridLines: false;
+	verticalScrollBarStyleName: dataGridVerticalScrollBar;
+	borderThickness: 0;
+	textAlign: left;
+	fontWeight: normal;
+	fontStyle: normal;
+	textDecoration: normal;
+	headerStyleName: dataGridHeader;
 }
 
 Button.StandardButton
@@ -53,4 +53,12 @@ Button.SlimlineButton
 .propertyFormInput
 {
 	color: #000000;
+}
+.dataGridVerticalScrollBar
+{
+}
+.dataGridHeader
+{
+	color: #EEEEEE;
+	fontWeight: bold;
 }

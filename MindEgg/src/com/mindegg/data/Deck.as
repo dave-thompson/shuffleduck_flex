@@ -105,6 +105,24 @@ package com.mindegg.data
 		{
 			_cards.splice(index,1);
 		}
+		
+		public function insertCardAtIndex(card:Card, index:uint):void
+		{
+			_cards.splice(index, 0, card);
+		}
+		
+		public function changeCardPosition(oldCardNumber:uint, newCardNumber:uint):void
+		{
+			// find old and new 0-based indexes; if indexes are less than zero or greater than the number of cards, constrain them to zero or the number of cards respectively
+			var oldCardIndex:uint = Math.max(oldCardNumber - 1, 0);
+			oldCardIndex = Math.min(oldCardIndex, numCards());
+			var newCardIndex:uint = Math.max(newCardNumber - 1, 0);
+			newCardIndex = Math.min(newCardIndex, numCards());
+
+			var cardToMove:Card = getCardAtIndex(oldCardIndex);
+			deleteCard(oldCardIndex);
+			insertCardAtIndex(cardToMove, newCardIndex);
+		}
 
 		public function toXMLString():String
 		{

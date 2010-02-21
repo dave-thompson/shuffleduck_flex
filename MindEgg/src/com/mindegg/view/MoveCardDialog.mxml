@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+				layout="absolute" 
+				width="316"
+				height="144" 
+				backgroundColor="#FFFFFF" 
+				backgroundAlpha="1"
+				borderStyle="solid" 
+				borderColor="#000000" 
+				borderThickness="2"
+				borderAlpha ="1"
+				headerHeight="0" 
+				cornerRadius="0"
+				dropShadowEnabled="true"
+				creationComplete="setup()">
+
+	<mx:Label text="Move To Position" fontSize="22" fontWeight="bold" color="#25E9EB" fontStyle="italic" x="10" y="10"/>
+	<mx:TextInput x="10" y="51" width="272" height="35" fontSize="20" id="newIndexTextInput" restrict="0-9"/>
+	<mx:Button x="206" y="102" label="OK" width="76" click="okButtonClicked()"/>
+	
+	<mx:Script>
+		<![CDATA[
+			
+			import com.mindegg.utils.CustomEvent;
+			import mx.managers.PopUpManager;
+			
+			public static const NEW_CARD_INDEX:String = "MoveCardDialog_newCardIndex";
+			
+			private var _originalCardNumber:uint;
+			
+			public function setup():void
+			{
+				// highlight text ready for editing
+				newIndexTextInput.setSelection(0, newIndexTextInput.length);
+				newIndexTextInput.setFocus();
+				
+				// listen to enter key, so we can dismiss the form
+				this.addEventListener(KeyboardEvent.KEY_DOWN,checkKey);
+			}
+			
+			public function setOriginalCardNumber(cardNumber:int):void
+			{
+				_originalCardNumber = cardNumber;
+				newIndexTextInput.text = String(_originalCardNumber);
+			}
+			
+			private function okButtonClicked():void
+			{
+				// fire event, passing back new deck name
+				var params:Object = new Object();
+				params.oldCardNumber = _originalCardNumber;
+				params.newCardNumber = parseInt(newIndexTextInput.text);
+	    		var newEvent:CustomEvent = new CustomEvent(NEW_CARD_INDEX, params, true);
+	    		dispatchEvent(newEvent);
+				
+				// remove pop up from screen
+  	    		PopUpManager.removePopUp(this);	    	
+			}
+			
+			private function checkKey(event:KeyboardEvent):void
+            {
+                if(event.keyCode == 13)
+                {
+                	okButtonClicked();
+            	}
+			}
+			
+		]]>
+	</mx:Script>
+	
+	
+</mx:TitleWindow>
