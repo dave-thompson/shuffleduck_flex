@@ -115,12 +115,16 @@
 		private static const GRID_STATE:String = "grid";
 
 		// scroll type constants
-		private static const RETAIN_POSITION:uint = 0;
-		private static const SCROLL_TO_END:uint = 1;
-		private static const SCROLL_TO_BEGINNING:uint = 2;
-		private static const SCROLL_TO_CARD_NUMBER:uint = 3; // when using this constant, cardNumberToScrollTo should be set to the desired index
-		
+		private static const UNDEFINED:uint = 0;
+		private static const RETAIN_POSITION:uint = 1;
+		private static const SCROLL_TO_END:uint = 2;
+		private static const SCROLL_TO_BEGINNING:uint = 3;
+		private static const SCROLL_TO_CARD_NUMBER:uint = 4; // when using this constant, _cardNumberToScrollTo should be set to the desired 1-based index
+		private static const SCROLL_TO_PIXEL_POSITION:uint = 5; // when using this constant, _pixelToScrollTo should be set to the desired value
+
 		private var _cardNumberToScrollTo:uint = 0;
+		private var _pixelPositionToScrollTo:uint = 0;
+		
 		
 		// card type constants
 		private static const TEMPLATE:uint = 0;
@@ -474,6 +478,11 @@
 			var scrolledToCardNumberEvent:CustomEvent = new CustomEvent(SCROLLED_TO_CARD_NUMBER, params, true);
 	        dispatchEvent(scrolledToCardNumberEvent);
 		}
+		
+		public function scrollToPixelPosition(e:FlexEvent):void
+		{
+			cardsHBox.horizontalScrollPosition = _pixelPositionToScrollTo;
+		}
 
 
 		// returns true if the deck viewer is looking at template sides; false otherwise
@@ -560,22 +569,45 @@
         * 	Purpose: draws all cards in a deck
         * 
         */
-        private function drawCardsFromDeck(cardToScrollTo:int = -1):void
+        private function drawCardsFromDeck(cardToScrollTo:int = -1, pixelPositionToScrollTo:int = -1):void
         {
         	var i:uint;
-			if (cardToScrollTo == -1) // no card specified to scroll to: draw the cards and scroll to the beginning
+			if (cardToScrollTo == -1) // no card specified to scroll to .. 
 			{
-		        for (i = 0; i < _deck.numCards(); i++)
-			        	{
+				if (pixelPositionToScrollTo >= 0) // .. but a specific horizontalScrollPosition has been specified
+				{
+					// draw cards and scroll to requested scroll position
+					_pixelPositionToScrollTo = pixelPositionToScrollTo;
+	 				for (i = 0; i < _deck.numCards(); i++)
+		        	{
+		        		if (i == _deck.numCards()-1)
+		        			drawNewCard(_deck.getCardAtIndex(i), CARD, SCROLL_TO_PIXEL_POSITION, i + 1);
+		        		else
+		        			drawNewCard(_deck.getCardAtIndex(i), CARD, UNDEFINED, i + 1);		
+		        	}
+				}
+				else // .. and no specific position to scroll to either
+				{
+					// draw cards and scroll to the beginning
+			        for (i = 0; i < _deck.numCards(); i++)
+		        	{
+		        		if (i == _deck.numCards()-1)
 			        		drawNewCard(_deck.getCardAtIndex(i), CARD, SCROLL_TO_BEGINNING, i + 1);
-			        	}
+			        	else
+		        			drawNewCard(_deck.getCardAtIndex(i), CARD, UNDEFINED, i + 1);
+		        	}
+			 	}
 		 	}
-		 	else // draw the cards and scroll to the requested card
+		 	else // a cardToScrollTo was specified
 		 	{
+		 		// draw the cards and scroll to the requested card
 		 		_cardNumberToScrollTo = cardToScrollTo;
  				for (i = 0; i < _deck.numCards(); i++)
 	        	{
-	        		drawNewCard(_deck.getCardAtIndex(i), CARD, SCROLL_TO_CARD_NUMBER, i + 1);
+		        	if (i == _deck.numCards()-1)
+	        			drawNewCard(_deck.getCardAtIndex(i), CARD, SCROLL_TO_CARD_NUMBER, i + 1);
+		        	else
+	        			drawNewCard(_deck.getCardAtIndex(i), CARD, UNDEFINED, i + 1);	        			
 	        	}
 		 	}
         }
@@ -592,7 +624,7 @@
         		// add the supplied card to the cards view
 	        	cardsHBox.addChild(cardViewer);
 	        	
-	        	// scroll to the requsted position
+	        	// scroll to the requsted position, if a position was requested
 	        	if (scrollType == SCROLL_TO_BEGINNING)
 	        	{
 	        		cardViewer.addEventListener(FlexEvent.CREATION_COMPLETE, scrollToBeginning);
@@ -601,9 +633,13 @@
 	        	{
 	        		cardViewer.addEventListener(FlexEvent.CREATION_COMPLETE, scrollToEnd);
 	        	}
-	        	else // ScrollType == SCROLL_TO_CARD_NUMBER
+	        	else if (scrollType == SCROLL_TO_CARD_NUMBER)
 	        	{
 	        		cardViewer.addEventListener(FlexEvent.CREATION_COMPLETE, scrollToCardNumber);
+	        	}
+	        	else if (scrollType == SCROLL_TO_PIXEL_POSITION)
+	        	{
+	        		cardViewer.addEventListener(FlexEvent.CREATION_COMPLETE, scrollToPixelPosition);
 	        	}
 	        	
 	        	// draw card
@@ -645,7 +681,7 @@
         	
         	// remove all cards and redraw them (can't simply redrawAllCards() as the contextual menus must be updated with the new card numbers)
         	cardsHBox.removeAllChildren();
-        	drawCardsFromDeck();
+        	drawCardsFromDeck(-1, cardsHBox.horizontalScrollPosition);
         	
         	// fire CARD_DELETED event so that the application can clear the properties pane
         	var params:Object = new Object();
