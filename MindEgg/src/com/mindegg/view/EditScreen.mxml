@@ -168,14 +168,7 @@
 				// set up the deck viewer and saving dialog
 				deckViewer.setup();			
 				_savingDialog = new SavingDialog();
-				
-				// Instantiate the save timer
-				saveTimer = new Timer(60000, 0); // fire timer event every minute forever
-		        saveTimer.addEventListener("timer", updateTimeSinceSave);
-				
-				// Write the deck title to the screen
-				title = aTitle;
-				
+								
 				// listen for events
 				// Events from DeckViewer
 				this.addEventListener(DeckViewer.DECK_CLEARED, deckCleared);
@@ -206,7 +199,13 @@
 			}
 			
 			// some set up should be repeated when the user comes back to view a new deck
-			propertiesPane.currentState="off";
+				// write the title to the screen
+				title = aTitle;
+				// clear the properties pane
+				propertiesPane.currentState="off";
+				// Instantiate the save timer
+				saveTimer = new Timer(60000, 0); // fire timer event every minute forever
+		        saveTimer.addEventListener("timer", updateTimeSinceSave);
 
 			// TESTING SECTION - ALL BELOW CODE IS TEMPORARY
 		}

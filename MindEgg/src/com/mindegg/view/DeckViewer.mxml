@@ -549,7 +549,11 @@
 	        	drawNewCard(_deck.template, TEMPLATE, SCROLL_TO_BEGINNING);
 	        	
 	        	// show the cards
-				this.currentState = CARDS_STATE;					
+	        	
+	        	if (_deck.numCards() == 0)
+	        		this.currentState = TEMPLATE_STATE;
+	        	else
+					this.currentState = CARDS_STATE;					
          	//}
          	
          	// in case of error loading the XML string, inform the user
