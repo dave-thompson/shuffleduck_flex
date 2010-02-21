@@ -585,7 +585,7 @@
 				    	)
 				{
 					// if a component is selected, forget it
-					if (Component.selectionExists())
+					if (Component.selectionExists()||CardViewer.selectionExists())
 					{
 						dropSelection();
 					}
@@ -606,11 +606,11 @@
 			propertiesPane.clearContext();
 			
 			// clear any current selection
-			Component.clearSelection();
+			clearSelection();
 			
 	        // redraw the components on the side containing the selection, to reflect that selection
-	       	_currentSelectedUISide.redrawExistingComponents();
-	       	_currentSelectedUISide = null;
+	       	//_currentSelectedUISide.redrawExistingComponents();
+	       	//_currentSelectedUISide = null;
 	       	
 	       	// set the status
 	       	setStatus(STATUS_NONE);
@@ -669,6 +669,8 @@
 			// Selection handling
 			clearSelection();
 	
+			cardViewer.setSelected(true);
+	
 			// set status
 			setStatus(STATUS_NONE); // treat card selection the same as no selection
 
@@ -686,6 +688,7 @@
 		{
 			// clear existing selection
 			Component.clearSelection(); // only one selected component permitted (may change later)
+			CardViewer.clearSelection();
 			// redraw the components on the side previously selected (if there is such a side)
 			if (_currentSelectedUISide != null)
 			{

@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" verticalGap="10" backgroundColor="#3D464B" height="390" paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5" verticalScrollPolicy="off" horizontalScrollPolicy="off">
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" verticalGap="10" backgroundColor="#3D464B" height="390" paddingBottom="4" paddingLeft="4" paddingRight="4" paddingTop="4" verticalScrollPolicy="off" horizontalScrollPolicy="off" borderThickness="1" borderStyle="solid" borderColor="#3D464B">
+	<mx:states>
+		<mx:State name="selected">
+			<mx:SetStyle name="borderColor" value="#FB9221"/>
+		</mx:State>
+	</mx:states>
 
 	<mx:VBox id="titleVBox" verticalGap="10" width="100%">
 		<mx:Label id="titleLabel" text="{cardTitle}" color="#FFFFFF" fontSize="10" textDecoration="underline"/>
@@ -22,6 +27,8 @@
 		private var _isTemplate:Boolean;
 		private var _cardNumber:uint;
 		private var _card:Card;
+		private var _selected:Boolean = false
+		private static var _selectedCardViewers:Array = new Array();;
 		
 		[Bindable] public var cardTitle:String = "";
 		
@@ -51,6 +58,41 @@
 				{cardTitle = "Card " + _cardNumber;}
 			else
 				{cardTitle = "Template";}
+		}
+		
+		public function setSelected(selected:Boolean):void
+		{
+			// retain state in this instance
+			_selected = selected;
+				
+			// set the state for the new selection status
+			if (_selected)
+			{
+				_selectedCardViewers.push(this); // also record this CardViewer in the class list of selected CardViewers
+				currentState = "selected";
+			}
+			else
+				currentState = "";
+		}
+		
+		public static function clearSelection():void
+		{	
+			for each (var selectedCardViewer:CardViewer in _selectedCardViewers)
+			{
+				// update state of this card viewer
+				selectedCardViewer.setSelected(false);				
+			}
+			
+			// clear the global list of selected components
+			_selectedCardViewers = new Array();
+		}
+		
+		public static function selectionExists():Boolean
+		{
+			if (_selectedCardViewers.length > 0)
+				{return true;}
+			else
+				{return false;}
 		}
 		
 		public function redraw():void
