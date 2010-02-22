@@ -24,8 +24,8 @@
 
     <mx:State name="homeScreen">
       <mx:AddChild position="lastChild">
-        <me_view:HomeScreen id="homeScreen" backgroundColor="#FFFFFF">
-        </me_view:HomeScreen>
+        <me_view:LibraryScreen id="homeScreen" backgroundColor="#FFFFFF">
+        </me_view:LibraryScreen>
       </mx:AddChild>
       <mx:RemoveChild target="{frontPage}"/>
       <mx:RemoveChild target="{leftSpacer}"/>

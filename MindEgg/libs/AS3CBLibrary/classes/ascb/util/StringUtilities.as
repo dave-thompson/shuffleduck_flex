@@ -17,7 +17,8 @@ package ascb.util {
 				
 				// Create an array of all the code points from 0 to 255.
 				var originalMap:Array = new Array();
-				for ( var i:int = 0; i < 256 ; i++ ) {
+				var i:int;
+				for ( i = 0; i < 256 ; i++ ) {
 					originalMap.push( i );
 				}
 			
@@ -25,7 +26,7 @@ package ascb.util {
 				var tempChars:Array = originalMap.concat();
 				
 				// Loop through all the character code points in originalMap.
-				for ( var i:int = 0; i < originalMap.length; i++ ) {
+				for ( i = 0; i < originalMap.length; i++ ) {
 					// Create a random number that is between 0 and the last index of tempChars.
 					var randomIndex:int = Math.floor( Math.random() * ( tempChars.length - 1 ) );
 					
@@ -64,7 +65,8 @@ package ascb.util {
 		    // This allows you to do a reverse lookup based on the encoded character
 		    // rather than the original character.
 		    reverseCodeMap = new Object();
-		    for ( var key in codeMap ) {
+		    for ( var key:String in codeMap ) // [DAVE] ADDED TYPE (String) TO KEY TO STOP UNTYPED VARIABLE WARNING THAT LIBRARY WAS CAUSING
+		    {
 		      reverseCodeMap[ codeMap[key] ] = key;
 		    }
 		  }

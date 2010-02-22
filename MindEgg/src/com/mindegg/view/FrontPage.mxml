@@ -36,13 +36,14 @@
 				height="100%"
 				backgroundAlpha="0.0" horizontalScrollPolicy="off" verticalScrollBarStyleName="customScroll">
 				 
-  <mx:Canvas width="327" height="170" backgroundColor="#1E6FC2" x="613" y="10" id="canvas2" cornerRadius="20" borderStyle="solid" borderThickness="0">
+  <mx:Canvas width="327" height="195" backgroundColor="#1E6FC2" x="613" y="10" id="canvas2" cornerRadius="20" borderStyle="solid" borderThickness="0">
     <mx:Label x="10" y="10" text="Log In" fontSize="30" textDecoration="underline" color="#000000"/>
     <mx:Label x="10" y="60" text="Username" fontSize="20"/>
     <mx:Label x="10" y="98" text="Password" fontSize="20"/>
-    <mx:Button x="196" y="134" label="Log In" width="116" height="24" cornerRadius="10" id="loginButton" click="logInButtonClicked()"/>
+    <mx:Button x="201" y="158" label="Log In" width="116" height="24" cornerRadius="10" id="loginButton" click="logInButtonClicked()"/>
     <mx:TextInput x="135" y="60" height="30" width="180" tabIndex="1" id="loginUsernameTextInput"/>
-    <mx:TextInput x="135" y="96" height="30" width="180" displayAsPassword="true" enabled="true" editable="true" tabIndex="2" id="loginPasswordTextInput"/>
+    <mx:TextInput x="135" y="96" height="30" width="180" displayAsPassword="true" enabled="true" editable="true" tabIndex="2" id="loginPasswordTextInput" enter="logInButtonClicked()"/>
+    <mx:Button x="140" y="128" label="Forgot Username / Password" fillAlphas="0" cornerRadius="0" alpha="0.0" fontWeight="normal" textDecoration="underline" id="forgotPasswordButton" click="showPasswordResetDialog()"/>
   </mx:Canvas>
   <mx:Canvas width="595" height="530" borderStyle="solid" backgroundColor="#FFFFFF" y="10" x="10" id="canvas1" cornerRadius="20">
     <mx:Canvas x="10" y="10" width="573" height="508">
@@ -74,6 +75,7 @@
 		import mx.rpc.events.ResultEvent;
 		import mx.rpc.events.FaultEvent;
 		import mx.collections.ArrayCollection;
+		import ascb.util.StringUtilities;
 
 		[Bindable]
         public var ages:ArrayCollection = new ArrayCollection([
@@ -203,8 +205,8 @@
 			currentState = "";
 			// send the entered data to the server
 			var user_session:XML = <user_session/>;
-			user_session['username'] = loginUsernameTextInput.text;			
-			user_session['password'] = loginPasswordTextInput.text;
+			user_session['username'] = StringUtilities.trim(loginUsernameTextInput.text);			
+			user_session['password'] = StringUtilities.trim(loginPasswordTextInput.text);
 			sessionCreate.send(user_session);
   	    }
   	    
@@ -219,11 +221,18 @@
 			currentState = "";
 			// send the entered data to the server
 			var user:XML = <user/>;
-			user['email'] = signUpEmailTextInput.text;
-			user['username'] = signUpUsernameTextInput.text;
+			user['email'] = StringUtilities.trim(signUpEmailTextInput.text);
+			user['username'] = StringUtilities.trim(signUpUsernameTextInput.text);
 			user['password'] = signUpPasswordTextInput.text;
 			user['age_at_signup'] = signUpAgeComboBox.value;
 			accountCreate.send(user);
+  	    }
+  	    
+  	    private function showPasswordResetDialog():void
+  	    {
+			var passwordResetDialog:PasswordResetDialog = new PasswordResetDialog();
+            PopUpManager.addPopUp(passwordResetDialog, this, true);
+            PopUpManager.centerPopUp(passwordResetDialog);
   	    }
   	    
   	    private function loggedIn(followingRegistration:Boolean, event:ResultEvent):void
@@ -246,8 +255,7 @@
 				loginPasswordTextInput.text = "";
 				
 				// parse response
-				var user_details:XML = event.result as XML;
-				var username:String = user_details.username[0];
+				var username:String = result_xml.username[0];
 				
 	  	    	// raise an event to the application so it may show the user's decks
 	  	    	var params:Object = new Object();
