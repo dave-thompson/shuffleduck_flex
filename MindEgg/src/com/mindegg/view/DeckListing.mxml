@@ -1,12 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="resetTitleLabelLength()" backgroundColor="#3D464B" height="122" paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5" mouseOver="mouseOverListing(event)" mouseOut="mouseOutListing(event)" click="mouseClickListing(event)" width="100%" borderStyle="solid" borderThickness="0" cornerRadius="10">
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="resetTitleLabelLength()" backgroundColor="#172322" height="132" paddingBottom="8" paddingLeft="8" paddingRight="8" paddingTop="8" mouseOver="mouseOverListing(event)" mouseOut="mouseOutListing(event)" click="mouseClickListing(event)" width="100%" borderStyle="solid" borderThickness="2" cornerRadius="10" borderColor="#172322">
+   	<mx:states>
+   	   	<mx:State name="listing_highlight">
+   	   	   	<mx:SetStyle name="borderColor"/>
+   	   	   	<mx:SetStyle name="backgroundColor" value="#2C403E"/>
+   	   	</mx:State>
+   	   	<mx:State name="title_highlight">
+   	   	   	<mx:SetStyle target="{titleLabel}" name="color" value="0x25e9eb"/>
+   	   	   	<mx:SetStyle target="{titleHBox}" name="cornerRadius"/>
+   	   	   	<mx:SetStyle target="{titleHBox}" name="borderThickness"/>
+   	   	   	<mx:SetStyle target="{titleHBox}" name="borderStyle"/>
+   	   	   	<mx:SetStyle target="{titleHBox}" name="borderColor"/>
+   	   	</mx:State>
+   	</mx:states>
    	<mx:Style source="com/mindegg/theme/styles.css"/>
 	<mx:HBox width="182" height="112" backgroundColor="#FFFFFF" id="sidePreviewHBox"/>
 	<mx:VBox height="100%" verticalGap="0" width="100%">
 		<mx:HBox width="100%">
 			<mx:VBox height="100%" width="100%" verticalGap="0">
 				<mx:HBox width="100%" height="42" verticalScrollPolicy="off" horizontalScrollPolicy="off" autoLayout="false" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0">
-					<mx:HBox id = "titleHBox" click="clickTitle(event)" width="100%" height="42" backgroundColor="#3D464B" verticalScrollPolicy="off" horizontalScrollPolicy="off">
+					<mx:HBox id = "titleHBox" click="clickTitle(event)" width="100%" height="42" verticalScrollPolicy="off" horizontalScrollPolicy="off">
 						<mx:Label id = "titleLabel" color="#FFFFFF" fontSize="30" width="100%" mouseOver="mouseOverTitle(event)" mouseOut="mouseOutTitle(event)" toolTip="Rename this deck"/>
 					</mx:HBox>
 				</mx:HBox>
@@ -102,31 +115,38 @@
 		{
 			if (!(event.target is Button))
 			{
-				// set listing and title (inside it) to highlighted
-				this.setStyle("backgroundColor", "#6c757a");
-				titleHBox.setStyle("backgroundColor", "#6c757a");
+				currentState = "listing_highlight";
+				
+				// set listing and title (inside it) to highlighted				
+				//this.setStyle("backgroundColor", "#6c757a");
+				//titleHBox.setStyle("backgroundColor", "#6c757a");
 			}
 		}
 		
 		private function mouseOverTitle(event:MouseEvent):void
 		{
+			currentState = "title_highlight";			
+			
 			// set title to hightlighted and listing to not highlighted
-			titleHBox.setStyle("backgroundColor", "#6c757a");
-			this.setStyle("backgroundColor", "#3D464B");
+			//titleHBox.setStyle("backgroundColor", "#6c757a");
+			//this.setStyle("backgroundColor", "#172322");
+			
 			// prevent event from reaching DeckListing (this should not be treated as a mouse over DeckListing)
 			event.stopPropagation();
 		}
 		
 		private function mouseOutListing(event:MouseEvent):void
 		{
-				this.setStyle("backgroundColor", "#3D464B");
-				titleHBox.setStyle("backgroundColor", "#3D464B");
+			currentState = "";
+			
+			//this.setStyle("backgroundColor", "#172322");
+			//titleHBox.setStyle("backgroundColor", "#172322");
 		}
 		
 		private function mouseOutTitle(event:MouseEvent):void
 		{
-			//this.setStyle("backgroundColor", "#6c757a");
-			titleHBox.setStyle("backgroundColor", "#3D464B");			
+			currentState = "listing_highlight";			
+			//titleHBox.setStyle("backgroundColor", "#172322");			
 		}
 		
 		

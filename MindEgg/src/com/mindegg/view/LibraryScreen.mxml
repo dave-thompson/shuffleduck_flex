@@ -4,10 +4,10 @@
 				xmlns:me="com.mindegg.*"
 				xmlns:me_view="com.mindegg.view.*"
 				xmlns:sp="com.mindegg.view.spinner.*"
-				paddingLeft="20"
-				paddingRight="20"
-				paddingTop="20"
-				paddingBottom="20"
+				paddingLeft="10"
+				paddingRight="10"
+				paddingTop="0"
+				paddingBottom="10"
 				width="100%"
 				height="100%"
 				backgroundAlpha="0.0"
@@ -43,19 +43,18 @@
 <!-- UI -->
   <mx:Style source="com/mindegg/theme/styles.css"/>
 			
-  <mx:HBox id="topHBox" width="100%" height="33" horizontalGap="0" backgroundColor="#86C9EF" backgroundAlpha="0.0">
-    <mx:Label text="Shuffle" fontSize="22" fontWeight="bold" color="#FFFFFF" fontStyle="italic"/>
-    <mx:Label text="Duck" fontSize="22" fontWeight="bold" color="#FB9221" fontStyle="italic"/>
+  <mx:HBox id="topHBox" width="100%" height="55" horizontalGap="0" backgroundColor="#86C9EF" backgroundAlpha="0.0">
+    <mx:Label text="ShuffleDuck" fontSize="40" fontWeight="bold" color="#ffffff" fontStyle="italic"/>
     <mx:Spacer width="100%"/>
-    <mx:Label text="" height="16" color="#000000" id="usernameLabel" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" width="148" textAlign="right"/>
+    <mx:Label text="" height="16" color="#000000" id="usernameLabel" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" width="329" textAlign="right"/>
     <mx:Label text="[" height="16" color="#000000" id="usernameLabel1" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" width="8"/>
-    <mx:Button label="logout" click="logoutButtonClicked()" height="16" width="41" color="#FB9221" alpha="0.0" fillAlphas="[0.0, 0.0, 0.0, 0.0]" textRollOverColor="0x25e9eb" styleName="StandardButton" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" id="logoutButton"/>
+    <mx:Button label="logout" click="logoutButtonClicked()" height="16" width="41" alpha="0.0" fillAlphas="[0.0, 0.0, 0.0, 0.0]" textRollOverColor="0x25e9eb" styleName="StandardButton" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" id="logoutButton"/>
     <mx:Label text="]" height="16" color="#000000" id="usernameLabel0" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" width="8"/>
   </mx:HBox>
   <mx:HBox id="mainHBox" width="100%" height="100%">	
-    <mx:VBox id="decksVBox" width="100%" height="100%" borderStyle="solid" backgroundColor="#FFFFFF" paddingBottom="10" paddingLeft="20" paddingTop="15" cornerRadius="20" borderThickness="0" paddingRight="20">
+    <mx:VBox id="decksVBox" width="100%" height="100%" borderStyle="solid" backgroundColor="#4C5C5E" paddingBottom="10" paddingLeft="20" paddingTop="15" cornerRadius="20" borderThickness="5" paddingRight="20" borderColor="#FFFFFF">
       <mx:HBox width="100%" id="hbox1">
-        <mx:Label text="Library" fontSize="22" fontWeight="bold" color="#000000" fontStyle="italic"/>
+        <mx:Label text="Library" fontSize="22" fontWeight="bold" color="#FFFFFF" fontStyle="italic"/>
         <mx:Spacer width="100%"/>
         <mx:Button label="+ New Deck" click="newDeckButtonClicked()" id="newDeckButton" styleName="SlimlineButton" height="33" width="86" textRollOverColor="0x25e9eb"/>
       </mx:HBox>

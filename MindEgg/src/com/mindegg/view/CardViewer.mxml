@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" verticalGap="10" backgroundColor="#3D464B" height="390" paddingBottom="4" paddingLeft="4" paddingRight="4" paddingTop="4" verticalScrollPolicy="off" horizontalScrollPolicy="off" borderThickness="1" borderStyle="solid" borderColor="#3D464B">
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" verticalGap="10" backgroundColor="#172322" height="390" paddingBottom="14" paddingLeft="14" paddingRight="14" paddingTop="10" verticalScrollPolicy="off" horizontalScrollPolicy="off" borderStyle="solid" borderThickness="2" cornerRadius="10" borderColor="#172322">
 	<mx:states>
 		<mx:State name="selected">
 			<mx:SetStyle name="borderColor" value="#FB9221"/>
+			<mx:SetStyle name="borderThickness" value="2"/>
 		</mx:State>
 	</mx:states>
 
@@ -10,7 +11,7 @@
 		<mx:Label id="titleLabel" text="{cardTitle}" color="#FFFFFF" fontSize="10" textDecoration="underline"/>
 	</mx:VBox>
    
-	<mx:VBox id="SidesVBox" verticalGap="10" width="100%" paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10"/>
+	<mx:VBox id="SidesVBox" verticalGap="10" width="100%"/>
    
 	<mx:Spacer id="spacer" height="100%"/>
 	   

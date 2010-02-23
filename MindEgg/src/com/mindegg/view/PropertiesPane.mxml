@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="166" backgroundColor="#606364" creationComplete="setup()" borderStyle="solid" borderThickness="0" cornerRadius="10" height="507">
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="176" backgroundColor="#80B4E9" creationComplete="setup()" borderStyle="solid" borderThickness="5" cornerRadius="10" height="507" borderColor="#FFFFFF">
 
 	<mx:states>
 		<mx:State name="off">

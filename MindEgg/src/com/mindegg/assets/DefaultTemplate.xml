@@ -2,7 +2,7 @@
 <Deck version_no="0.01" backward_compatible_iphone_version_no="0.01">
 	<Template>
 		<Card>
-			<Side backgroundColor="13158">
+			<Side backgroundColor="13382451">
 				<Component template_component_id="1" name="Question" x="0" y="50" width="260" height="60">
 					<TextBox>
 						<text variable="true">Question</text>
@@ -16,7 +16,7 @@
 					</TextBox>
 				</Component>
 			</Side>
-			<Side backgroundColor="13158">
+			<Side backgroundColor="13382451">
 				<Component template_component_id="2" name="Answer" x="0" y="50" width="260" height="60">
 					<TextBox>
 						<text variable="true">Answer</text>

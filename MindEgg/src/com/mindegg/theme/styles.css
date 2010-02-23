@@ -17,11 +17,15 @@
 	textDecoration: normal;
 	headerStyleName: dataGridHeader;
 }
-
+.dataGridHeader
+{
+	color: #EEEEEE;
+	fontWeight: bold;
+}
 Button.StandardButton
 {
 	borderColor: #000000;
-	color: #FB9221;
+	color: #FC575E;
 	fillAlphas: 0.0, 0.0, 0.0, 0.0;
 	cornerRadius: 0;
 	fontFamily: Verdana;
@@ -36,7 +40,7 @@ Button.SlimlineButton
 	paddingRight: 0;
 	paddingTop: 0;
 	textAlign: center;
-	color: #FB9221;
+	color: #FC575E;
 }
 .customScroll
 {
@@ -45,20 +49,4 @@ Button.SlimlineButton
     thumbUpSkin: ClassReference('com.mindegg.theme.skins.CustomSkinThumb');
     thumbOverSkin: ClassReference('com.mindegg.theme.skins.CustomSkinThumb');
     thumbDownSkin: ClassReference('com.mindegg.theme.skins.CustomSkinThumb');
-}
-.propertyFormItem
-{
-	color: #FFFFFF;
-}
-.propertyFormInput
-{
-	color: #000000;
-}
-.dataGridVerticalScrollBar
-{
-}
-.dataGridHeader
-{
-	color: #EEEEEE;
-	fontWeight: bold;
 }

@@ -26,7 +26,7 @@ package ascb.util {
 		      dTwo = new Date();
 		    }
 		    return new Date(dOne.getTime() - dTwo.getTime());
-		  }
+		  } 
 		
 		  public static function elapsedMilliseconds(dOne:Date, dTwo:Date = null, bDisregard:Boolean = false):Number {
 		    if(bDisregard) {

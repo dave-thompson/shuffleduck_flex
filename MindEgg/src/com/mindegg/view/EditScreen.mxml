@@ -3,10 +3,10 @@
 <mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
 				xmlns:me="com.mindegg.*"
 				xmlns:me_view="com.mindegg.view.*"
-				paddingLeft="2"
-				paddingRight="2"
-				paddingTop="2"
-				paddingBottom="2"
+				paddingLeft="10"
+				paddingRight="10"
+				paddingTop="0"
+				paddingBottom="10"
 				 backgroundAlpha="0.0">
   
 <!-- Web Services -->
@@ -38,33 +38,31 @@
 	</mx:Style>    
 	<mx:Style source="com/mindegg/theme/styles.css"/>
   
-	<mx:HBox backgroundColor="#000000" width="100%" height="50" horizontalGap="0" backgroundAlpha="0.0" verticalScrollPolicy="off" horizontalScrollPolicy="off">
-		<mx:HBox width="166" horizontalGap="0" id="mindEggLogo" toolTip="Return to Library " mouseOver="setStyle(&quot;backgroundColor&quot;, &quot;#FFFFFF&quot;)" mouseOut="setStyle(&quot;backgroundColor&quot;, &quot;#000000&quot;)" backgroundColor="#FFFFFF" backgroundAlpha="0.0" click="mindEggLogoClicked()" height="33">
-			<mx:Label text="Shuffle" fontSize="22" fontWeight="bold" color="#FFFFFF" fontStyle="italic"/>
-			<mx:Label text="Duck" fontSize="22" fontWeight="bold" color="#FB9221" fontStyle="italic"/>
-		</mx:HBox>
+	<mx:HBox backgroundColor="#000000" width="100%" height="55" horizontalGap="0" backgroundAlpha="0.0" verticalScrollPolicy="off" horizontalScrollPolicy="off">
+		
+		<mx:Label text="ShuffleDuck" fontSize="40" fontWeight="bold" color="#FFFFFF" fontStyle="italic" id="logoLabel" toolTip="Return to Library" mouseOver="logoLabel.setStyle(&quot;color&quot;, &quot;#000000&quot;)" mouseOut="logoLabel.setStyle(&quot;color&quot;, &quot;#FFFFFF&quot;)" click="mindEggLogoClicked()"/>
 		
 		<mx:VBox height="100%" verticalGap="0" width="100%">
 		
 			<mx:HBox width="100%">
-				<mx:Label text="{title}" color="#FFFFFF" id="deckNameLabel" fontSize="25" width="100%" height="36" textAlign="right"/>			
+				<mx:Label text="{title}" color="#172322" id="deckNameLabel" fontSize="25" width="100%" height="36" textAlign="right"/>			
 			</mx:HBox>
 			
 			<mx:HBox width="100%" horizontalGap="0">
 			 	<mx:Spacer width="100%"/>
-			 	<mx:Label text="Last Saved: " fontWeight="bold" color="#FFFFFF" fontSize="10"/>
-			 	<mx:Label text="{minutesSinceSave} mins ago" color="#FFFFFF" fontSize="10" id="lastSavedLabel"/>
-			 	<mx:Label text="[" fontWeight="bold" color="#FFFFFF" fontSize="10" textAlign="right" width="13"/>		    	
+			 	<mx:Label text="Last Saved: " fontWeight="bold" color="#172322" fontSize="10"/>
+			 	<mx:Label text="{_timeSinceSaveString}" color="#172322" fontSize="10" id="lastSavedLabel"/>
+			 	<mx:Label text="[" fontWeight="bold" color="#172322" fontSize="10" textAlign="right" width="13"/>		    	
 			 	<mx:Button label="save" styleName="StandardButton" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" height="17" textRollOverColor="0x25e9eb" alpha="0.0" click="saveDeckButtonClicked()" width="35"/>
-			 	<mx:Label text="]" fontWeight="bold" color="#FFFFFF" fontSize="10" width="12" textAlign="left"/>
+			 	<mx:Label text="]" fontWeight="bold" color="#172322" fontSize="10" width="12" textAlign="left"/>
 			</mx:HBox>
 
 		</mx:VBox>
 		
 	</mx:HBox>
 	<mx:HBox width="100%" height="100%">
-			<me_view:DeckViewer id="deckViewer" width="100%" backgroundColor="#9FA3A5" cornerRadius="10" borderStyle="solid" borderThickness="0" height="100%" paddingBottom="0"/>
-			<me_view:PropertiesPane id="propertiesPane" borderStyle="solid" borderThickness="0" cornerRadius="10" height="100%"/>
+			<me_view:DeckViewer id="deckViewer" width="100%" backgroundColor="#4C5C5E" cornerRadius="20" borderStyle="solid" borderThickness="5" height="100%" paddingBottom="0" borderColor="#FFFFFF"/>
+			<me_view:PropertiesPane id="propertiesPane" cornerRadius="20" height="100%" backgroundColor="#4C5C5E"/>
 	</mx:HBox>
   
   <mx:Script>
@@ -138,11 +136,13 @@
   		 [Bindable] private var userVisibleDeckID:uint; // the user visible deck id of the currently edited deck
   		 
   		 [Bindable] private var minutesSinceSave:uint;
+  		 [Bindable] private var _timeSinceSaveString:String;
   		 private var saveTimer:Timer;
   		 
   		 [Bindable] private var title:String;
   		 
   		 private var _savingDialog:SavingDialog;
+  		 private var _changedSinceSave:Boolean = false;
   		 
   		 [Embed(source="com/mindegg/assets/add_cursor.png")]
          [Bindable]
@@ -797,7 +797,7 @@
         private function completeSave(event:ResultEvent):void
         {
         	// reset the save timer
-			resetSaveTimer();
+			resetSaveTimer();			
   	    	
   	    	// remove Saving modal pop-up
   	    	PopUpManager.removePopUp(_savingDialog);	    	
@@ -808,12 +808,32 @@
 			// start counting time since last save from zero
 			minutesSinceSave = 0;
 			saveTimer.reset();
-			saveTimer.start();        	
+			saveTimer.start();
+			refreshTimeSinceSaveString();
+			
+			// recall that current state is the saved state
+			_changedSinceSave = false;
         }
         
         public function updateTimeSinceSave(event:TimerEvent):void
         {
         	minutesSinceSave++;
+			refreshTimeSinceSaveString();        	
+        }
+        
+        private function refreshTimeSinceSaveString():void
+        {
+  	    	switch(minutesSinceSave)
+  	    	{
+  	    		case 0:
+  	    			_timeSinceSaveString = "seconds ago";
+  	    			break;
+  	    		case 1:
+  	    			_timeSinceSaveString = "1 minute ago";
+  	    			break;
+  	    		default:
+  	    			_timeSinceSaveString = minutesSinceSave + " minutes ago";
+  	    	}
         }
         
         private function exitToLibrary():void

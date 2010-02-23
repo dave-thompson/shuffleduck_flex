@@ -146,7 +146,6 @@ package com.mindegg.data
 			return xmlString;
 		}
 
-
 		/**
 		 * GETTERS & SETTERS
 		 * 
