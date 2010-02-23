@@ -2,24 +2,23 @@ package com.mindegg.data
 {
 	import com.mindegg.utils.AttributeConstants;
 	
-	import flash.events.EventDispatcher;
 	import flash.text.TextFormatAlign;
 
-	public class Side extends EventDispatcher
+	public class Side extends DataModelItem
 	{		
 		private var _components:Array;
-		public var backgroundColor:uint;
+		private var _backgroundColor:uint;
 		
 		public function Side()
 		{
-			backgroundColor = 0xFFFFFF;
-			 _components = new Array();
+			_backgroundColor = 0xFFFFFF;
+			_components = new Array();
 		}
 		
 		public function loadWithXML(xmlSide:XML):Side
 		{
 			// get side data
-			backgroundColor = xmlSide.attribute("backgroundColor");
+			_backgroundColor = xmlSide.attribute("backgroundColor");
 			
 			// delete any existing content
 			_components = new Array();	
@@ -103,7 +102,7 @@ package com.mindegg.data
 					else					{tb.setFixed(AttributeConstants.ALIGNMENT);}
 					
 					// add the component to the side
-					this.addComponent(tb);						
+					this.addComponent(tb);					
 				}
 				else if (xmlComponent.Image.length > 0)
 				{
@@ -116,7 +115,7 @@ package com.mindegg.data
 		public function clone():Side
 		{
 			var clonedSide:Side = new Side();
-			clonedSide.backgroundColor = this.backgroundColor;
+			clonedSide._backgroundColor = this._backgroundColor;
 			for (var i:uint = 0; i <_components.length; i++)
 			{
 				clonedSide.addComponent(this._components[i].clone());	
@@ -128,11 +127,12 @@ package com.mindegg.data
 		public function deleteComponentWithIndex(index:uint):void
 		{
 			_components.splice(index, 1);
+			raiseChangeEvent();
 		}
 		
 		public function toXMLString():String
 		{
-			var xmlString:String = "<Side backgroundColor=\"" + backgroundColor + "\">";
+			var xmlString:String = "<Side backgroundColor=\"" + _backgroundColor + "\">";
 			
 				for (var i:uint = 0; i < _components.length; i++)
 				{
@@ -161,6 +161,8 @@ package com.mindegg.data
 		public function addComponent(component:Component):void
 		{
 			_components.push(component);
+			startPropogatingChangeEventsFrom(component);
+			raiseChangeEvent();
 		}
 		
 		public function getComponentWithTemplateComponentID(id:uint):Component
@@ -177,15 +179,7 @@ package com.mindegg.data
 			
 			return result;
 		}
-		
-		/*
-		public function sideNumber():uint
-		{
-			var ownerCard:Card = this.parent as Card;
-			return ownerCard.getSideNumber(this);
-		}
-		*/
-		
+				
 		/**
 		 *		Parameters:	N / A
 		 * 		Returns:	a 2-dimensional array of [templateComponentID, AttributeConstants.CONSTANT],
@@ -212,6 +206,17 @@ package com.mindegg.data
 				}
 			}
 			return fullResult;
+		}
+		
+		public function get backgroundColor():uint
+		{
+			return _backgroundColor;
+		}
+		
+		public function set backgroundColor(color:uint):void
+		{
+			_backgroundColor = color;
+			raiseChangeEvent();
 		}
 		 		
 	}

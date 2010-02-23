@@ -67,6 +67,7 @@
   
   <mx:Script>
   	<![CDATA[
+  		import com.mindegg.data.Deck;
   		import mx.events.FlexEvent;
   		import com.mindegg.view.CornerCircle;
   		import com.mindegg.view.UIUserComponent;
@@ -99,6 +100,7 @@
 		import mx.controls.Alert;
 		import com.adobe.utils.DateUtil;
 		import mx.managers.PopUpManagerChildList;
+		import com.mindegg.data.DataModelItem;
 		
   		 public static const ROLL_OVER_COLOR:uint = 0x25e9eb;
   		 
@@ -216,8 +218,15 @@
   	    
   	    private function mindEggLogoClicked():void
   	    {
-  	    	// show a dialog asking if the user would like to save or not, and act on their choice (via function processUserExitChoice)
-			Alert.show("Save Changes before closing?", "Save", Alert.YES|Alert.NO|Alert.CANCEL, this, processUserExitChoice, null, Alert.CANCEL);
+  	    	if (_changedSinceSave)
+  	    	{
+	  	    	// show a dialog asking if the user would like to save or not, and act on their choice (via function processUserExitChoice)
+				Alert.show("Save Changes before closing?", "Save", Alert.YES|Alert.NO|Alert.CANCEL, this, processUserExitChoice, null, Alert.CANCEL);
+  	    	}
+  	    	else
+  	    	{
+  	    		exitToLibrary();
+  	    	}
   	    }
   	    
 		private function processUserExitChoice(eventObj:CloseEvent):void
@@ -298,9 +307,15 @@
 			var rails_xml_string:XML = event.result as XML;
 			var deck_details_xml_string:XML = rails_xml_string.xml_string[0];
 			 // load the deck
-        	deckViewer.showDeck(deck_details_xml_string);
+			var currentlyShownDeck:Deck = deckViewer.showDeck(deck_details_xml_string);
+			currentlyShownDeck.addEventListener(DataModelItem.DATA_MODEL_CHANGE, recallDeckChanged);
   		}
 
+		private function recallDeckChanged(event:CustomEvent):void
+		{
+			//trace(new Date());
+			_changedSinceSave = true;
+		}
 
 
   	    /**********************

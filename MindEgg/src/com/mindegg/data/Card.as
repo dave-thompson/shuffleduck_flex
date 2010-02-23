@@ -2,7 +2,7 @@ package com.mindegg.data
 {
 	import flash.utils.ByteArray; 
 	
-	public class Card
+	public class Card extends DataModelItem
 	{
 		private var _sides:Array;
 		
@@ -30,19 +30,7 @@ package com.mindegg.data
 				this.addSide(side.loadWithXML(xmlSide));
 			}
 			return this;
-		}
-
-		
-		/*
-		public function Card(numberSides:int)
-		{
-			_sides = new Array();
-			for (var sidesCreated:int = 0; sidesCreated < numberSides; sidesCreated++)
-			{
-				this.newSide();
-			}
-		}
-		*/
+		}		
 
 		public function clone():Card
 		{
@@ -73,12 +61,16 @@ package com.mindegg.data
 		{
 			var side:Side = new Side();
 			_sides.push(side);
+			startPropogatingChangeEventsFrom(side);
+			raiseChangeEvent();
 			return side;
 		}
 		
 		public function addSide(side:Side):void
 		{
 			_sides.push(side);
+			startPropogatingChangeEventsFrom(side);
+			raiseChangeEvent();
 		}
 		
 		public function numSides():uint
@@ -90,15 +82,7 @@ package com.mindegg.data
 		{
 			return _sides[index];
 		}
-		
-		/*
-		public function getSideNumber(side:Side):uint
-		{
-			// concerned that this does a value match rather than an object match; it needs to be the latter
-			return _sides.indexOf(side) + 1;
-		}
-		*/
-		
+				
 		/**
 		 *		Parameters:	id = the templateComponentID from which to identify a component within this card
 		 * 		Returns:	the component requested
@@ -117,7 +101,6 @@ package com.mindegg.data
 					result = sidesReturnedComponent;
 				}
 			}
-			
 			return result;
 		}
 		

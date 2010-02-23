@@ -4,7 +4,7 @@ package com.mindegg.data
 	import com.mindegg.utils.XMLFormatter;
 	import flash.text.TextFormatAlign;
 	
-	public class Deck
+	public class Deck extends DataModelItem
 	{
 		
 		private var _template:Card;
@@ -29,6 +29,7 @@ package com.mindegg.data
 			var templateCardXML:XML = deck.Template[0].Card[0];
 			_template = new Card();
 			_template.loadWithXML(templateCardXML);
+			startPropogatingChangeEventsFrom(_template);
 				
 			// Process Cards
 			var cardsXML:XML = deck.Cards[0];
@@ -36,7 +37,7 @@ package com.mindegg.data
 			for each (var cardXML:XML in cardsXML.Card)
 			{
 				var card:Card = new Card();
-				_cards.push(card.loadWithXML(cardXML));
+				addCard(card.loadWithXML(cardXML));
 			}				
 		}
 
@@ -67,6 +68,7 @@ package com.mindegg.data
    			{
    				components[i].name = newName;
    			}
+			raiseChangeEvent();
    		}
 
 		/**
@@ -93,22 +95,37 @@ package com.mindegg.data
 		 *  LOGIC METHODS
 		 */
 
+		/**
+		 *  Adds the given card to the end of the deck.
+		 */
+		public function addCard(card:Card):void
+		{
+			// add that card to the deck
+			_cards.push(card);
+			// watch for changes
+			startPropogatingChangeEventsFrom(card);
+			raiseChangeEvent();
+		}
+
+
 		public function newCard():void
 		{
 			// create a new card based on the template
 			var card:Card = _template.clone();	
-			// add that card to the deck
-			_cards.push(card);
+			addCard(card);
 		}
 		
 		public function deleteCard(index:uint):void
 		{
 			_cards.splice(index,1);
+			raiseChangeEvent();			
 		}
 		
 		public function insertCardAtIndex(card:Card, index:uint):void
 		{
 			_cards.splice(index, 0, card);
+			startPropogatingChangeEventsFrom(card);
+			raiseChangeEvent();
 		}
 		
 		public function changeCardPosition(oldCardNumber:uint, newCardNumber:uint):void
@@ -122,6 +139,8 @@ package com.mindegg.data
 			var cardToMove:Card = getCardAtIndex(oldCardIndex);
 			deleteCard(oldCardIndex);
 			insertCardAtIndex(cardToMove, newCardIndex);
+			
+			// no raiseChangeEvent() required - it is called implicitly through deleteCard and insertCardAtIndex 
 		}
 
 		public function toXMLString():String
@@ -159,6 +178,7 @@ package com.mindegg.data
 		public function set deckName(name:String):void
 		{
 			_deckName = name;
+			raiseChangeEvent();
 		}
 		
 		public function get deckName():String

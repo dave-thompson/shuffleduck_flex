@@ -140,6 +140,7 @@ package com.mindegg.data
 					case AttributeConstants.ALIGNMENT:
 						_alignment.variable = true;
 				}
+				raiseChangeEvent();
 			}
 		}
 		
@@ -175,6 +176,7 @@ package com.mindegg.data
 					case AttributeConstants.ALIGNMENT:
 						_alignment.variable = false;
 				}
+				raiseChangeEvent();
 			}
 		}
 		
@@ -292,6 +294,7 @@ package com.mindegg.data
 					case AttributeConstants.ALIGNMENT:
 						// TO WRITE
 				}
+				raiseChangeEvent();
 			}
 			return errorString;
 		}
@@ -310,7 +313,7 @@ package com.mindegg.data
 			}
 			
 			// append any variable attributes from component
-			return super.getVariableAttributes().concat(textBoxResult);			
+			return super.getVariableAttributes().concat(textBoxResult);
 		}
 
 		
@@ -320,32 +323,40 @@ package com.mindegg.data
 		public function set text(text:String):void
 		{
 			this._text.value = text;
+			raiseChangeEvent();
 		}
 		
 		public function set fontSize(fontSize:Number):void
 		{
 			this._fontSize.value = fontSize;
+			raiseChangeEvent();
 		}
 		
 		public function set backgroundColor(backgroundColor:uint):void
 		{
 			this._backgroundColor.value = backgroundColor;
+			raiseChangeEvent();
 		}
 
 		public function set backgroundTransparent(backgroundTransparency:Boolean):void
 		{
 			this._backgroundTransparent.value = backgroundTransparency;
+			raiseChangeEvent();
 		}
 		
 		public function set foregroundColor(foregroundColor:uint):void
 		{
 			this._foregroundColor.value = foregroundColor;
+			raiseChangeEvent();
 		}
 		
 		public function set alpha(alpha:Number):void
 		{
 			if (0.0 <= alpha <= 1.0)
-				{this._alpha.value = alpha;}
+				{
+					this._alpha.value = alpha;
+					raiseChangeEvent();
+				}
 			else
 				{throw Error("Alpha can not be set to a value outside the range 0-1.");}
 
@@ -356,6 +367,7 @@ package com.mindegg.data
 			if ((alignment == TextFormatAlign.CENTER) || (alignment == TextFormatAlign.RIGHT) || (alignment == TextFormatAlign.LEFT))
 			{
 				this._alignment.value = alignment;
+				raiseChangeEvent();
 			}
 			else
 			{
@@ -368,6 +380,7 @@ package com.mindegg.data
 			if (font == "Arial")
 			{
 				this._font.value = font;
+				raiseChangeEvent();
 			}
 			else
 				{throw Error("Font must be set to one of the following: \"Arial\".");}

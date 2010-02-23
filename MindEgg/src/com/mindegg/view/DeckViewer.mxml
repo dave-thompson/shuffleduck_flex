@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="296" verticalGap="10" backgroundColor="#3D464B" paddingLeft="10" paddingRight="10" paddingTop="10" paddingBottom="10" currentState="cards" height="430" xmlns:ns1="com.mindegg.view.spinner.*">
+<mx:VBox 	xmlns:mx="http://www.adobe.com/2006/mxml"
+			width="296"
+			verticalGap="10"
+			backgroundColor="#3D464B"
+			paddingLeft="10"
+			paddingRight="10"
+			paddingTop="10"
+			paddingBottom="10"
+			currentState="cards"
+			height="430"
+			xmlns:ns1="com.mindegg.view.spinner.*">
+			
    <mx:states>
       <mx:State name="template">
          <mx:SetStyle target="{templateButton}" name="color" value="#FFFFFF"/>
@@ -543,7 +554,7 @@
 			}
 		}
 				
-		public function showDeck(xmlString:String):void
+		public function showDeck(xmlString:String):Deck
         {
 	        	_deck = new Deck(xmlString);
 	        	
@@ -553,8 +564,10 @@
 	        	// draw the template
 	        	drawNewCard(_deck.template, TEMPLATE, SCROLL_TO_BEGINNING);
 	        	
-	        	// come out of the loding state
+	        	// come out of the loading state
 	        	setLoading(false);
+	        	
+	        	return _deck;
         }
         
         /**

@@ -6,7 +6,7 @@ package com.mindegg.data
 	import flash.events.EventDispatcher;
 	import flash.utils.getQualifiedClassName;
 
-	public class Component extends EventDispatcher // abstract class
+	public class Component extends DataModelItem // abstract class
 	{
 		public static const COMPONENT_SELECTED:String = "com.mindegg.data.Component::COMPONENT_SELECTED";
 		public static const COMPONENT_DESELECTED:String = "com.mindegg.data.Component::COMPONENT_DESELECTED";
@@ -69,16 +69,22 @@ package com.mindegg.data
 			// set the component's templateComponentID
 			_templateComponentID = _nextTemplateComponentID;
 			_nextTemplateComponentID ++;
+			
 			// set the component's default name
 			_name = getQualifiedClassName(this).substring(18) + " " + _templateComponentID;
+			
+			raiseChangeEvent();
 		}
 		
 		public function detachFromTemplate():void
 		{
 			// set templateComponent ID to -1 to indicate that this component is not found on the template
 			_templateComponentID = -1;
+			
 			// remove name from the component
 			_name = "Card Specific " + getQualifiedClassName(this).substring(18);
+			
+			raiseChangeEvent();
 		}
 		
 		public function toXMLString():String // abstract
@@ -150,6 +156,7 @@ package com.mindegg.data
 				case AttributeConstants.HEIGHT:
 					_height.variable = true;
 			}
+			raiseChangeEvent();
 		}
 		
 		public function setFixed(attribute:uint):void
@@ -168,7 +175,7 @@ package com.mindegg.data
 				case AttributeConstants.HEIGHT:
 					_height.variable = false;
 			}
-	
+			raiseChangeEvent();
 		}
 		
 		public function isVariable(attribute:uint):Boolean
@@ -236,6 +243,7 @@ package com.mindegg.data
 				case AttributeConstants.HEIGHT:
 					// TO WRITE
 			}
+			raiseChangeEvent();
 			return errorString;
 		}
 		
@@ -282,26 +290,31 @@ package com.mindegg.data
 		public function set x(value:uint):void
 		{
 			this._x.value = value;
+			raiseChangeEvent();
 		}
 
 		public function set y(value:uint):void
 		{
 			this._y.value = value;
+			raiseChangeEvent();
 		}
 
 		public function set width(value:uint):void
 		{
 			this._width.value = value;
+			raiseChangeEvent();
 		}
 
 		public function set height(value:uint):void
 		{
 			this._height.value = value;
+			raiseChangeEvent();
 		}
 		
 		public function set name(name:String):void
 		{
 			this._name = name;
+			raiseChangeEvent();
 		}
 		
 		public function set templateComponentID(id:int):void
@@ -313,6 +326,7 @@ package com.mindegg.data
 			{
 				_nextTemplateComponentID = this.templateComponentID + 1;
 			}
+			raiseChangeEvent();
 		}
 
 

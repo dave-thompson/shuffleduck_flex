@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="176" backgroundColor="#80B4E9" creationComplete="setup()" borderStyle="solid" borderThickness="5" cornerRadius="10" height="507" borderColor="#FFFFFF">
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="176" backgroundColor="#4C5C5E" borderStyle="solid" borderThickness="5" cornerRadius="10" height="507" borderColor="#FFFFFF">
 
 	<mx:states>
 		<mx:State name="off">
@@ -101,19 +101,13 @@
 		import com.mindegg.utils.CustomEvent;
 		import flash.text.TextFormatAlign;
 		import mx.events.FlexEvent;
+		import mx.events.ItemClickEvent;
 		
 		public static const COMPONENT_NAME_CHANGE:String = "componentNameChange";
 					
 		private var _component:Component; // the component currently being edited
 		private var _uiUserComponent:UIUserComponent; // the UIUserComponent representing the current component on screen
 		private var _cardViewer:CardViewer; // the CardViewer being edited (when in "card" status only)
-		
-		public function setup():void
-		{
-			// This event listener can't be added inline in MXML as it would fire before the component is created
-			// (valueCommit is fired by programmatic changes as well as by the user changing the selectedIndex through clicking)
-			alignmentToggleButtonBar.addEventListener(FlexEvent.VALUE_COMMIT, onChange);			
-		}	
 		
 		public function setContext(component:Component, uiUserComponent:UIUserComponent, isTemplate:Boolean):void
 		{
@@ -154,6 +148,9 @@
 					alignmentToggleButtonBar.selectedIndex = 2;
 					break;	
 			}
+			
+			// listen for change events from the alignment buttons
+			alignmentToggleButtonBar.addEventListener(ItemClickEvent.ITEM_CLICK, onChange);
 		}
 		
 		public function setCardContext(cardViewer:CardViewer, isTemplate:Boolean):void
@@ -171,72 +168,83 @@
 				
 		public function clearContext():void
 		{
+			// stop listening to change events from the alignment buttons
+			alignmentToggleButtonBar.removeEventListener(ItemClickEvent.ITEM_CLICK, onChange);
+			
+			// clear the properties
 			_component = null;
+			_cardViewer = null;
 			currentState = "off";
 		}
 		
 		private function onChange(e:Event):void
-		{
+		{	
+			// if editing a TextBox
 			if ((currentState == "textbox") || (currentState == "template_textbox"))
 			{
-				if (e.target == nameTextInput) // name changes require special handling - names across all matching components must be changed
+				var textBox:TextBox = _component as TextBox;
+
+				if (e.target == nameTextInput)
 				{
-					// the application needs to handle this
+					// names across all matching components must be changed: the application needs to handle this
 					var params:Object = new Object();
 					params.newName = nameTextInput.text;
 					params.component = _component;
 			    	var event:CustomEvent = new CustomEvent(COMPONENT_NAME_CHANGE, params, true);
 			    	dispatchEvent(event);
 				}
-				else
+				else if (e.target == foregroundColorPicker)
 				{
-					// update data model
-						// if editing a textbox, update textbox specific data items
-						var textBox:TextBox = _component as TextBox;
-						textBox.fontSize = fontSizeNumericStepper.value;
-						textBox.foregroundColor = foregroundColorPicker.selectedColor;
-					
-						switch (alignmentToggleButtonBar.selectedIndex)
-						{
-							case 0:
-								textBox.alignment = "left";
-								break;
-							case 1:
-								textBox.alignment = "center";
-								break;
-							case 2:
-								textBox.alignment = "right";
-								break;	
-						}
-						
-						// As clearBackgroundButton does not hold its own state, background interactions require special handling
-						if (e.target == backgroundColorPicker)
-						{
-							// set background to opaque and the choosen colour
-							textBox.backgroundTransparent = false;						
-							textBox.backgroundColor = backgroundColorPicker.selectedColor;
-						}
-						if (e.target == clearBackgroundButton)
-						{
-							// set background to transparent
-							textBox.backgroundTransparent = true;
-							
-							// set backgroundColor to light grey to give user feeling that it has no colour
-							textBox.backgroundColor = 0xCCCCCD;
-							backgroundColorPicker.selectedColor = textBox.backgroundColor;
-						}
-	
-					
-					// update drawn component on screen
-					_uiUserComponent.redraw();
+					textBox.foregroundColor = foregroundColorPicker.selectedColor;	
 				}
+				else if (e.target == fontSizeNumericStepper)
+				{
+					textBox.fontSize = fontSizeNumericStepper.value;					
+				}
+				else if (e.target == alignmentToggleButtonBar)
+				{
+					switch (alignmentToggleButtonBar.selectedIndex)
+					{
+						case 0:
+							textBox.alignment = "left";
+							break;
+						case 1:
+							textBox.alignment = "center";
+							break;
+						case 2:
+							textBox.alignment = "right";
+							break;	
+					}
+				}
+				else if (e.target == backgroundColorPicker)
+				{
+					// set background to opaque and the choosen colour
+					textBox.backgroundTransparent = false;						
+					textBox.backgroundColor = backgroundColorPicker.selectedColor;					
+				}
+				else if (e.target == clearBackgroundButton)
+				{
+					// set background to transparent
+					textBox.backgroundTransparent = true;
+					
+					// set backgroundColor to light grey to give user feeling that it has no colour
+					textBox.backgroundColor = 0xCCCCCD;
+					backgroundColorPicker.selectedColor = textBox.backgroundColor;					
+				}
+				// update drawn component on screen
+				_uiUserComponent.redraw();
 			}
+			// if editing a Card
 			else if (currentState == "card")
 			{
-				// update data model
-				_cardViewer.getUISideNumber(1).side.backgroundColor = side1ColorPicker.selectedColor;
-				_cardViewer.getUISideNumber(2).side.backgroundColor = side2ColorPicker.selectedColor;
-					
+				if (e.target == side1ColorPicker)
+				{
+					_cardViewer.getUISideNumber(1).side.backgroundColor = side1ColorPicker.selectedColor;					
+				}
+				else if (e.target == side2ColorPicker)
+				{
+					_cardViewer.getUISideNumber(2).side.backgroundColor = side2ColorPicker.selectedColor;					
+				}
 				// update drawn component on screen
 				_cardViewer.redraw();
 			}
