@@ -3,14 +3,26 @@
 <mx:VBox	    xmlns:mx="http://www.adobe.com/2006/mxml"
 				xmlns:me="com.mindegg.*"
 				xmlns:me_view="com.mindegg.view.*"
-				paddingLeft="2"
-				paddingRight="2"
-				paddingTop="2"
-				paddingBottom="2"
+				xmlns:sp="com.mindegg.view.spinner.*"
+				paddingLeft="20"
+				paddingRight="20"
+				paddingTop="20"
+				paddingBottom="20"
 				width="100%"
 				height="100%"
 				backgroundAlpha="0.0"
 				creationComplete="setup()">
+	<mx:states>
+		<mx:State name="loading">
+			<mx:RemoveChild target="{hbox1}"/>
+			<mx:RemoveChild target="{deckListingsVBox}"/>
+			<mx:AddChild relativeTo="{decksVBox}" position="lastChild">
+				<sp:Spinner id="spinner" toolTip="Loading your cards" tickColor="#86C9EF" size = "55" numTicks = "12" tickWidth = "6" speed = "1000" fadeSpeed = "400"/>
+			</mx:AddChild>
+			<mx:SetStyle target="{decksVBox}" name="horizontalAlign" value="center"/>
+			<mx:SetStyle target="{decksVBox}" name="verticalAlign" value="middle"/>
+		</mx:State>
+	</mx:states>
 			
 <!-- Web Services -->
 <mx:HTTPService id="decksIndex" url="{MindEgg.CONTEXT_URL}/decks" resultFormat="e4x" result="decksIndexResult(event)"/>
@@ -31,8 +43,8 @@
 <!-- UI -->
   <mx:Style source="com/mindegg/theme/styles.css"/>
 			
-  <mx:HBox id="topHBox" width="100%" height="33" horizontalGap="0" backgroundColor="#FFFFFF">
-    <mx:Label text="Shuffle" fontSize="22" fontWeight="bold" color="#25E9EB" fontStyle="italic"/>
+  <mx:HBox id="topHBox" width="100%" height="33" horizontalGap="0" backgroundColor="#86C9EF" backgroundAlpha="0.0">
+    <mx:Label text="Shuffle" fontSize="22" fontWeight="bold" color="#FFFFFF" fontStyle="italic"/>
     <mx:Label text="Duck" fontSize="22" fontWeight="bold" color="#FB9221" fontStyle="italic"/>
     <mx:Spacer width="100%"/>
     <mx:Label text="" height="16" color="#000000" id="usernameLabel" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" width="148" textAlign="right"/>
@@ -41,13 +53,13 @@
     <mx:Label text="]" height="16" color="#000000" id="usernameLabel0" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" width="8"/>
   </mx:HBox>
   <mx:HBox id="mainHBox" width="100%" height="100%">	
-    <mx:VBox id="decksVBox" width="100%" height="100%" borderStyle="solid" backgroundColor="#09D9F2" paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5">
-      <mx:HBox width="100%">
+    <mx:VBox id="decksVBox" width="100%" height="100%" borderStyle="solid" backgroundColor="#FFFFFF" paddingBottom="10" paddingLeft="20" paddingTop="15" cornerRadius="20" borderThickness="0" paddingRight="20">
+      <mx:HBox width="100%" id="hbox1">
         <mx:Label text="Library" fontSize="22" fontWeight="bold" color="#000000" fontStyle="italic"/>
         <mx:Spacer width="100%"/>
         <mx:Button label="+ New Deck" click="newDeckButtonClicked()" id="newDeckButton" styleName="SlimlineButton" height="33" width="86" textRollOverColor="0x25e9eb"/>
       </mx:HBox>
-      <mx:VBox width="100%" id="deckListingsVBox" minHeight="0" minWidth="0" verticalScrollBarStyleName="customScroll" height="100%" resize="resizeDeckListingsVBox()" horizontalScrollPolicy="off">
+      <mx:VBox width="100%" id="deckListingsVBox" minHeight="0" minWidth="0" verticalScrollBarStyleName="customScroll" height="100%" resize="resizeDeckListingsVBox()" horizontalScrollPolicy="off" verticalGap="15" paddingRight="10">
       </mx:VBox>
     </mx:VBox>
   </mx:HBox>
@@ -56,6 +68,7 @@
 				
   <mx:Script>
   	<![CDATA[
+  		import mx.events.FlexEvent;
 
 		import com.mindegg.utils.CustomEvent;
 		import com.adobe.utils.DateUtil;
@@ -76,17 +89,19 @@
   		 ********************/
   		 
   		public function setup():void
-		{				
+		{							
 			// build HTTPService headers
 			deleteHeader["X-HTTP-METHOD-OVERRIDE"] = "delete";
-			
+
 			// retrieve user's decks from server
+			setLoading(true);
 			decksIndex.send();
-			
+
 			 // Set up event listeners
 		     this.addEventListener(DeckListing.DECK_DELETE_REQUESTED, deleteDeck);
 		     this.addEventListener(DeckListing.DECK_DUPLICATION_REQUESTED, duplicateDeck);
 		}
+		
 		
 		public function setUsername(aUsername:String):void
 		{
@@ -198,6 +213,7 @@
 			var decks:XML = event.result as XML;
 			
 			// clear deck listing
+			setLoading(false);
 			deckListingsVBox.removeAllChildren();
 			
 			// loop through XML string, creating deck listings and adding them to the screen
@@ -219,6 +235,20 @@
   				listing.resetTitleLabelLength();
   			}
   		}
+
+		private function setLoading(loading:Boolean):void
+		{
+			if (loading)
+			{
+				currentState = "loading";
+				if (spinner) spinner.play(); // if the spinner has been created, play it; if not, allow it to autoplay as soon as creation completes
+			}
+			else
+			{
+				currentState = "";
+				spinner.stop();
+			}
+		}
 
   	]]>
   </mx:Script>

@@ -40,8 +40,15 @@ package com.mindegg.view.preloaders
 			this.loadBytes(byteArray);
 		}
 
+		public function getBitmap():Bitmap {
+			var bmpData:BitmapData = drawProgress();
+			var bmp:Bitmap = new Bitmap(bmpData);
+			return bmp;
+		}
+
 		// Draws the screen graphic to a BitmapData for display		
-		private function drawProgress():BitmapData {
+		private function drawProgress():BitmapData
+		{
 
 			// Create a new sprite and graphics context for manual drawing
 			var sprite:Sprite = new Sprite();
@@ -63,7 +70,7 @@ package com.mindegg.view.preloaders
 			graph.endFill();
 
 			// Draw our progress bar onto the sprite's graphics
-			graph.beginFill(0x338844);
+			graph.beginFill(0xFCBC4F);
 			graph.drawRoundRect(_progressBarHorizOffset, 
 				height-_progressBarBottomOffset-_progressBarHeight,
 				(width-_progressBarHorizOffset-_progressBarHorizOffset)*_progress, 

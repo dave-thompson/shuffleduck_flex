@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
-				backgroundColor="#000000"
 				xmlns:me="com.mindegg.*"
 				xmlns:me_view="com.mindegg.view.*"
 				paddingLeft="2"
@@ -64,8 +63,8 @@
 		
 	</mx:HBox>
 	<mx:HBox width="100%" height="100%">
-			<me_view:DeckViewer id="deckViewer" width="100%" backgroundColor="#57666E" cornerRadius="10" borderStyle="solid" borderThickness="0" height="100%"/>
-			<me_view:PropertiesPane id="propertiesPane" backgroundColor="#57666E" borderStyle="solid" borderThickness="0" cornerRadius="10" height="100%"/>
+			<me_view:DeckViewer id="deckViewer" width="100%" backgroundColor="#9FA3A5" cornerRadius="10" borderStyle="solid" borderThickness="0" height="100%" paddingBottom="0"/>
+			<me_view:PropertiesPane id="propertiesPane" borderStyle="solid" borderThickness="0" cornerRadius="10" height="100%"/>
 	</mx:HBox>
   
   <mx:Script>
@@ -193,7 +192,7 @@
 				this.addEventListener(MouseEvent.MOUSE_OUT, mouseOut);			
 			
 				// Keyboard events
-				this.stage.addEventListener(KeyboardEvent.KEY_DOWN,keyDownListener);
+				this.addEventListener(KeyboardEvent.KEY_DOWN,keyDownListener);
 				
 				_setupCompleted = true;
 			}
@@ -299,7 +298,7 @@
 			var rails_xml_string:XML = event.result as XML;
 			var deck_details_xml_string:XML = rails_xml_string.xml_string[0];
 			 // load the deck
-        	deckViewer.loadDeck(deck_details_xml_string);
+        	deckViewer.showDeck(deck_details_xml_string);
   		}
 
 
@@ -382,8 +381,7 @@
 				if (e.keyCode == 8) // delete key
 				{
 					if (_status == STATUS_COMPONENT_SELECTED)
-					{
-						if (this.focusManager.getFocus() == null) // not editing attributes
+					{						if (this.focusManager.getFocus() == null) // not editing attributes
 						{
 							deleteCurrentComponent();
 						}
@@ -821,13 +819,12 @@
         private function exitToLibrary():void
         {
         	// clear the current deck
-        	deckViewer.clearContext();
+        	deckViewer.clear();
         	
         	// raise event so that application may change state back to the library
 			var params:Object = new Object();
 	    	var newEvent:CustomEvent = new CustomEvent(RETURN_TO_LIBRARY_REQUEST, params, true);
 	    	dispatchEvent(newEvent);
-
         }
 
 

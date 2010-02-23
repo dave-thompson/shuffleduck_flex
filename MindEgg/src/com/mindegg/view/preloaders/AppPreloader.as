@@ -11,7 +11,7 @@ package com.mindegg.view.preloaders
 
 	public class AppPreloader extends DownloadProgressBar
 	{
-		private var preloaderScreen:PreloaderScreen= new PreloaderScreen();
+		private var preloaderScreen:PreloaderScreen = new PreloaderScreen();
 		
 		public function AppPreloader()
 		{

@@ -9,38 +9,37 @@
 				paddingTop="2"
 				paddingBottom="2"
 				backgroundGradientAlphas="[1.0, 1.0]"
-				backgroundGradientColors="[#062C7A, #000000]"
 				preloader="com.mindegg.view.preloaders.AppPreloader"
 				applicationComplete="initialSetup()"
-				 backgroundColor="#062C7A">
+				backgroundColor="#86C9EF" horizontalAlign="center" verticalAlign="middle">
 				 
  <mx:Style source="com/mindegg/theme/styles.css"/>
- 
- <mx:Spacer id="leftSpacer" width="100%"/>				
- <me_view:FrontPage id="frontPage" height="100%" width="950"/>
- <mx:Spacer id="rightSpacer" width="100%"/>
+ 				
+ <me_view:FrontPage id="frontPage" height="100%" width="950" horizontalAlign="center" verticalAlign="middle"/>
 				
   <mx:states>
 
     <mx:State name="homeScreen">
       <mx:AddChild position="lastChild">
-        <me_view:LibraryScreen id="homeScreen" backgroundColor="#FFFFFF">
+        <me_view:LibraryScreen id="homeScreen" backgroundColor="#771C1C" backgroundAlpha="0.0">
         </me_view:LibraryScreen>
       </mx:AddChild>
       <mx:RemoveChild target="{frontPage}"/>
-      <mx:RemoveChild target="{leftSpacer}"/>
-      <mx:RemoveChild target="{rightSpacer}"/>
-      <mx:SetStyle name="backgroundColor" value="#FFFFFF"/>
       <mx:SetStyle name="backgroundGradientAlphas"/>
       <mx:SetStyle name="backgroundGradientColors"/>
     </mx:State>
     <mx:State name="editScreen">
       <mx:RemoveChild target="{frontPage}"/>
-      <mx:RemoveChild target="{leftSpacer}"/>
-      <mx:RemoveChild target="{rightSpacer}"/>
       <mx:AddChild position="lastChild">
         <me_view:EditScreen id="editScreen" width="100%" height="100%">
         </me_view:EditScreen>
+      </mx:AddChild>
+    </mx:State>
+    <mx:State name="loading">
+      <mx:RemoveChild target="{frontPage}"/>
+      <mx:AddChild position="lastChild">
+<!--        <mx:HBox width="100%" height="100%" horizontalAlign="center" verticalAlign="middle" id="loadingHBox"/> -->
+        <mx:UIComponent width="100%" height="100%" id="bitmapUIComponent"/>
       </mx:AddChild>
     </mx:State>
   </mx:states>
@@ -58,6 +57,7 @@
   		import com.mindegg.view.DebugDialog;
   		import com.mindegg.view.DeckListing;
   		import mx.rpc.events.ResultEvent;
+  		import com.mindegg.view.preloaders.PreloaderScreen;
 
 		// Version Numbers
   		public static const XML_VERSION_NO:String 								= "0.01";
@@ -72,6 +72,8 @@
 		public static const USER_LOGGED_IN:String = "userLoggedIn";
 		public static const USER_LOGGED_OUT:String = "userLoggedOut";
 		public static const DEBUG_POP_UP_REQUEST:String = "debugPopUpRequest";
+  		 
+  		private var preloaderScreen:PreloaderScreen = new PreloaderScreen(); // a copy of the preloader screen that will be displayed while session information is retrieved, thereby providing a seamless session loading experience to the user
   		 
   		/********************
   		 * Constructor
@@ -91,15 +93,20 @@
 				// Events from EditScreen
 				this.addEventListener(EditScreen.RETURN_TO_LIBRARY_REQUEST, returnToLibrary);
 				
-				
 				// Other events
 				this.addEventListener(MindEgg.DEBUG_POP_UP_REQUEST, popUpDebugMessage);
 			
 			// set up application
 			currentState="editScreen";
 			currentState="";
-			frontPage.setup();
+			currentState="loading";
 			
+			// continue showing the preloader screen until the session has been loaded
+			bitmapUIComponent.width = preloaderScreen.width;
+			bitmapUIComponent.height = preloaderScreen.height;
+			preloaderScreen.progress = 1;
+			bitmapUIComponent.addChild(preloaderScreen.getBitmap());
+
 			// check to see if there is a session in progress, and if so go to the library screen
 			sessionShow.send();
 		}
@@ -118,14 +125,15 @@
 			}
 			else // a user wasn't returned - therefore we should serve the login page
 			{
-				
+				currentState = "";
 			}
 		}
 		
 		private function sessionDetailsFault(event:Event):void
   	    {
   	    	// for some reason the server wasn't reached to provide a session or otherwise - most likely the user has no connectivity of ShuffleDuck is down
-			// serve the login page (do nothing)
+			// serve the login page (do nothing) - this will allow the user to try logging in with their credentials - if this still fails, the front page will provide them an error
+			currentState = "";
   	    }
 
 		

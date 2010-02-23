@@ -96,8 +96,6 @@
 			var metrics:TextLineMetrics = titleLabel.getLineMetrics(0);
 			var i:int =1;
 			titleHBox.width = metrics.width + 4;
-			
-			trace(this.width);
 		}
 					
 		private function mouseOverListing(event:MouseEvent):void
