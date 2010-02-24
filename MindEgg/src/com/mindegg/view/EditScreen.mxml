@@ -861,6 +861,11 @@
 	    	var newEvent:CustomEvent = new CustomEvent(RETURN_TO_LIBRARY_REQUEST, params, true);
 	    	dispatchEvent(newEvent);
         }
+        
+        public function get changedSinceSave():Boolean
+        {
+        	return _changedSinceSave;
+        }
 
 
   	]]>

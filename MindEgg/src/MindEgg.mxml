@@ -58,6 +58,7 @@
   		import com.mindegg.view.DeckListing;
   		import mx.rpc.events.ResultEvent;
   		import com.mindegg.view.preloaders.PreloaderScreen;
+  		import com.mindegg.utils.ExternalInterfaceUtil;
 
 		// Version Numbers
   		public static const XML_VERSION_NO:String 								= "0.01";
@@ -81,6 +82,9 @@
   		 
   		private function initialSetup():void
 		{
+			// setup JavaScript to show an alert should the user close the browser window or navigate away without first saving
+			ExternalInterfaceUtil.addExternalEventListener("window.onbeforeunload", requestUnloadConfirmation, "unloadConfirmation");
+			
 			// listen for events
 				this.addEventListener(MindEgg.USER_LOGGED_IN, userSuccessfullyLoggedIn);
 
@@ -171,6 +175,18 @@
 		{
 			// go to the home page
 			currentState="";
+		}
+		
+		private function requestUnloadConfirmation():String
+		{
+			if (editScreen.changedSinceSave)
+			{
+				return "ShuffleDuck has unsaved changes. Are you sure you want to leave without saving?";
+			}
+			else
+			{
+				return null;
+			}
 		}
 		
 
