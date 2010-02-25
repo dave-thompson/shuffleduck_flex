@@ -180,14 +180,13 @@
 		{
 			if (editScreen.changedSinceSave)
 			{
-				return "ShuffleDuck has unsaved changes. Are you sure you want to leave without saving?";
+				return "ShuffleDuck has unsaved changes. These will be lost if you leave without saving.";
 			}
 			else
 			{
 				return null;
 			}
-		}
-		
+		}		
 
   	]]>
   </mx:Script>

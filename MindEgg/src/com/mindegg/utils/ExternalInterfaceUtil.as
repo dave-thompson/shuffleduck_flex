@@ -11,8 +11,8 @@ package com.mindegg.utils
                 
                 // 2. Build javascript to execute
                 var jsExecuteCallBack:String = "document.getElementsByName('"+ExternalInterface.objectID+"')[0]."+callBackAlias+"()";
-                var jsBindEvent:String = "function(){"+qualifiedEventName+"= function(){"+jsExecuteCallBack+"};}";
-                trace(jsBindEvent);
+                var jsBindEvent:String = "function(){"+qualifiedEventName+"= function(){return "+jsExecuteCallBack+"};}";
+
                 // 3. Execute the composed javascript to perform the binding of the external event to the specified callBack function
                 ExternalInterface.call(jsBindEvent);
         }
