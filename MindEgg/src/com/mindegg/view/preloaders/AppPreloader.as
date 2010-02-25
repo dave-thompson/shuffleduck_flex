@@ -13,8 +13,8 @@ package com.mindegg.view.preloaders
 	public class AppPreloader extends DownloadProgressBar
 	{
 		// The width and height of this screen - usually the max size of the background image
-		private var _preloaderWidth:Number = 450;
-		private var _preloaderHeight:Number = 150;
+		private static var _preloaderWidth:Number = 450;
+		private static var _preloaderHeight:Number = 150;
 
 		// The space to leave between the edge of the background image and the start/end of the progress bar		
 		private static var _progressBarHorizOffset:Number = 20;
@@ -74,6 +74,23 @@ package com.mindegg.view.preloaders
 			displayObject.x = (stage.stageWidth-displayObject.width)/2;
 			displayObject.y = (stage.stageHeight-displayObject.height)/2;
 		}
+		
+		// returns a preloader background
+		// use if you need to show the preloader other than at loading time
+		public static function preloaderScreen():PreloaderScreen
+		{
+			var preloaderScreen:PreloaderScreen = new PreloaderScreen(_preloaderWidth, _preloaderHeight, _progressBarHorizOffset, _progressBarBottomOffset, _progressBarHeight);
+			return preloaderScreen;	
+		}
+
+		// returns a preloader progress bar fill with the requested amount of progress
+		// use if you need to show the preloader other than at loading time	
+		public static function preloaderProgressBarFill(progress:Number):PreloaderProgressBarFill
+		{
+			var preloaderProgressBarFill:PreloaderProgressBarFill = new PreloaderProgressBarFill(_preloaderWidth, _preloaderHeight, _progressBarHorizOffset, _progressBarBottomOffset, _progressBarHeight, progress);
+			return preloaderProgressBarFill;
+		}
+		
 		
 	}
 }

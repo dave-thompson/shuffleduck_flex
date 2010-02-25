@@ -38,8 +38,7 @@
     <mx:State name="loading">
       <mx:RemoveChild target="{frontPage}"/>
       <mx:AddChild position="lastChild">
-<!--        <mx:HBox width="100%" height="100%" horizontalAlign="center" verticalAlign="middle" id="loadingHBox"/> -->
-        <mx:UIComponent width="100%" height="100%" id="bitmapUIComponent"/>
+      	<mx:UIComponent width="100%" height="100%" id="loadingUIComponent"/>
       </mx:AddChild>
     </mx:State>
   </mx:states>
@@ -48,6 +47,7 @@
   
   <mx:Script>
   	<![CDATA[
+  		import com.mindegg.view.preloaders.PreloaderScreen;
   		import mx.rpc.events.ResultEvent;
   		import adobe.utils.CustomActions;
 
@@ -57,7 +57,7 @@
   		import com.mindegg.view.DebugDialog;
   		import com.mindegg.view.DeckListing;
   		import mx.rpc.events.ResultEvent;
-  		import com.mindegg.view.preloaders.PreloaderScreen;
+  		import com.mindegg.view.preloaders.AppPreloader;
   		import com.mindegg.utils.ExternalInterfaceUtil;
 
 		// Version Numbers
@@ -72,8 +72,6 @@
 		public static const USER_LOGGED_IN:String = "userLoggedIn";
 		public static const USER_LOGGED_OUT:String = "userLoggedOut";
 		public static const DEBUG_POP_UP_REQUEST:String = "debugPopUpRequest";
-  		 
-  		//private var preloaderScreen:PreloaderScreen = new PreloaderScreen(); // a copy of the preloader screen that will be displayed while session information is retrieved, thereby providing a seamless session loading experience to the user
   		 
   		/********************
   		 * Constructor
@@ -105,10 +103,11 @@
 			currentState="loading";
 			
 			// continue showing the preloader screen until the session has been loaded
-			/*bitmapUIComponent.width = preloaderScreen.width;
-			bitmapUIComponent.height = preloaderScreen.height;
-			preloaderScreen.progress = 1;
-			bitmapUIComponent.addChild(preloaderScreen.getBitmap());*/
+			var preloaderScreen:PreloaderScreen = AppPreloader.preloaderScreen();
+			loadingUIComponent.addChild(preloaderScreen.getBitmap());			
+			loadingUIComponent.addChild(AppPreloader.preloaderProgressBarFill(1));
+			loadingUIComponent.width = preloaderScreen.width;
+			loadingUIComponent.height = preloaderScreen.height;				
 
 			// check to see if there is a session in progress, and if so go to the library screen
 			sessionShow.send();
