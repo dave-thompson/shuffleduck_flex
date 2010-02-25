@@ -14,23 +14,33 @@ package com.mindegg.view.preloaders
 	public class PreloaderScreen extends Loader
 	{
 		// The width and height of this screen - usually the max size of the background image
-		private var _preloaderWidth:Number = 450;
-		private var _preloaderHeight:Number = 150;
+		private var _preloaderWidth:Number;
+		private var _preloaderHeight:Number;
 
 		// The space to leave between the edge of the background image and the start/end of the progress bar		
-		private static var _progressBarHorizOffset:Number = 20;
+		private static var _progressBarHorizOffset:Number;
 		
 		// The space to leave from the bottom of the background image to the bottom of the progress bar  
-		private static var _progressBarBottomOffset:Number = 20;
+		private static var _progressBarBottomOffset:Number;
 		
 		// The height of our progress bar
-		private static var _progressBarHeight:Number = 10;
+		private static var _progressBarHeight:Number;
 		
 		// Graphics
 		[Embed(source="../../assets/PreloaderBackground.png")]
 		private var backgroundImage:Class;
 		
-		private var _progress:Number = 0;
+		public function PreloaderScreen(width:Number, height:Number, horizOffset:Number, bottomOffset:Number, barHeight:Number)
+		{
+			super();
+			
+			// set dimensions
+			_preloaderWidth = width;
+			_preloaderHeight = height;
+			_progressBarHorizOffset = horizOffset;
+			_progressBarBottomOffset = bottomOffset;
+			_progressBarHeight = barHeight;
+		}
 		
 		// Called to get the screen graphic and display
 		public function refreshDisplay():void {
@@ -63,20 +73,14 @@ package com.mindegg.view.preloaders
 
 			// Draw the progress bar background area
 			graph.beginFill(0x333333);
-			graph.drawRoundRect(_progressBarHorizOffset, 
-				height-_progressBarBottomOffset-_progressBarHeight,
-				width-_progressBarHorizOffset-_progressBarHorizOffset, 
-				_progressBarHeight, 10);
+			graph.drawRoundRect(	_progressBarHorizOffset, 
+									height-_progressBarBottomOffset-_progressBarHeight,
+									width-_progressBarHorizOffset-_progressBarHorizOffset, 
+									_progressBarHeight,
+									10
+								);
 			graph.endFill();
 
-			// Draw our progress bar onto the sprite's graphics
-			graph.beginFill(0xFCBC4F);
-			graph.drawRoundRect(_progressBarHorizOffset, 
-				height-_progressBarBottomOffset-_progressBarHeight,
-				(width-_progressBarHorizOffset-_progressBarHorizOffset)*_progress, 
-				_progressBarHeight, 10);
-			graph.endFill();
-			
 			// Draw the sprite onto the main BitmapData
 			bmpData.draw(sprite);
 			return bmpData;
@@ -87,10 +91,6 @@ package com.mindegg.view.preloaders
 		public override function get width():Number { return _preloaderWidth; }
 		
 		public override function set height(value:Number):void { _preloaderHeight = value; }
-		public override function get height():Number { return _preloaderHeight; }
-        
-        // Number between 0 and 1 indicating how far through the loading progress we are
-        public function set progress(n:Number):void { _progress = n; refreshDisplay(); }
-        public function get progress():Number { return _progress; }
+		public override function get height():Number { return _preloaderHeight; }        
 	}
 }

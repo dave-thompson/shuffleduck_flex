@@ -4,10 +4,10 @@
 {
   vertical-grid-lines: true;
   border-style: solid;
-  selection-color: #F6D29F;
-  roll-over-color: #F0BC73;
-  alternating-item-colors: #CCCCCC, #E1E4E5;
-  headerColors: #3D464B, #57666E;
+  selection-color: #E8A5A8;
+  roll-over-color: #DD7479;
+  alternating-item-colors: #FFFFFF, #F2F2DA;
+  headerColors: #FC575E, #FC575E;
 	horizontalGridLines: false;
 	verticalScrollBarStyleName: dataGridVerticalScrollBar;
 	borderThickness: 0;
@@ -16,6 +16,7 @@
 	fontStyle: normal;
 	textDecoration: normal;
 	headerStyleName: dataGridHeader;
+	fontSize: 14;
 }
 .dataGridHeader
 {

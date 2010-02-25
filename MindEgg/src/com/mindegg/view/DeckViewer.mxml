@@ -48,7 +48,7 @@
          <mx:RemoveChild target="{templateHBox}"/>
          <mx:SetStyle target="{gridButton}" name="textRollOverColor" value="#FFFFFF"/>
          <mx:AddChild position="lastChild">
-            <mx:HBox horizontalGap="10" width="100%" height = "100%" id="gridHBox">
+            <mx:HBox horizontalGap="10" width="100%" height = "100%" id="gridHBox" paddingBottom="10" cornerRadius="10">
                <mx:horizontalScrollBarStyleName/>
                <mx:verticalScrollBarStyleName/>
                <mx:DataGrid styleName="cardsDatagrid" horizontalScrollBarStyleName="customScroll" verticalScrollBarStyleName="customScroll" width="100%" height="100%" id="datagrid" sortableColumns="false">

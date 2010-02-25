@@ -68,13 +68,12 @@
 		//public static const CONTEXT_URL:String = "http://localhost:3000";
 		public static const CONTEXT_URL:String = "http://shuffleduck.heroku.com";
 
-
 		// event constants
 		public static const USER_LOGGED_IN:String = "userLoggedIn";
 		public static const USER_LOGGED_OUT:String = "userLoggedOut";
 		public static const DEBUG_POP_UP_REQUEST:String = "debugPopUpRequest";
   		 
-  		private var preloaderScreen:PreloaderScreen = new PreloaderScreen(); // a copy of the preloader screen that will be displayed while session information is retrieved, thereby providing a seamless session loading experience to the user
+  		//private var preloaderScreen:PreloaderScreen = new PreloaderScreen(); // a copy of the preloader screen that will be displayed while session information is retrieved, thereby providing a seamless session loading experience to the user
   		 
   		/********************
   		 * Constructor
@@ -106,10 +105,10 @@
 			currentState="loading";
 			
 			// continue showing the preloader screen until the session has been loaded
-			bitmapUIComponent.width = preloaderScreen.width;
+			/*bitmapUIComponent.width = preloaderScreen.width;
 			bitmapUIComponent.height = preloaderScreen.height;
 			preloaderScreen.progress = 1;
-			bitmapUIComponent.addChild(preloaderScreen.getBitmap());
+			bitmapUIComponent.addChild(preloaderScreen.getBitmap());*/
 
 			// check to see if there is a session in progress, and if so go to the library screen
 			sessionShow.send();
