@@ -103,11 +103,13 @@
 			currentState="loading";
 			
 			// continue showing the preloader screen until the session has been loaded
+			/*
 			var preloaderScreen:PreloaderScreen = AppPreloader.preloaderScreen();
 			loadingUIComponent.addChild(preloaderScreen.getBitmap());			
 			loadingUIComponent.addChild(AppPreloader.preloaderProgressBarFill(1));
 			loadingUIComponent.width = preloaderScreen.width;
-			loadingUIComponent.height = preloaderScreen.height;				
+			loadingUIComponent.height = preloaderScreen.height;
+			*/			
 
 			// check to see if there is a session in progress, and if so go to the library screen
 			sessionShow.send();
