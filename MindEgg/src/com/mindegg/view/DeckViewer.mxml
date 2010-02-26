@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:VBox 	xmlns:mx="http://www.adobe.com/2006/mxml"
-			width="296"
 			verticalGap="10"
 			backgroundColor="#3D464B"
 			paddingLeft="10"
@@ -60,6 +59,12 @@
                </mx:DataGrid>
             </mx:HBox>
          </mx:AddChild>
+         <mx:AddChild relativeTo="{spacer2}" position="before">
+            <mx:Button id="importButton" label="import" styleName="SlimlineButton" textRollOverColor="0x25e9eb" click="importClicked(event)" fontSize="10" width="52" toolTip="Import data from a spreadsheet"/>
+         </mx:AddChild>
+         <mx:AddChild relativeTo="{importButton}" position="before">
+            <mx:Spacer width="30"/>
+         </mx:AddChild>
          <mx:SetProperty target="{textBoxButton}" name="enabled" value="false"/>
          <mx:SetProperty target="{gridButton}" name="toolTip" value=""/>
          <mx:SetProperty target="{textBoxButton}" name="toolTip" value=""/>
@@ -86,7 +91,7 @@
     	<mx:Spacer id="spacer1" width="30"/>
     	<mx:Button id="textBoxButton" label="T" styleName="SlimlineButton" textRollOverColor="0x25e9eb" click="newComponentButtonClicked(event)" fontSize="15" width="30" toolTip="Add a new textbox"/>
 		<!-- IMAGE BUTTON <mx:Button x="27" y="51" width="75" styleName="StandardButton" alpha="0.0" textRollOverColor="0x25e9eb" id="imageButton" enabled="false"/> -->
-    	<mx:Spacer width="100%"/>
+    	<mx:Spacer width="100%" id="spacer2"/>
     	<mx:Button label="Template" id="templateButton" styleName="StandardButton" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" height="17" textRollOverColor="0x25e9eb" alpha="0.0" click="changeView(TEMPLATE_STATE)">
     	 	<mx:toolTip>Edit the template on which all new cards are based</mx:toolTip>
     	</mx:Button>
@@ -124,6 +129,7 @@
 		import flash.net.*;
 		import mx.events.FlexEvent;
 		import com.mindegg.utils.datagrid.*;
+		import com.mindegg.view.ImportDialog;
 		
 		// event constants
 		public static const SIDE_SELECTED:String = "sideSelected";
@@ -165,6 +171,8 @@
 		private var _numberColumnsInGrid:uint;
 		private var _dataFieldNames:Array;
 		
+		// daughter screens
+		private var _importDialog:ImportDialog;
 		
 		// object model  		
 		private var _deck:Deck;
@@ -344,6 +352,7 @@
 					datagrid.dataProvider = _dataProviderAC;
 				// allow the user to change values in the datagrid		
 					datagrid.editable = true;
+					datagrid.allowMultipleSelection = true;
 				
 			// setup event listener on data collection
 				_dataProviderAC.addEventListener(CollectionEvent.COLLECTION_CHANGE, gridDataChanged);
@@ -440,7 +449,7 @@
 				{
                 	// add the card to the deck
                 	newCard();
-	               	cardIndex = Math.min(datagrid.editedItemPosition.rowIndex, _deck.numCards() - 1); // new rows return a row index higher than it should be
+                	cardIndex = event.location;
                 	card = _deck.getCardAtIndex(cardIndex);
                 	
                 	// loop through each column
@@ -475,6 +484,59 @@
 				_deck.deleteCard(event.location);
 				_cardsRequireFullRedraw = true;
 			}
+		}
+		
+		private function importClicked(event:MouseEvent):void
+		{
+			// create an import dialog and add it to the screen
+			if (!_importDialog)
+				_importDialog = new ImportDialog();
+            PopUpManager.addPopUp(_importDialog, this, true);
+            PopUpManager.centerPopUp(_importDialog);
+            
+            // wait for the user to respond
+            _importDialog.addEventListener(ImportDialog.IMPORT_REQUEST_RECEIVED, importDeck);            
+		}
+		
+		private function importDeck(event:CustomEvent):void
+		{
+            _importDialog.removeEventListener(ImportDialog.IMPORT_REQUEST_RECEIVED, importDeck);            
+			
+			var stringToImport:String = event.params.text;
+			
+			// Clean up string
+				// convert \r into \n
+				stringToImport = stringToImport.replace(/\r/g, "\n");
+				
+				// remove any empty rows
+		    	stringToImport = stringToImport.replace(/\n[\t\n]*\n/g, "\n");
+		    	
+		    	// remove \n at start and end of string
+		    	stringToImport = stringToImport.replace(/^\n/, "");
+		    	stringToImport = stringToImport.replace(/\n$/, "");
+	    	
+	    	// split string into rows
+		  	var rows:Array = stringToImport.split("\n");
+		
+		  	var columns:Array = datagrid.columns;
+		  	var arrayOfRows:Array = [];
+		
+		  	for each (var rowString:String in rows)
+		  	{
+		  		// split row into cells
+				var cells:Array = rowString.split("\t");
+				// cycle through columns, creating an object for the row
+				var numColumns:int = columns.length;
+				var item:Object = {};
+				for (var colNumber:int = 0; colNumber < numColumns; colNumber++)
+					if (colNumber < cells.length)
+		  				item[columns[colNumber].dataField] = cells[colNumber];
+		  			else
+		  				item[columns[colNumber].dataField] = "";
+				
+				// add this row to the end of the datagrid data provider	
+				_dataProviderAC.addItem(item);
+		  	}		  	
 		}
 		
 		private function datagridScrollToBottom(event:FlexEvent):void

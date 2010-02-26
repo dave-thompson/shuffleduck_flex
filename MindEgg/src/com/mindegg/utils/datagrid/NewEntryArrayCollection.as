@@ -47,6 +47,12 @@ public class NewEntryArrayCollection extends ArrayCollection
 		return super.length + 1;
     }
 
+    override public function addItem(item:Object):void
+    {
+        addItemAt(item, length - 1);
+    }
+
+
 	/**
 	 * Notify the view that a data item has been updated.
 	 * Removes any old items which have had all their data removed.
