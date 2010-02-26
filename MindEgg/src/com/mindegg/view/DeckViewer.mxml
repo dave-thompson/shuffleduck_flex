@@ -51,7 +51,7 @@
             <mx:HBox horizontalGap="10" width="100%" height = "100%" id="gridHBox" paddingBottom="10" cornerRadius="10">
                <mx:horizontalScrollBarStyleName/>
                <mx:verticalScrollBarStyleName/>
-               <mx:DataGrid styleName="cardsDatagrid" horizontalScrollBarStyleName="customScroll" verticalScrollBarStyleName="customScroll" width="100%" height="100%" id="datagrid" sortableColumns="false">
+               <mx:DataGrid styleName="cardsDatagrid" horizontalScrollBarStyleName="customScroll" verticalScrollBarStyleName="customScroll" width="100%" height="100%" id="datagrid" sortableColumns="false" rowHeight="27">
                   <mx:columns>
                      <mx:DataGridColumn headerText="Column 1" dataField="col1"/>
                      <mx:DataGridColumn headerText="Column 2" dataField="col2"/>
@@ -63,6 +63,7 @@
          <mx:SetProperty target="{textBoxButton}" name="enabled" value="false"/>
          <mx:SetProperty target="{gridButton}" name="toolTip" value=""/>
          <mx:SetProperty target="{textBoxButton}" name="toolTip" value=""/>
+         <mx:SetProperty target="{newCardButton}" name="enabled" value="false"/>
       </mx:State>
       <mx:State name="loading">
          <mx:SetProperty target="{newCardButton}" name="enabled" value="false"/>
@@ -122,6 +123,7 @@
 		import flash.events.ContextMenuEvent;
 		import flash.net.*;
 		import mx.events.FlexEvent;
+		import com.mindegg.utils.datagrid.*;
 		
 		// event constants
 		public static const SIDE_SELECTED:String = "sideSelected";
@@ -157,8 +159,12 @@
 		private static const PIXELS_BETWEEN_CARDS:uint = 300;
 		
 		// data in the grid (if in grid view)
-		private var _dataProviderCollection:ArrayCollection = null;
+		private var _dataProviderAC:NewEntryArrayCollection = null;
 		private var _cardsRequireFullRedraw:Boolean = false;
+		private var _dataGridColumns:Array;
+		private var _numberColumnsInGrid:uint;
+		private var _dataFieldNames:Array;
+		
 		
 		// object model  		
 		private var _deck:Deck;
@@ -196,7 +202,7 @@
 						// if leaving GRID_STATE, clear local grid variables and update the cards view
 						if (currentState == GRID_STATE)
 						{
-							_dataProviderCollection = null;
+							_dataProviderAC = null;
 							if (_cardsRequireFullRedraw)
 							{
 								fullyRedrawAllCards();
@@ -215,7 +221,7 @@
 						// if leaving GRID_STATE, make sure that any data change is processed
 						if (currentState == GRID_STATE)
 						{
-							_dataProviderCollection = null;
+							_dataProviderAC = null;
 							if (_cardsRequireFullRedraw)
 							{
 								fullyRedrawAllCards();
@@ -263,21 +269,21 @@
 			var componentIDsAttributeConstants:Array = _deck.template.getVariableAttributes();
 
 			// find the number of variable attributes (== columns)			
-			var numColumns:uint = componentIDsAttributeConstants.length;
+			_numberColumnsInGrid = componentIDsAttributeConstants.length;
 			
 			// initialise column name arrays
 			var componentNames:Array = new Array();
 			var attributeIDs:Array = new Array();
 			var attributeNames:Array = new Array();
 			var columnNames:Array = new Array();
-			var dataFieldNames:Array = new Array();
+			_dataFieldNames = new Array();
 			
 			// initialise columns & data
 			var dataGridColumn:DataGridColumn;
-			var dataGridColumns:Array = new Array();
+			_dataGridColumns = new Array();
 			
 			// loop through each column
-			for (var i:uint = 0; i < numColumns; i ++)
+			for (var i:uint = 0; i < _numberColumnsInGrid; i ++)
 			{
 				// derive the column names
 					// find the component names
@@ -289,24 +295,25 @@
 					//columnNames.push(componentNames[i] + ": " + attributeNames[i]);
 					columnNames.push(componentNames[i]); // temporarily just have component names for column names - only showing text anyway
 					// but use componentIDs for dataField names (so that column names may be changed without impacting data integrity)
-					dataFieldNames.push(componentIDsAttributeConstants[i].templateComponentID.toString() + "." + attributeIDs[i]);
+					_dataFieldNames.push(componentIDsAttributeConstants[i].templateComponentID.toString() + "." + attributeIDs[i]);
 				
 				// set up the datagrid columns
 					dataGridColumn = new DataGridColumn();
 					dataGridColumn.headerText = columnNames[i];
-					dataGridColumn.dataField = dataFieldNames[i];
-					dataGridColumns.push(dataGridColumn);
+					dataGridColumn.dataField = _dataFieldNames[i];
+					dataGridColumn.itemRenderer = new ClassFactory(PlaceHolderItemRenderer);
+					_dataGridColumns.push(dataGridColumn);
 			}
 				
 			// setup data provider
-			var dataProvider:Array = new Array()
+			var dataProviderArray:Array = new Array()
 				// loop through cards 
 				for (var cardIndex:uint = 0; cardIndex < _deck.numCards(); cardIndex++)
 				{
 					var card:Card = _deck.getCardAtIndex(cardIndex);
 					var cardData:Object = new Object();
 					// for each column
-					for (var columnIndex:uint = 0; columnIndex < numColumns; columnIndex ++)
+					for (var columnIndex:uint = 0; columnIndex < _numberColumnsInGrid; columnIndex ++)
 					{	// get the card's attribute value for this column
 						var cardComponent:Component = card.getComponentWithTemplateComponentID(componentIDsAttributeConstants[columnIndex].templateComponentID);
 						var cardAttributeValue:String;
@@ -320,27 +327,61 @@
 							cardAttributeValue = cardComponent.getAttributeAsString(componentIDsAttributeConstants[columnIndex].attributeConstant);
 						}
 						// add the value to the Data Provider
-						cardData[dataFieldNames[columnIndex]] = cardAttributeValue;
+						cardData[_dataFieldNames[columnIndex]] = cardAttributeValue;
 					}
-					dataProvider.push(cardData);
+					dataProviderArray.push(cardData);
 				}
 			
 			// setup datagrid
 				// set its columns
-				datagrid.columns = dataGridColumns;
+					datagrid.columns = _dataGridColumns;
 				// set its data
-				datagrid.dataProvider = dataProvider;
-				// allow the user to change values in the datagrid			
-				datagrid.editable = true;
+					_dataProviderAC = new NewEntryArrayCollection(dataProviderArray);			
+					// set factory function and empty test funtion (see below)
+					_dataProviderAC.factoryFunction = generateObject;
+					_dataProviderAC.emptyTestFunction = isObjectEmpty;
+					// assign the datd
+					datagrid.dataProvider = _dataProviderAC;
+				// allow the user to change values in the datagrid		
+					datagrid.editable = true;
 				
 			// setup event listener on data collection
-				_dataProviderCollection = datagrid.dataProvider as ArrayCollection;
-				_dataProviderCollection.addEventListener(CollectionEvent.COLLECTION_CHANGE, gridDataChanged);
+				_dataProviderAC.addEventListener(CollectionEvent.COLLECTION_CHANGE, gridDataChanged);
 			// if requested, setup event listener to scroll to end of datagrid once loading is complete
 				if (scrollType == SCROLL_TO_END)
 				{
 					datagrid.addEventListener(FlexEvent.UPDATE_COMPLETE, datagridScrollToBottom);
 				}
+		}
+	
+		/**
+		 * Factory Function
+		 * Create a new object to go in the datagrid
+		 */
+		private function generateObject():Object
+		{
+			var newCardData:Object = new Object();
+			// for each column
+			for (var columnIndex:uint = 0; columnIndex < _numberColumnsInGrid; columnIndex ++)
+			{	
+				newCardData[_dataFieldNames[columnIndex]] = "";
+			}
+			return newCardData;
+		}
+
+		/**
+		 * Empty Test Function
+		 * Test if the supplied datagrid row data is empty
+		 */
+		private function isObjectEmpty(cardData:Object):Boolean
+		{
+			var result:Boolean = true;
+			// check each column for data
+			for (var columnIndex:uint = 0; columnIndex < _numberColumnsInGrid; columnIndex ++)
+			{	
+				result = result && (cardData[_dataFieldNames[columnIndex]] == "");
+			}
+			return result;
 		}
 
 		/**
@@ -349,26 +390,39 @@
 		 */		
 		private function gridDataChanged(event:CollectionEvent):void
 		{
+			trace (event.kind);
+			
+			var i:uint;
+			var cardIndex:uint;
+			var card:Card;
+			var dataGridFieldName:String;
+			var templateComponentIDAndAttribute:Array;
+			var templateComponentID:uint;
+			var attribute:uint;
+			var newValue:String;
+			var updatedComponent:Component;
+			var errorString:String;
+			
 			if (event.kind == CollectionEventKind.UPDATE)
 			{
-				for (var i:uint = 0; i < event.items.length; i++)
+				for (i = 0; i < event.items.length; i++)
 				{
                 	// find the card that was edited
-                	var cardIndex:uint = datagrid.editedItemPosition.rowIndex;
-                	var card:Card = _deck.getCardAtIndex(cardIndex);
+	               	cardIndex = Math.min(datagrid.editedItemPosition.rowIndex, _deck.numCards() - 1); // if this is a new card, the row index is one less than the total number of cards
+                	card = _deck.getCardAtIndex(cardIndex);
                 	
                 	// find the component and attribute on that card that were edited
                 	var propertyChangeEvent:PropertyChangeEvent = event.items[i];
-                	var templateComponentIDAndAttribute:Array = propertyChangeEvent.property.split(".");
-					var templateComponentID:uint = int(templateComponentIDAndAttribute[0]);
-					var attribute:uint = int(templateComponentIDAndAttribute[1]);
+                	templateComponentIDAndAttribute = propertyChangeEvent.property.split(".");
+					templateComponentID = int(templateComponentIDAndAttribute[0]);
+					attribute = int(templateComponentIDAndAttribute[1]);
 
                 	// retrieve the new value
-                	var newValue:String = propertyChangeEvent.source[propertyChangeEvent.property];
+                	newValue = propertyChangeEvent.source[propertyChangeEvent.property];
                 	
                 	// update the value in the data model
-                	var updatedComponent:Component = card.getComponentWithTemplateComponentID(templateComponentID);
-                	var errorString:String = "";
+                	updatedComponent = card.getComponentWithTemplateComponentID(templateComponentID);
+                	errorString = "";
                 	if (updatedComponent != null) // if the updated component exists (if it does not exist, it is because the user has edited a <N/A> value in the table)
                 	{
                 		errorString = updatedComponent.setAttributeFromString(attribute, newValue); // returns "" unless there was an error
@@ -376,9 +430,50 @@
                 	// if there was a problem, report it to the user and roll back the value
                 	if (errorString != "")
                 	{
-	                	// NOT REQUIRED FOR TEXT VALUES - IMPLEMENT LATER WHEN OTHER ATTRIBUTES ADDED            		
-                	}
+	                	// not required for text values - will be required if other values are ever to be edited here            		
+                	}                		                		
 				}
+			}
+			else if (event.kind == CollectionEventKind.ADD)
+			{
+				for (i = 0; i < event.items.length; i++)
+				{
+                	// add the card to the deck
+                	newCard();
+	               	cardIndex = Math.min(datagrid.editedItemPosition.rowIndex, _deck.numCards() - 1); // new rows return a row index higher than it should be
+                	card = _deck.getCardAtIndex(cardIndex);
+                	
+                	// loop through each column
+					for (var columnNumber:uint = 0; columnNumber < _numberColumnsInGrid; columnNumber ++)
+					{					
+						// find the component and attribute that we're editing
+						dataGridFieldName = _dataGridColumns[columnNumber].dataField; // e.g. 1.4
+					    templateComponentIDAndAttribute = dataGridFieldName.split(".");
+						templateComponentID = int(templateComponentIDAndAttribute[0]);
+						attribute = int(templateComponentIDAndAttribute[1]);
+
+						// retrieve the new value
+						newValue = event.items[i][dataGridFieldName]	
+					
+	                	// update the value in the data model
+	                	updatedComponent = card.getComponentWithTemplateComponentID(templateComponentID);
+	                	errorString = "";
+	                	if (updatedComponent != null) // if the updated component exists (if it does not exist, it is because the user has edited a <N/A> value in the table)
+	                	{
+	                		errorString = updatedComponent.setAttributeFromString(attribute, newValue); // returns "" unless there was an error
+	                	}
+	                	if (errorString != "") // if there was a problem, report it to the user and roll back the value
+	                	{
+		                	// not required for text values - will be required if other values are ever to be edited here            		
+	                	}
+     				}
+				}
+
+			}
+			else if (event.kind == CollectionEventKind.REMOVE)
+			{
+				_deck.deleteCard(event.location);
+				_cardsRequireFullRedraw = true;
 			}
 		}
 		
@@ -389,29 +484,7 @@
 			// remove event listener so that subsequent updates (i.e. user edits) will not cause a scroll
 			datagrid.removeEventListener(FlexEvent.UPDATE_COMPLETE, datagridScrollToBottom);
 		}
-		
-		/**
-		 * 	Purpose: 	Removes all cards from the cards view and draws them from scratch using the existing deck
-		 * 				Differs from redrawAllCards, which redraws existing components and does not add any new content
-		 * 				Method can cause some on-screen flickering and delay, therefore use sparingly
-		 * 
-		 */
-		private function fullyRedrawAllCards():void
-		{
-			// recall current state before working
-			var formerState:String = currentState;
-			// for working on cardsHBox, we need to be in CARDS_STATE
-			currentState = CARDS_STATE;
-			
-			// remove the drawn cards
-			cardsHBox.removeAllChildren();
-			// draw the cards in the deck
-	        drawCardsFromDeck();
-	        
-	        // restore state
-	        currentState = formerState;
-		}
-		
+				
 		private function toComponentName(componentID:uint):String
 		{
 			return _deck.template.getComponentWithTemplateComponentID(componentID).name;			
@@ -434,17 +507,10 @@
 				// draw the new card on screen
 				drawNewCard(_deck.getCardAtIndex(_deck.numCards() - 1), CARD, SCROLL_TO_END, _deck.numCards());
 			}
-			else if (currentState == TEMPLATE_STATE)
+			else if (currentState == GRID_STATE) // expect to be tautology
 			{
 				// defer drawing until later, but set flag for it to be done
 				_cardsRequireFullRedraw = true;
-			}
-			else // currentState is GRID_STATE
-			{
-				// defer drawing until later, but set flag for it to be done
-				_cardsRequireFullRedraw = true;
-				// update grid
-				prepareGrid(SCROLL_TO_END);
 			}
 		}
 		
@@ -531,7 +597,8 @@
 		 *  (Presume that a card may have changed in some way.)
 		 * 	Parameters:	cardNumber should be either the 1-based index of the card to be updated, or the constant TEMPLATE
 		 */
-		 
+		
+		/** Redraw a specific card */
 		public function redrawCard(cardNumber:uint):void
 		{
 			if (cardNumber == TEMPLATE)	// redraw the template
@@ -546,12 +613,36 @@
 				}
 		}
 		
+		/** Redraw all cards
+		 *  This does not recreate the contextual menus  */
 		public function redrawAllCards():void
 		{
 			for (var i:int = 0; i < deck.numCards(); i++)
 			{
 				redrawCard(i + 1);
 			}
+		}
+		
+		/**
+		 * 	Purpose: 	Removes all cards from the cards view and draws them from scratch using the existing deck
+		 * 				Differs from redrawAllCards, which redraws existing components and does not add any new content
+		 * 				Method can cause some on-screen flickering and delay, therefore use sparingly
+		 * 
+		 */
+		private function fullyRedrawAllCards():void
+		{
+			// recall current state before working
+			var formerState:String = currentState;
+			// for working on cardsHBox, we need to be in CARDS_STATE
+			currentState = CARDS_STATE;
+			
+			// remove the drawn cards
+			cardsHBox.removeAllChildren();
+			// draw the cards in the deck
+        	drawCardsFromDeck(-1, cardsHBox.horizontalScrollPosition);
+	        
+	        // restore state
+	        currentState = formerState;
 		}
 				
 		public function showDeck(xmlString:String):Deck
@@ -682,12 +773,11 @@
         	
         	// delete the corresponding card from the deck and from the screen
         	_deck.deleteCard(zeroBasedCardIndex);
-        	cardsHBox.removeChildAt(zeroBasedCardIndex);
+        	//cardsHBox.removeChildAt(zeroBasedCardIndex);
         	
         	// remove all cards and redraw them (can't simply redrawAllCards() as the contextual menus must be updated with the new card numbers)
-        	cardsHBox.removeAllChildren();
-        	drawCardsFromDeck(-1, cardsHBox.horizontalScrollPosition);
-        	
+			fullyRedrawAllCards();
+			        	
         	// fire CARD_DELETED event so that the application can clear the properties pane
         	var params:Object = new Object();
 			var cardDeletedEvent:CustomEvent = new CustomEvent(CARD_DELETED, params, true);
