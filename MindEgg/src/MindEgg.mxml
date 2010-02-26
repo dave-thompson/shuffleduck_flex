@@ -103,6 +103,7 @@
 			currentState="loading";
 			
 			// continue showing the preloader screen until the session has been loaded
+			// commented out - user experience better with just a blue screen
 			/*
 			var preloaderScreen:PreloaderScreen = AppPreloader.preloaderScreen();
 			loadingUIComponent.addChild(preloaderScreen.getBitmap());			

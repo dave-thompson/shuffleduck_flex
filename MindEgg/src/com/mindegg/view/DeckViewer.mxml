@@ -179,6 +179,11 @@
 		
 		// SETUP METHODS
 		
+		public function showLoading():void
+		{
+			setLoading(true);
+		}
+		
 		public function setup():void
 		{
 			// instantiate the other states - this is necessary to draw the components of other states, so that they may then be referenced

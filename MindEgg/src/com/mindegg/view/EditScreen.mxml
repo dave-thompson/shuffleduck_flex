@@ -161,13 +161,15 @@
   		 
   		public function setup(aTitle:String):void
 		{	
+			deckViewer.showLoading();
+			
 			if (!(_setupCompleted)) // if this is the first time this function has been called
 			{
 				// set up the HTTP headers for the HTTPService components above
 				putHeader["X-HTTP-METHOD-OVERRIDE"] = "put";
 
 				// set up the deck viewer and saving dialog
-				deckViewer.setup();			
+				deckViewer.setup();
 				_savingDialog = new SavingDialog();
 								
 				// listen for events
