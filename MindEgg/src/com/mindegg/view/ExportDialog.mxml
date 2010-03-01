@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+				layout="absolute" 
+				width="384"
+				height="136" 
+				backgroundColor="#FFFFFF" 
+				backgroundAlpha="1"
+				borderStyle="solid" 
+				borderColor="#000000" 
+				borderThickness="2"
+				borderAlpha ="1"
+				headerHeight="0" 
+				cornerRadius="0"
+				dropShadowEnabled="true"
+				creationComplete="setup()">
+	<mx:Label text="Data Export" fontSize="22" fontWeight="bold" color="#25E9EB" fontStyle="italic" x="10" y="10" id="label1"/>
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.managers.PopUpManager;
+			
+			public function setup():void
+			{
+				this.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
+			}
+			
+			private function keyPressed(event:KeyboardEvent):void
+			{
+				if (event.keyCode == Keyboard.ENTER)
+				{
+					cancelButtonClicked();
+				}
+				event.stopImmediatePropagation();
+			}
+			
+			private function cancelButtonClicked():void
+			{
+				// remove pop up from screen
+  	    		PopUpManager.removePopUp(this);				
+			}
+			
+		]]>
+	</mx:Script>
+	<mx:Button x="277" y="96" label="Close" width="73" click="cancelButtonClicked()" id="cancelButton"/>
+	<mx:TextArea x="10" y="51" width="340" editable="false" borderThickness="0" height="37">
+		<mx:text>Your data has been copied to the clipboard and may be pasted into your favorite spreadsheet.</mx:text>
+	</mx:TextArea>
+	
+	
+</mx:TitleWindow>

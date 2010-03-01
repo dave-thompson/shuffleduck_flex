@@ -62,8 +62,14 @@
          <mx:AddChild relativeTo="{spacer2}" position="before">
             <mx:Button id="importButton" label="import" styleName="SlimlineButton" textRollOverColor="0x25e9eb" click="importClicked(event)" fontSize="10" width="52" toolTip="Import data from a spreadsheet"/>
          </mx:AddChild>
+         <mx:AddChild relativeTo="{spacer2}" position="before">
+            <mx:Button id="exportButton" label="export" styleName="SlimlineButton" textRollOverColor="0x25e9eb" click="exportClicked(event)" fontSize="10" width="52" toolTip="Export data to the clipboard in spreadsheet format"/>
+         </mx:AddChild>
          <mx:AddChild relativeTo="{importButton}" position="before">
             <mx:Spacer width="30"/>
+         </mx:AddChild>
+         <mx:AddChild relativeTo="{exportButton}" position="before">
+            <mx:Spacer width="10"/>
          </mx:AddChild>
          <mx:SetProperty target="{textBoxButton}" name="enabled" value="false"/>
          <mx:SetProperty target="{gridButton}" name="toolTip" value=""/>
@@ -173,7 +179,7 @@
 		
 		// daughter screens
 		private var _importDialog:ImportDialog;
-		
+		private var _exportDialog:ExportDialog;
 		// object model  		
 		private var _deck:Deck;
 		
@@ -542,6 +548,36 @@
 				// add this row to the end of the datagrid data provider	
 				_dataProviderAC.addItem(item);
 		  	}		  	
+		}
+		
+		private function exportClicked(event:MouseEvent):void
+		{
+			// Convert the column names into a tab delimited string
+			var tabDelimitedText:String = "";
+			for each (var column:DataGridColumn in datagrid.columns)
+				tabDelimitedText += column.headerText + "\t";
+			tabDelimitedText = tabDelimitedText.replace(/\t$/, "\n");
+			
+			// Add the data values to the tab delimited string
+			for each (var item:Object in _dataProviderAC)
+		    {
+				for each (var column:DataGridColumn in datagrid.columns)
+					tabDelimitedText += item[column.dataField] + "\t";
+				tabDelimitedText = tabDelimitedText.replace(/\t$/, "\n");
+		    }
+		    
+			// Clean up excessive whitespace at end of string
+	    	tabDelimitedText = tabDelimitedText.replace(/\n[\t\n]*\n/g, "\n");
+	    	tabDelimitedText = tabDelimitedText.replace(/\n$/, "");
+		    
+		    // put the tab delimited string in the user's clipboard
+			System.setClipboard(tabDelimitedText);
+			
+			// notify the user
+			if (!_exportDialog)
+				_exportDialog = new ExportDialog();
+            PopUpManager.addPopUp(_exportDialog, this, true);
+            PopUpManager.centerPopUp(_exportDialog);
 		}
 		
 		private function datagridScrollToBottom(event:FlexEvent):void
