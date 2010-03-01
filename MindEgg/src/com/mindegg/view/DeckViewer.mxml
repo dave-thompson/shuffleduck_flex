@@ -561,7 +561,7 @@
 			// Add the data values to the tab delimited string
 			for each (var item:Object in _dataProviderAC)
 		    {
-				for each (var column:DataGridColumn in datagrid.columns)
+				for each (column in datagrid.columns)
 					tabDelimitedText += item[column.dataField] + "\t";
 				tabDelimitedText = tabDelimitedText.replace(/\t$/, "\n");
 		    }

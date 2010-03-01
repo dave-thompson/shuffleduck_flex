@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
-				layout="horizontal"
+				layout="vertical"
 				xmlns:me="com.mindegg.*"
 				xmlns:me_view="com.mindegg.view.*"
 				paddingLeft="2"
@@ -11,37 +11,44 @@
 				backgroundGradientAlphas="[1.0, 1.0]"
 				preloader="com.mindegg.view.preloaders.AppPreloader"
 				applicationComplete="initialSetup()"
-				backgroundColor="#86C9EF" horizontalAlign="center" verticalAlign="middle">
+				backgroundColor="#86C9EF" horizontalAlign="center" verticalAlign="middle" verticalGap="0">
 				 
  <mx:Style source="com/mindegg/theme/styles.css"/>
  				
- <me_view:FrontPage id="frontPage" height="100%" width="950" horizontalAlign="center" verticalAlign="middle"/>
-				
+ <me_view:FrontPage id="frontPage" width="950" horizontalAlign="center" verticalAlign="middle"/>
+ 
   <mx:states>
-
     <mx:State name="homeScreen">
-      <mx:AddChild position="lastChild">
+      <mx:AddChild position="firstChild">
         <me_view:LibraryScreen id="homeScreen" backgroundColor="#771C1C" backgroundAlpha="0.0">
         </me_view:LibraryScreen>
       </mx:AddChild>
       <mx:RemoveChild target="{frontPage}"/>
       <mx:SetStyle name="backgroundGradientAlphas"/>
       <mx:SetStyle name="backgroundGradientColors"/>
+      <mx:SetProperty target="{bottombar}" name="width" value="100%"/>
+      <mx:SetProperty target="{bottombar}" name="height" value="20"/>
+      <mx:SetStyle target="{bottombar}" name="horizontalAlign" value="right"/>
     </mx:State>
     <mx:State name="editScreen">
       <mx:RemoveChild target="{frontPage}"/>
-      <mx:AddChild position="lastChild">
+      <mx:AddChild position="firstChild">
         <me_view:EditScreen id="editScreen" width="100%" height="100%">
         </me_view:EditScreen>
       </mx:AddChild>
+      <mx:SetProperty target="{bottombar}" name="width" value="100%"/>
+      <mx:SetProperty target="{bottombar}" name="height" value="20"/>
+      <mx:SetStyle target="{bottombar}" name="horizontalAlign" value="right"/>
     </mx:State>
     <mx:State name="loading">
       <mx:RemoveChild target="{frontPage}"/>
-      <mx:AddChild position="lastChild">
+      <mx:AddChild position="firstChild">
       	<mx:UIComponent width="100%" height="100%" id="loadingUIComponent"/>
       </mx:AddChild>
+      <mx:RemoveChild target="{bottombar}"/>
     </mx:State>
   </mx:states>
+  <me_view:BottomBar id="bottombar" width="950" height="100%" horizontalAlign="center"/>
  
  <mx:HTTPService id="sessionShow" url="{MindEgg.CONTEXT_URL}/user_session" resultFormat="e4x" result="sessionDetailsReceived(event)" fault="sessionDetailsFault(event)"/>
   
