@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+				layout="vertical"
+				xmlns:me="com.shuffleduck.*"
+				xmlns:me_view="com.shuffleduck.view.*"
+				paddingLeft="2"
+				paddingRight="2"
+				paddingTop="2"
+				paddingBottom="2"
+				backgroundGradientAlphas="[1.0, 1.0]"
+				preloader="com.shuffleduck.view.preloaders.AppPreloader"
+				applicationComplete="initialSetup()"
+				backgroundColor="#86C9EF" horizontalAlign="center" verticalAlign="middle" verticalGap="0">
+				 
+ <mx:Style source="com/shuffleduck/theme/styles.css"/>
+ 				
+ <me_view:FrontPage id="frontPage" width="950" horizontalAlign="center" verticalAlign="middle"/>
+ 
+  <mx:states>
+    <mx:State name="homeScreen">
+      <mx:AddChild position="firstChild">
+        <me_view:LibraryScreen id="homeScreen" backgroundColor="#771C1C" backgroundAlpha="0.0">
+        </me_view:LibraryScreen>
+      </mx:AddChild>
+      <mx:RemoveChild target="{frontPage}"/>
+      <mx:SetStyle name="backgroundGradientAlphas"/>
+      <mx:SetStyle name="backgroundGradientColors"/>
+      <mx:SetProperty target="{bottombar}" name="width" value="100%"/>
+      <mx:SetProperty target="{bottombar}" name="height" value="20"/>
+      <mx:SetStyle target="{bottombar}" name="horizontalAlign" value="right"/>
+    </mx:State>
+    <mx:State name="editScreen">
+      <mx:RemoveChild target="{frontPage}"/>
+      <mx:AddChild position="firstChild">
+        <me_view:EditScreen id="editScreen" width="100%" height="100%">
+        </me_view:EditScreen>
+      </mx:AddChild>
+      <mx:SetProperty target="{bottombar}" name="width" value="100%"/>
+      <mx:SetProperty target="{bottombar}" name="height" value="20"/>
+      <mx:SetStyle target="{bottombar}" name="horizontalAlign" value="right"/>
+    </mx:State>
+    <mx:State name="loading">
+      <mx:RemoveChild target="{frontPage}"/>
+      <mx:AddChild position="firstChild">
+      	<mx:UIComponent width="100%" height="100%" id="loadingUIComponent"/>
+      </mx:AddChild>
+      <mx:RemoveChild target="{bottombar}"/>
+    </mx:State>
+  </mx:states>
+  <me_view:BottomBar id="bottombar" width="950" height="100%" horizontalAlign="center"/>
+ 
+ <mx:HTTPService id="sessionShow" url="{ShuffleDuck.CONTEXT_URL}/user_session" resultFormat="e4x" result="sessionDetailsReceived(event)" fault="sessionDetailsFault(event)"/>
+  
+  <mx:Script>
+  	<![CDATA[
+  		import com.shuffleduck.view.preloaders.PreloaderScreen;
+  		import mx.rpc.events.ResultEvent;
+  		import adobe.utils.CustomActions;
+
+		import com.shuffleduck.view.FrontPage;
+  		import com.shuffleduck.utils.CustomEvent;
+  		import mx.managers.PopUpManager;
+  		import com.shuffleduck.view.DebugDialog;
+  		import com.shuffleduck.view.DeckListing;
+  		import mx.rpc.events.ResultEvent;
+  		import com.shuffleduck.view.preloaders.AppPreloader;
+  		import com.shuffleduck.utils.ExternalInterfaceUtil;
+
+		// Version Numbers
+  		public static const XML_VERSION_NO:String 								= "0.01";
+  		public static const XML_BACKWARD_COMPATIBLE_IPHONE_VERSION_NO:String 	= "0.01";
+
+		// Web Service Configuration
+		public static const CONTEXT_URL:String = "http://localhost:3000";
+		//public static const CONTEXT_URL:String = "http://shuffleduck.heroku.com";
+
+		// event constants
+		public static const USER_LOGGED_IN:String = "userLoggedIn";
+		public static const USER_LOGGED_OUT:String = "userLoggedOut";
+		public static const DEBUG_POP_UP_REQUEST:String = "debugPopUpRequest";
+  		 
+  		/********************
+  		 * Constructor
+  		 ********************/
+  		 
+  		private function initialSetup():void
+		{
+			// setup JavaScript to show an alert should the user close the browser window or navigate away without first saving
+			ExternalInterfaceUtil.addExternalEventListener("window.onbeforeunload", requestUnloadConfirmation, "unloadConfirmation");
+			
+			// listen for events
+				this.addEventListener(ShuffleDuck.USER_LOGGED_IN, userSuccessfullyLoggedIn);
+
+				// Events from DeckListing
+				this.addEventListener(DeckListing.DECK_LISTING_CLICKED, deckListingClicked);
+
+				// Events from HomePage
+				this.addEventListener(ShuffleDuck.USER_LOGGED_OUT, userLoggedOut);
+				
+				// Events from EditScreen
+				this.addEventListener(EditScreen.RETURN_TO_LIBRARY_REQUEST, returnToLibrary);
+				
+				// Other events
+				this.addEventListener(ShuffleDuck.DEBUG_POP_UP_REQUEST, popUpDebugMessage);
+			
+			// set up application
+			currentState="editScreen";
+			currentState="";
+			currentState="loading";
+			
+			// continue showing the preloader screen until the session has been loaded
+			// commented out - user experience better with just a blue screen
+			/*
+			var preloaderScreen:PreloaderScreen = AppPreloader.preloaderScreen();
+			loadingUIComponent.addChild(preloaderScreen.getBitmap());			
+			loadingUIComponent.addChild(AppPreloader.preloaderProgressBarFill(1));
+			loadingUIComponent.width = preloaderScreen.width;
+			loadingUIComponent.height = preloaderScreen.height;
+			*/			
+
+			// check to see if there is a session in progress, and if so go to the library screen
+			sessionShow.send();
+		}
+		
+		private function sessionDetailsReceived(e:ResultEvent):void
+		{
+			// parse response
+			var user_details:XML = e.result as XML;
+			if (user_details != null) // if a user was returned (and we're therefore logged in)
+			{
+	  	    	// raise an event to the application (self) so it may show the user's decks
+	  	    	var params:Object = new Object();
+	  	    	params.username = user_details.username
+		    	var newEvent:CustomEvent = new CustomEvent(ShuffleDuck.USER_LOGGED_IN, params, true);
+		    	dispatchEvent(newEvent);
+			}
+			else // a user wasn't returned - therefore we should serve the login page
+			{
+				currentState = "";
+			}
+		}
+		
+		private function sessionDetailsFault(event:Event):void
+  	    {
+  	    	// for some reason the server wasn't reached to provide a session or otherwise - most likely the user has no connectivity of ShuffleDuck is down
+			// serve the login page (do nothing) - this will allow the user to try logging in with their credentials - if this still fails, the front page will provide them an error
+			currentState = "";
+  	    }
+
+		
+		private function returnToLibrary(e:CustomEvent):void
+		{
+			// go to the home page
+			currentState="homeScreen";
+			homeScreen.setup();
+		}
+		
+		private function popUpDebugMessage(e:CustomEvent):void
+		{
+			var debugDialog:DebugDialog = new DebugDialog;
+  	    	PopUpManager.addPopUp(debugDialog, this, true);
+			PopUpManager.centerPopUp(debugDialog);
+			debugDialog.message = e.params.message;
+		}
+		
+		private function deckListingClicked(e:CustomEvent):void
+		{
+			currentState="editScreen";
+			editScreen.setup(e.params.title);
+			editScreen.loadDeck(e.params.userVisibleDeckID);
+		}
+		
+  	    private function userSuccessfullyLoggedIn(e:CustomEvent):void
+		{
+			// go to the home page
+			currentState="homeScreen";
+			homeScreen.setup();
+			homeScreen.setUsername(e.params.username);
+		}
+		
+  	    private function userLoggedOut(e:CustomEvent):void
+		{
+			// go to the home page
+			currentState="";
+		}
+		
+		private function requestUnloadConfirmation():String
+		{
+			if (editScreen.changedSinceSave)
+			{
+				return "ShuffleDuck has unsaved changes. These will be lost if you leave without saving.";
+			}
+			else
+			{
+				return null;
+			}
+		}		
+
+  	]]>
+  </mx:Script>
+  
+</mx:Application>

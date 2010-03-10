@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+				layout="absolute" 
+				width="594"
+				height="480" 
+				backgroundColor="#FFFFFF" 
+				backgroundAlpha="1"
+				borderStyle="solid" 
+				borderColor="#000000" 
+				borderThickness="2"
+				borderAlpha ="1"
+				headerHeight="0" 
+				cornerRadius="0"
+				dropShadowEnabled="true"
+				creationComplete="setup()">
+	<mx:Label text="Data Import" fontSize="22" fontWeight="bold" color="#25E9EB" fontStyle="italic" x="10" y="10" id="label1"/>
+	<mx:Button x="427" y="432" label="Import" width="133" click="okButtonClicked()" id="button1"/>
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.managers.PopUpManager;
+			import ascb.util.StringUtilities;
+			import com.shuffleduck.utils.CustomEvent;
+			
+			public static const IMPORT_REQUEST_RECEIVED:String = "importRequestReceived";
+			
+			public function setup():void
+			{
+				// make ready for editing
+				clipboardTextArea.setFocus();				
+			}
+			
+			private function okButtonClicked():void
+			{
+				if (clipboardTextArea.text != "")
+				{
+					// raise an import event with the supplied text
+					var params:Object = new Object();
+		        	params.text = clipboardTextArea.text;
+					var event:CustomEvent = new CustomEvent(IMPORT_REQUEST_RECEIVED, params, false);
+			        dispatchEvent(event);
+				}
+				
+				// remove pop up from screen
+				clipboardTextArea.text = "";
+  	    		PopUpManager.removePopUp(this);	    	
+			}
+			
+			private function cancelButtonClicked():void
+			{
+				// remove pop up from screen
+				clipboardTextArea.text = "";
+  	    		PopUpManager.removePopUp(this);				
+			}
+
+			
+		]]>
+	</mx:Script>
+	<mx:Button x="346" y="432" label="Cancel" width="73" click="cancelButtonClicked()" id="cancelButton"/>
+	<mx:TextArea x="10" y="103" width="550" height="321" id="clipboardTextArea"/>
+	<mx:Label x="10" y="51" text="Copy and paste spreadsheet data below and click 'Import'."/>
+	<mx:Label x="10" y="77" text="Cards will be added to the end of your deck."/>
+	
+	
+</mx:TitleWindow>

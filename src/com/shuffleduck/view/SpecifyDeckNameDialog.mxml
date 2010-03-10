@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" width="400" height="146" title="Deck Name" creationComplete="creationComplete()">
+	<mx:TextArea width="100%" editable="false" fontSize="14">
+		<mx:text>Please specify a name for this deck:</mx:text>
+	</mx:TextArea>
+	<mx:TextInput width="100%" id="nameTextInput">
+		<mx:change>manageSaveButtonEnabling()</mx:change>
+	</mx:TextInput>
+	<mx:HBox width="100%">
+		<mx:Spacer width="100%"/>
+		<mx:Button label="Cancel" id="cancelButton" click="PopUpManager.removePopUp(this)"/>
+		<mx:Button label="Save" id="saveButton" click="saveButtonClicked()" enabled="false"/>
+	</mx:HBox>
+	
+	<mx:Script>
+	<![CDATA[
+		
+	import com.shuffleduck.utils.CustomEvent;
+	import mx.managers.PopUpManager;
+	
+	public static const DECK_NAME_CHOSEN:String = "deckNameChosen";
+	
+	public var deckName:String = "";
+	
+	private function creationComplete():void
+	{
+		nameTextInput.text = deckName;
+		manageSaveButtonEnabling();
+	}
+	
+	private function manageSaveButtonEnabling():void
+	{
+		if ((nameTextInput.text.length) > 0)
+ 			{saveButton.enabled = true;}
+		else
+			{saveButton.enabled = false;}
+	}
+	
+	private function saveButtonClicked():void
+	{
+		// raise event to the appication, passing the requested deck name
+		var params:Object = new Object();
+		params.deckName = nameTextInput.text;
+    	var event:CustomEvent = new CustomEvent(DECK_NAME_CHOSEN, params, true);
+    	dispatchEvent(event);
+    	
+    	// remove the pop up window
+    	PopUpManager.removePopUp(this);
+	}
+		
+	]]>
+</mx:Script>
+	
+</mx:Panel>

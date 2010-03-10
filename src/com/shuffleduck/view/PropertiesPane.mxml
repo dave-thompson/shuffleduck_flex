@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="176" backgroundColor="#4C5C5E" borderStyle="solid" borderThickness="5" cornerRadius="10" height="507" borderColor="#FFFFFF">
+
+	<mx:states>
+		<mx:State name="off">
+			<mx:RemoveChild target="{titleLabel}"/>
+			<mx:RemoveChild target="{hrule1}"/>
+			<mx:RemoveChild target="{label1}"/>
+			<mx:RemoveChild target="{nameTextInput}"/>
+			<mx:RemoveChild target="{hrule0}"/>
+			<mx:RemoveChild target="{label2}"/>
+			<mx:RemoveChild target="{foregroundColorPicker}"/>
+			<mx:RemoveChild target="{fontSizeNumericStepper}"/>
+			<mx:RemoveChild target="{alignmentToggleButtonBar}"/>
+			<mx:RemoveChild target="{label3}"/>
+			<mx:RemoveChild target="{backgroundColorPicker}"/>
+			<mx:RemoveChild target="{clearBackgroundButton}"/>
+			<mx:RemoveChild target="{hrule3}"/>
+			<mx:RemoveChild target="{label4}"/>
+			<mx:RemoveChild target="{label5}"/>
+			<mx:RemoveChild target="{xLabel}"/>
+			<mx:RemoveChild target="{label7}"/>
+			<mx:RemoveChild target="{yLabel}"/>
+			<mx:RemoveChild target="{label6}"/>
+			<mx:RemoveChild target="{label8}"/>
+			<mx:RemoveChild target="{heightLabel}"/>
+			<mx:RemoveChild target="{widthLabel}"/>
+		</mx:State>
+		<mx:State name="card">
+			<mx:RemoveChild target="{label4}"/>
+			<mx:RemoveChild target="{xLabel}"/>
+			<mx:RemoveChild target="{label5}"/>
+			<mx:RemoveChild target="{label7}"/>
+			<mx:RemoveChild target="{yLabel}"/>
+			<mx:RemoveChild target="{label6}"/>
+			<mx:RemoveChild target="{label8}"/>
+			<mx:RemoveChild target="{widthLabel}"/>
+			<mx:RemoveChild target="{heightLabel}"/>
+			<mx:AddChild position="lastChild">
+				<mx:ColorPicker id="side1ColorPicker" change="onChange(event)" x="34" y="88" toolTip="Set background color" width="31" height="31"/>
+			</mx:AddChild>
+			<mx:RemoveChild target="{clearBackgroundButton}"/>
+			<mx:RemoveChild target="{alignmentToggleButtonBar}"/>
+			<mx:RemoveChild target="{fontSizeNumericStepper}"/>
+			<mx:RemoveChild target="{foregroundColorPicker}"/>
+			<mx:RemoveChild target="{backgroundColorPicker}"/>
+			<mx:RemoveChild target="{nameTextInput}"/>
+			<mx:RemoveChild target="{label1}"/>
+			<mx:SetProperty target="{titleLabel}" name="text" value="Card X"/>
+			<mx:SetProperty target="{label2}" name="y" value="59"/>
+			<mx:SetProperty target="{label2}" name="text" value="Background"/>
+			<mx:SetProperty target="{label3}" name="text" value="Side 1"/>
+			<mx:SetProperty target="{label3}" name="y" value="127"/>
+			<mx:AddChild position="lastChild">
+				<mx:ColorPicker id="side2ColorPicker" change="onChange(event)" x="112" y="88" toolTip="Set background color" width="31" height="31"/>
+			</mx:AddChild>
+			<mx:SetProperty target="{hrule1}" name="y" value="29"/>
+			<mx:RemoveChild target="{hrule0}"/>
+			<mx:RemoveChild target="{hrule3}"/>
+			<mx:AddChild position="lastChild">
+				<mx:Label text="Side 2" x="107" y="127" color="#FFFFFF" fontWeight="normal" textDecoration="normal" id="label0" fontSize="12" fontStyle="italic"/>
+			</mx:AddChild>
+			<mx:SetStyle target="{label2}" name="fontStyle" value="normal"/>
+			<mx:SetStyle target="{label3}" name="fontStyle" value="italic"/>
+			<mx:SetProperty target="{label3}" name="x" value="29"/>
+		</mx:State>
+		<mx:State name="textbox">
+			<mx:RemoveChild target="{nameTextInput}"/>
+			<mx:RemoveChild target="{label1}"/>
+			<mx:RemoveChild target="{hrule1}"/>
+			<mx:SetProperty target="{hrule0}" name="y" value="29"/>
+			<mx:SetProperty target="{label2}" name="y" value="59"/>
+			<mx:SetProperty target="{fontSizeNumericStepper}" name="y" value="85"/>
+			<mx:SetProperty target="{foregroundColorPicker}" name="y" value="85"/>
+			<mx:SetProperty target="{label3}" name="y" value="186"/>
+			<mx:SetProperty target="{backgroundColorPicker}" name="y" value="212"/>
+			<mx:SetProperty target="{clearBackgroundButton}" name="y" value="212"/>
+			<mx:SetProperty target="{alignmentToggleButtonBar}" name="y" value="133"/>
+			<mx:SetProperty target="{hrule3}" name="y" value="260"/>
+			<mx:SetProperty target="{label4}" name="y" value="290"/>
+			<mx:SetProperty target="{label5}" name="y" value="316"/>
+			<mx:SetProperty target="{label6}" name="y" value="316"/>
+			<mx:SetProperty target="{xLabel}" name="y" value="316"/>
+			<mx:SetProperty target="{widthLabel}" name="y" value="316"/>
+			<mx:SetProperty target="{label7}" name="y" value="333"/>
+			<mx:SetProperty target="{yLabel}" name="y" value="333"/>
+			<mx:SetProperty target="{label8}" name="y" value="333"/>
+			<mx:SetProperty target="{heightLabel}" name="y" value="333"/>
+		</mx:State>
+		<mx:State name="template_textbox"/>
+	</mx:states>
+	
+	<mx:Style source="com/shuffleduck/theme/styles.css"/>
+	
+	<mx:Script>
+		<![CDATA[
+			
+		import com.shuffleduck.data.Component;
+		import com.shuffleduck.data.TextBox;
+		import flash.display.DisplayObject;
+		import com.shuffleduck.utils.CustomEvent;
+		import flash.text.TextFormatAlign;
+		import mx.events.FlexEvent;
+		import mx.events.ItemClickEvent;
+		
+		public static const COMPONENT_NAME_CHANGE:String = "componentNameChange";
+					
+		private var _component:Component; // the component currently being edited
+		private var _uiUserComponent:UIUserComponent; // the UIUserComponent representing the current component on screen
+		private var _cardViewer:CardViewer; // the CardViewer being edited (when in "card" status only)
+		
+		public function setContext(component:Component, uiUserComponent:UIUserComponent, isTemplate:Boolean):void
+		{
+			_component = component;
+			_uiUserComponent = uiUserComponent;
+			var textBox:TextBox = component as TextBox;
+
+			// setup as template or card view
+			if (isTemplate)
+			{
+				currentState = "template_textbox";
+				nameTextInput.text = textBox.name;
+				this.titleLabel.text = "Properties";
+			}
+			else
+			{
+				currentState = "textbox";
+				this.titleLabel.text = textBox.name;
+			}
+			
+			// populate values in properties pane, based on existing values for editable properties
+			fontSizeNumericStepper.value = textBox.fontSize;
+			foregroundColorPicker.selectedColor = textBox.foregroundColor;
+			backgroundColorPicker.selectedColor = textBox.backgroundColor;
+			xLabel.text = String(textBox.x);
+			yLabel.text = String(textBox.y);
+			widthLabel.text = String(textBox.width);
+			heightLabel.text = String(textBox.height);
+			switch (textBox.alignment)
+			{
+				case "left":
+					alignmentToggleButtonBar.selectedIndex = 0;
+					break;
+				case "center":
+					alignmentToggleButtonBar.selectedIndex = 1;
+					break;
+				case "right":
+					alignmentToggleButtonBar.selectedIndex = 2;
+					break;	
+			}
+			
+			// listen for change events from the alignment buttons
+			alignmentToggleButtonBar.addEventListener(ItemClickEvent.ITEM_CLICK, onChange);
+		}
+		
+		public function setCardContext(cardViewer:CardViewer, isTemplate:Boolean):void
+		{
+			_cardViewer = cardViewer;
+
+			// setup for card
+			currentState = "card";
+			this.titleLabel.text = _cardViewer.cardTitle;
+			
+			// populate values in properties pane, based on existing values for editable properties
+			side1ColorPicker.selectedColor = _cardViewer.getUISideNumber(1).side.backgroundColor;
+			side2ColorPicker.selectedColor = _cardViewer.getUISideNumber(2).side.backgroundColor;
+		}
+				
+		public function clearContext():void
+		{
+			// stop listening to change events from the alignment buttons
+			alignmentToggleButtonBar.removeEventListener(ItemClickEvent.ITEM_CLICK, onChange);
+			
+			// clear the properties
+			_component = null;
+			_cardViewer = null;
+			currentState = "off";
+		}
+		
+		private function onChange(e:Event):void
+		{	
+			// if editing a TextBox
+			if ((currentState == "textbox") || (currentState == "template_textbox"))
+			{
+				var textBox:TextBox = _component as TextBox;
+
+				if (e.target == nameTextInput)
+				{
+					// names across all matching components must be changed: the application needs to handle this
+					var params:Object = new Object();
+					params.newName = nameTextInput.text;
+					params.component = _component;
+			    	var event:CustomEvent = new CustomEvent(COMPONENT_NAME_CHANGE, params, true);
+			    	dispatchEvent(event);
+				}
+				else if (e.target == foregroundColorPicker)
+				{
+					textBox.foregroundColor = foregroundColorPicker.selectedColor;	
+				}
+				else if (e.target == fontSizeNumericStepper)
+				{
+					textBox.fontSize = fontSizeNumericStepper.value;					
+				}
+				else if (e.target == alignmentToggleButtonBar)
+				{
+					switch (alignmentToggleButtonBar.selectedIndex)
+					{
+						case 0:
+							textBox.alignment = "left";
+							break;
+						case 1:
+							textBox.alignment = "center";
+							break;
+						case 2:
+							textBox.alignment = "right";
+							break;	
+					}
+				}
+				else if (e.target == backgroundColorPicker)
+				{
+					// set background to opaque and the choosen colour
+					textBox.backgroundTransparent = false;						
+					textBox.backgroundColor = backgroundColorPicker.selectedColor;					
+				}
+				else if (e.target == clearBackgroundButton)
+				{
+					// set background to transparent
+					textBox.backgroundTransparent = true;
+					
+					// set backgroundColor to light grey to give user feeling that it has no colour
+					textBox.backgroundColor = 0xCCCCCD;
+					backgroundColorPicker.selectedColor = textBox.backgroundColor;					
+				}
+				// update drawn component on screen
+				_uiUserComponent.redraw();
+			}
+			// if editing a Card
+			else if (currentState == "card")
+			{
+				if (e.target == side1ColorPicker)
+				{
+					_cardViewer.getUISideNumber(1).side.backgroundColor = side1ColorPicker.selectedColor;					
+				}
+				else if (e.target == side2ColorPicker)
+				{
+					_cardViewer.getUISideNumber(2).side.backgroundColor = side2ColorPicker.selectedColor;					
+				}
+				// update drawn component on screen
+				_cardViewer.redraw();
+			}
+		}	
+		
+		]]>
+	</mx:Script>
+	
+		<mx:Label text="Title" x="10" y="10" color="#FFFFFF" fontWeight="bold" textDecoration="normal" fontSize="12" height="24" id="titleLabel"/>
+		<mx:Label text="x:" x="31" y="387" color="#FFFFFF" id="label5"/>
+		<mx:Label text="y:" x="31" y="404" color="#FFFFFF" id="label7"/>
+		<mx:Label text="260" x="46" y="404" id="yLabel" color="#FFFFFF" textAlign="right"/>
+		<mx:Label text="w:" x="88" y="387" color="#FFFFFF" id="label6"/>
+		<mx:Label text="h:" x="88" y="404" color="#FFFFFF" id="label8"/>
+		<mx:Label text="260" x="46" y="387" id="xLabel" color="#FFFFFF" textAlign="right"/>
+		<mx:Label text="260" x="105" y="404" id="heightLabel" color="#FFFFFF" textAlign="right"/>
+		<mx:Label text="260" x="105" y="387" id="widthLabel" color="#FFFFFF" textAlign="right"/>
+		<mx:TextInput id="nameTextInput" width="119" change="onChange(event)" styleName="propertyFormInput" x="31" y="70" toolTip="Set name (for grid view)"/>
+		<mx:Label text="Font" x="10" y="130" color="#FFFFFF" fontWeight="normal" textDecoration="normal" id="label2" fontSize="12"/>
+		<mx:NumericStepper id="fontSizeNumericStepper" minimum="4" maximum="127" stepSize="1" change="onChange(event)" styleName="propertyFormInput" x="88" y="156" width="62" value="127" toolTip="Set font size" height="31" fontSize="18"/>
+		<mx:ColorPicker id="foregroundColorPicker" change="onChange(event)" x="31" y="156" toolTip="Set font color" width="31" height="31"/>
+		<mx:Label text="Background" x="10" y="257" color="#FFFFFF" fontWeight="normal" textDecoration="normal" id="label3" fontSize="12"/>
+		<mx:ColorPicker id="backgroundColorPicker" change="onChange(event)" x="31" y="283" toolTip="Choose background color" width="31" height="31"/>
+		<mx:Label text="Dimensions" x="12" y="361" color="#FFFFFF" fontWeight="normal" textDecoration="normal" id="label4" fontSize="12"/>
+		<mx:HRule height="22" width="166" id="hrule3" x="0" y="331"/>
+		<mx:HRule height="22" width="166" id="hrule0" x="0" y="100"/>
+		<mx:Label text="Name" x="10" y="44" color="#FFFFFF" fontWeight="normal" textDecoration="normal" id="label1" fontSize="12"/>
+		<mx:Button x="74" y="283" icon="@Embed(source='../assets/clearBG.png')" toolTip="Clear background" id="clearBackgroundButton"  click="onChange(event)" width="31" height="31"/>
+		
+		<mx:ToggleButtonBar id="alignmentToggleButtonBar" dataProvider="{alignmentsArray}" buttonMode="true"  x="31" y="204" width="119"/>
+	
+	
+    <mx:Array id="alignmentsArray">
+        <mx:Object toolTip="Align left" icon="@Embed(source='com/shuffleduck/assets/alignmentLeft.png')" />
+        <mx:Object toolTip="Align centre" icon="@Embed(source='com/shuffleduck/assets/alignmentCenter.png')" />
+        <mx:Object toolTip="Align right" icon="@Embed(source='com/shuffleduck/assets/alignmentRight.png')" />
+    </mx:Array>
+    <mx:HRule height="22" width="166" id="hrule1" x="0" y="27"/>
+
+</mx:Canvas>

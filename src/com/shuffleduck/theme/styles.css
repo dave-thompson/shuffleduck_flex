@@ -1,0 +1,53 @@
+/* CSS file */
+
+.cardsDatagrid
+{
+  vertical-grid-lines: true;
+  border-style: solid;
+  selection-color: #E8A5A8;
+  roll-over-color: #DD7479;
+  alternating-item-colors: #FFFFFF, #F2F2DA;
+  headerColors: #FC575E, #FC575E;
+	horizontalGridLines: false;
+	verticalScrollBarStyleName: dataGridVerticalScrollBar;
+	borderThickness: 0;
+	textAlign: left;
+	fontWeight: normal;
+	fontStyle: normal;
+	textDecoration: normal;
+	headerStyleName: dataGridHeader;
+	fontSize: 14;
+}
+.dataGridHeader
+{
+	color: #EEEEEE;
+	fontWeight: bold;
+}
+Button.StandardButton
+{
+	borderColor: #000000;
+	color: #FC575E;
+	fillAlphas: 0.0, 0.0, 0.0, 0.0;
+	cornerRadius: 0;
+	fontFamily: Verdana;
+}
+Button.SlimlineButton
+{
+	cornerRadius: 10;
+	fillAlphas: 0.8, 0.8, 0.8, 0.8;
+	fillColors: #000000, #000000;
+	paddingBottom: 0;
+	paddingLeft: 0;
+	paddingRight: 0;
+	paddingTop: 0;
+	textAlign: center;
+	color: #FC575E;
+}
+.customScroll
+{
+    upArrowSkin: ClassReference(null);
+    downArrowSkin: ClassReference(null);
+    thumbUpSkin: ClassReference('com.shuffleduck.theme.skins.CustomSkinThumb');
+    thumbOverSkin: ClassReference('com.shuffleduck.theme.skins.CustomSkinThumb');
+    thumbDownSkin: ClassReference('com.shuffleduck.theme.skins.CustomSkinThumb');
+}

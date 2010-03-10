@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:VBox	    xmlns:mx="http://www.adobe.com/2006/mxml"
+				xmlns:me="com.shuffleduck.*"
+				xmlns:me_view="com.shuffleduck.view.*"
+				paddingLeft="2"
+				paddingRight="2"
+				paddingTop="2"
+				paddingBottom="2"
+				width="100%"
+				backgroundAlpha="0.0">
+		 
+<mx:HTTPService id="accountCreate" url="{ShuffleDuck.CONTEXT_URL}/users" method = "POST" resultFormat="e4x" contentType="application/xml" result="loggedIn(true, event)" fault="failedAccountCreation(event)"/>
+<mx:HTTPService id="sessionCreate" url="{ShuffleDuck.CONTEXT_URL}/user_session" method = "POST" resultFormat="e4x" contentType="application/xml" result="loggedIn(false, event)" fault="failedLogIn(event)"/>
+<mx:Style source="com/shuffleduck/theme/styles.css"/>
+
+	<mx:states>
+		<mx:State name="error">
+			<mx:AddChild position="firstChild">
+				<mx:VBox id ="errorsVBox" width="100%" backgroundColor="#DEE2E2" cornerRadius="20" borderStyle="solid" borderThickness="5" verticalGap="2" borderColor="#ffffff" paddingTop="5" paddingBottom="5">
+				  <mx:Label text="Could not reach server - please check your network connection and let us know if the problem persists." fontSize="12" textDecoration="normal" color="#EC0616" height="20" width="100%" textAlign="center" id="errorLabel"/>
+				</mx:VBox>
+			</mx:AddChild>
+			<mx:SetStyle name="paddingBottom"/>
+			<mx:SetStyle name="paddingLeft"/>
+			<mx:SetStyle name="paddingRight"/>
+			<mx:SetStyle name="paddingTop"/>
+			<mx:AddChild relativeTo="{errorsVBox}" position="before">
+				<mx:Spacer height="5"/>
+			</mx:AddChild>
+		</mx:State>
+	</mx:states>
+				 
+<mx:Canvas		paddingLeft="0"
+				paddingRight="0"
+				paddingTop="0"
+				paddingBottom="0"
+				width="100%"
+				height="100%"
+				backgroundAlpha="0.0" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+				 
+  <mx:Canvas width="337" height="201" backgroundColor="#80B4E9" x="609" y="10" id="canvas2" cornerRadius="20" borderStyle="solid" borderColor="#FFFFFF" borderThickness="5" verticalScrollPolicy="off" horizontalScrollPolicy="off">
+    <mx:Label x="10" y="10" text="Log In" fontSize="30" textDecoration="underline" color="#000000"/>
+    <mx:Label x="10" y="60" text="Username" fontSize="20"/>
+    <mx:Label x="10" y="98" text="Password" fontSize="20"/>
+    <mx:Button x="201" y="158" label="Log In" width="116" height="24" cornerRadius="10" id="loginButton" click="logInButtonClicked()"/>
+    <mx:TextInput x="135" y="60" height="30" width="180" tabIndex="1" id="loginUsernameTextInput" fontSize="17"/>
+    <mx:TextInput x="135" y="96" height="30" width="180" displayAsPassword="true" enabled="true" editable="true" tabIndex="2" id="loginPasswordTextInput" enter="logInButtonClicked()" fontSize="17"/>
+    <mx:Button x="140" y="128" label="Forgot Username / Password" fillAlphas="0" cornerRadius="0" alpha="0.0" fontWeight="normal" textDecoration="underline" id="forgotPasswordButton" click="showPasswordResetDialog()"/>
+  </mx:Canvas>
+  <mx:Canvas width="585" height="526" borderStyle="solid" backgroundColor="#DEE2E2" y="10" x="0" id="canvas1" cornerRadius="20" verticalScrollPolicy="off" horizontalScrollPolicy="off" borderThickness="5" borderColor="#ffffff">
+    <mx:Canvas x="10" y="10" width="555" height="496">
+      <mx:Label x="0" y="36" text="Shuffle" fontSize="127" width="555" height="160" color="#FC575E"/>
+      <mx:Label x="0" y="184" text="Duck" fontSize="127" width="555" height="164" textAlign="right" color="#9FC54E"/>
+      <mx:Label x="0" y="421" text="The Free Flashcard Platform" fontSize="30" width="555" height="53" textAlign="right" color="#000000"/>
+    </mx:Canvas>
+  </mx:Canvas>
+  <mx:Canvas width="337" height="257" borderStyle="solid" backgroundColor="#80B4E9" x="609" y="279" id="canvas3" cornerRadius="20" borderThickness="5" borderColor="#ffffff">
+    <mx:Button x="201" y="214" label="Join" width="116" height="24" cornerRadius="10" id="signUpButton" click="signUpButtonClicked()"/>
+    <mx:Label x="10" y="176" text="Age" fontSize="20"/>
+    <mx:ComboBox x="135" y="174" width="180" height="32" dataProvider="{ages}" id="signUpAgeComboBox" tabIndex="6" prompt="select age"></mx:ComboBox>
+    <mx:Label x="10" y="10" text="Join in Seconds" fontSize="30" textDecoration="underline" color="#000000"/>
+    <mx:Label x="10" y="60" text="Email" fontSize="20"/>
+    <mx:TextInput x="135" y="60" height="30" width="180" id="signUpEmailTextInput" tabIndex="3" fontSize="17"/>
+    <mx:Label x="10" y="136" text="Password" fontSize="20"/>
+    <mx:TextInput x="135" y="136" height="30" width="180" displayAsPassword="true" id="signUpPasswordTextInput" tabIndex="5" fontSize="17"/>
+    <mx:Label x="10" y="98" text="Username" fontSize="20"/>
+    <mx:TextInput x="135" y="98" height="30" width="180" id="signUpUsernameTextInput" tabIndex="4" fontSize="17"/>
+    <mx:Button x="92" y="215" label="Terms of Use" fillAlphas="0" cornerRadius="0" alpha="0.0" fontWeight="normal" textDecoration="underline" id="termsOfUseButton" click="showTermsDialog()"/>
+    <mx:Button x="31" y="215" label="Privacy" fillAlphas="0" cornerRadius="0" alpha="0.0" fontWeight="normal" textDecoration="underline" id="privacyButton" click="showPrivacyDialog()"/>
+  </mx:Canvas>
+				 
+  <mx:Script>
+  	<![CDATA[
+  		import mx.controls.Spacer;
+
+
+		import com.shuffleduck.utils.CustomEvent;
+		import mx.managers.PopUpManager;
+		import mx.rpc.events.ResultEvent;
+		import mx.rpc.events.FaultEvent;
+		import mx.collections.ArrayCollection;
+		import ascb.util.StringUtilities;
+
+		[Bindable]
+        public var ages:ArrayCollection = new ArrayCollection([
+                  													{label:"1", data:1},
+                  													{label:"2", data:2},
+                  													{label:"3", data:3},
+                  													{label:"4", data:4},
+                  													{label:"5", data:5},
+                  													{label:"6", data:6},
+                  													{label:"7", data:7},
+                  													{label:"8", data:8},
+                  													{label:"9", data:9},
+                  													{label:"10", data:10},
+                  													{label:"11", data:11},
+                  													{label:"12", data:12},
+                  													{label:"13", data:13},
+                  													{label:"14", data:14},
+                  													{label:"15", data:15},
+                  													{label:"16", data:16},
+                  													{label:"17", data:17},
+                  													{label:"18", data:18},
+                  													{label:"19", data:19},
+                  													{label:"20", data:20},
+                  													{label:"21", data:21},
+                  													{label:"22", data:22},
+                  													{label:"23", data:23},
+                  													{label:"24", data:24},
+                  													{label:"25", data:25},
+                  													{label:"26", data:26},
+                  													{label:"27", data:27},
+                  													{label:"28", data:28},
+                  													{label:"29", data:29},
+                  													{label:"30", data:30},
+                  													{label:"31", data:31},
+                  													{label:"32", data:32},
+                  													{label:"33", data:33},
+                  													{label:"34", data:34},
+                  													{label:"35", data:35},
+                  													{label:"36", data:36},
+                  													{label:"37", data:37},
+                  													{label:"38", data:38},
+                  													{label:"39", data:39},
+                  													{label:"40", data:40},
+                  													{label:"41", data:41},
+                  													{label:"42", data:42},
+                  													{label:"43", data:43},
+                  													{label:"44", data:44},
+                  													{label:"45", data:45},
+                  													{label:"46", data:46},
+                  													{label:"47", data:47},
+                  													{label:"48", data:48},
+                  													{label:"49", data:49},
+                  													{label:"50", data:50},
+                  													{label:"51", data:51},
+                  													{label:"52", data:52},
+                  													{label:"53", data:53},
+                  													{label:"54", data:54},
+                  													{label:"55", data:55},
+                  													{label:"56", data:56},
+                  													{label:"57", data:57},
+                  													{label:"58", data:58},
+                  													{label:"59", data:59},
+                  													{label:"60", data:60},
+                  													{label:"61", data:61},
+                  													{label:"62", data:62},
+                  													{label:"63", data:63},
+                  													{label:"64", data:64},
+                  													{label:"65", data:65},
+                  													{label:"66", data:66},
+                  													{label:"67", data:67},
+                  													{label:"68", data:68},
+                  													{label:"69", data:69},
+                  													{label:"70", data:70},
+                  													{label:"71", data:71},
+                  													{label:"72", data:72},
+                  													{label:"73", data:73},
+                  													{label:"74", data:74},
+                  													{label:"75", data:75},
+                  													{label:"76", data:76},
+                  													{label:"77", data:77},
+                  													{label:"78", data:78},
+                  													{label:"79", data:79},
+                  													{label:"80", data:80},
+                  													{label:"81", data:81},
+                  													{label:"82", data:82},
+                  													{label:"83", data:83},
+                  													{label:"84", data:84},
+                  													{label:"85", data:85},
+                  													{label:"86", data:86},
+                  													{label:"87", data:87},
+                  													{label:"88", data:88},
+                  													{label:"89", data:89},
+                  													{label:"90", data:90},
+                  													{label:"91", data:91},
+                  													{label:"92", data:92},
+                  													{label:"93", data:93},
+                  													{label:"94", data:94},
+                  													{label:"95", data:95},
+                  													{label:"96", data:96},
+                  													{label:"97", data:97},
+                  													{label:"98", data:98},
+                  													{label:"99", data:99},
+                  													{label:"100", data:100},
+                  													{label:"101", data:101},
+                  													{label:"102", data:102},
+                  													{label:"103", data:103},
+                  													{label:"104", data:104},
+                  													{label:"105", data:105},
+                  													{label:"106", data:106},
+                  													{label:"107", data:107},
+                  													{label:"108", data:108},
+                  													{label:"109", data:109},
+                  													{label:"110", data:110}
+                  											]);
+  		/********************
+  		 * Constructor
+  		 ********************/
+  		 
+  	    private function logInButtonClicked():void
+  	    {
+			// clear the last error message if there was one
+			currentState = "";
+			// send the entered data to the server
+			var user_session:XML = <user_session/>;
+			user_session['username'] = StringUtilities.trim(loginUsernameTextInput.text);			
+			user_session['password'] = StringUtilities.trim(loginPasswordTextInput.text);
+			sessionCreate.send(user_session);
+  	    }
+  	    
+  	    private function signUpButtonClicked():void
+  	    {
+  	    	// show the sign up dialog
+  	    	//var registrationDialog:RegistrationDialog = new RegistrationDialog;
+  	    	//PopUpManager.addPopUp(registrationDialog, this, true);
+			//PopUpManager.centerPopUp(registrationDialog);
+
+			// clear the last error message if there was one
+			currentState = "";
+			// send the entered data to the server
+			var user:XML = <user/>;
+			user['email'] = StringUtilities.trim(signUpEmailTextInput.text);
+			user['username'] = StringUtilities.trim(signUpUsernameTextInput.text);
+			user['password'] = signUpPasswordTextInput.text;
+			user['age_at_signup'] = signUpAgeComboBox.value;
+			accountCreate.send(user);
+  	    }
+  	    
+  	    private function showPasswordResetDialog():void
+  	    {
+			var passwordResetDialog:PasswordResetDialog = new PasswordResetDialog();
+            PopUpManager.addPopUp(passwordResetDialog, this, true);
+            PopUpManager.centerPopUp(passwordResetDialog);
+  	    }
+  	    
+  	    private function loggedIn(followingRegistration:Boolean, event:ResultEvent):void
+  	    {  		
+  	    	// check the response
+  	    	var result_xml:XML = event.result as XML;
+  	    	if (result_xml.localName() == "errors")
+  	    	{
+  	    		if (!(followingRegistration))	loginPasswordTextInput.text = ""; // this is likely because the username / password was invalid - therefore clear the password box
+  	    		showErrors(result_xml);
+  	    	}
+  	    	else
+  	    	{
+	  	    	// clear user data from front page
+	  	    	signUpEmailTextInput.text = "";
+				signUpUsernameTextInput.text = "";			
+				signUpPasswordTextInput.text = "";
+				signUpAgeComboBox.selectedIndex = -1;
+				loginUsernameTextInput.text = "";
+				loginPasswordTextInput.text = "";
+				
+				// parse response
+				var username:String = result_xml.username[0];
+				
+	  	    	// raise an event to the application so it may show the user's decks
+	  	    	var params:Object = new Object();
+	  	    	params.username = username;
+		    	var newEvent:CustomEvent = new CustomEvent(ShuffleDuck.USER_LOGGED_IN, params, true);
+		    	dispatchEvent(newEvent);
+  	    	}
+  	    }
+  	    
+  	    private function failedAccountCreation(event:FaultEvent):void
+  	    {
+  	    	var errors:XML = <errors/>;
+  	    	errors['error'] = "Couldn't reach server. Please check your network connection and let us know if the problem persists.";
+  	    }
+
+  	    private function failedLogIn(event:FaultEvent):void
+  	    {
+  	    	var errors:XML = <errors/>;
+  	    	errors['error'] = "Couldn't reach server. Please check your network connection and let us know if the problem persists.";			
+  	    }
+  	    
+  	    private function showErrors(error_xml:XML):void
+  	    {
+  	    	// set up the error box
+			currentState = "error";
+			errorsVBox.removeAllChildren();
+			
+			/*
+			var headerLabel:Label = new Label();
+			  	headerLabel.text = "     Sorry, there were some problems:";
+  	    		headerLabel.height = 20;
+  	    		headerLabel.width = 910;
+  	    		headerLabel.setStyle("fontSize", 12);
+  	    		headerLabel.setStyle("color", "#FFFFFF");
+  	    		headerLabel.setStyle("textAlign", "left");
+  	    		errorsVBox.addChild(headerLabel);
+			*/
+			
+			// add the errors
+  	    	for each (var error:XML in error_xml.error)
+  	    	{
+  	    		var label:Label = new Label();
+  	    		label.text = error.toString();
+  	    		label.height = 20;
+  	    		label.width = 910;
+  	    		label.setStyle("fontSize", 12);
+  	    		label.setStyle("color", "#EC0616");
+  	    		label.setStyle("textAlign", "center");
+  	    		errorsVBox.addChild(label);
+  	    	}
+  	    }
+  	    
+  	    public function showTermsDialog():void
+  	    {
+  	    	
+  	    }
+
+  	    public function showPrivacyDialog():void
+  	    {
+  	    	
+  	    }
+
+/*
+  	    private function guestButtonClicked():void
+  	    {
+  	    	// notify the application that button was clicked
+			var params:Object = new Object();
+            var event:CustomEvent = new CustomEvent(GUEST_BUTTON_CLICKED, params, true);
+            dispatchEvent(event);
+  	    }
+*/
+  	]]>
+  </mx:Script>
+  
+ </mx:Canvas>
+</mx:VBox>
