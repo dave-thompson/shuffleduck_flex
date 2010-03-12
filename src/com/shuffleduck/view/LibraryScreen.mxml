@@ -210,11 +210,12 @@
 		private function decksIndexResult(event:ResultEvent):void
 		{
 			var decks:XML = event.result as XML;
+			var serverTime:Date = DateUtil.parseW3CDTF(decks.timestamp);
 			
 			// clear deck listing
 			setLoading(false);
 			deckListingsVBox.removeAllChildren();
-			
+						
 			// loop through XML string, creating deck listings and adding them to the screen
 			var deckListing:DeckListing;
 			for each (var deck:XML in decks.deck)
@@ -222,7 +223,7 @@
 				// create deck listing
 				deckListing = new DeckListing();
 				deckListingsVBox.addChild(deckListing);
-				deckListing.setup(deck);
+				deckListing.setup(deck, serverTime);
 			}
   		}
   		

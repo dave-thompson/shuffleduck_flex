@@ -23,8 +23,8 @@
 						<mx:Label id = "titleLabel" color="#FFFFFF" fontSize="30" width="100%" mouseOver="mouseOverTitle(event)" mouseOut="mouseOutTitle(event)" toolTip="Rename this deck"/>
 					</mx:HBox>
 				</mx:HBox>
-				<mx:Label text="ID: {userVisibleID}" color="#FFFFFF"/>
-				<mx:Label text="{numCardsString}" color="#FFFFFF" fontStyle="italic"/>
+				<mx:Label text="ID: {_userVisibleID}" color="#FFFFFF"/>
+				<mx:Label text="{_numCardsString}" color="#FFFFFF" fontStyle="italic"/>
 			</mx:VBox>
 			<mx:VBox height="100%" horizontalGap="0" verticalGap="0">
 			    <mx:Button label="Duplicate" id="duplicateButton" styleName="StandardButton" textRollOverColor="0x25e9eb" alpha="0.0" click="duplicateButtonClicked()" toolTip="Make a copy of this deck"/>
@@ -38,13 +38,13 @@
 			<mx:Spacer height = "100%"/>
 			<mx:HBox width="100%">
 				<mx:Spacer width = "100%"/>
-				<mx:Label text="Modified: {friendlyDate(lastSavedDate)}" color="#FFFFFF"/>				
+				<mx:Label color="#FFFFFF" id="lastSavedDateLabel"/>		
 			</mx:HBox>
 		</mx:VBox>
 
 	</mx:VBox>
 
-	<mx:HTTPService id="decksUpdate" url="{ShuffleDuck.CONTEXT_URL}/decks/{userVisibleID}" method="POST" resultFormat="e4x" contentType="application/xml" result="completeTitleChange(event)" headers="{putHeader}"/>
+	<mx:HTTPService id="decksUpdate" url="{ShuffleDuck.CONTEXT_URL}/decks/{_userVisibleID}" method="POST" resultFormat="e4x" contentType="application/xml" result="completeTitleChange(event)" headers="{putHeader}"/>
 
 
 <mx:Script>
@@ -57,14 +57,16 @@
 		import mx.controls.Alert;
 		import mx.managers.PopUpManager;
 		import mx.rpc.events.ResultEvent;
+		import ascb.util.DateUtilities;
 		
 		// state variables
-		[Bindable] public var userVisibleID:String;
-  		[Bindable] public var lastSavedDate:Date;
-  		[Bindable] public var numCardsString:String;
-  		public var title:String;
+		[Bindable] private var _userVisibleID:String;
+  		[Bindable] private var _lastSavedDate:Date;
+  		[Bindable] private var _numCardsString:String;
+  		private var _title:String;
 		
 		private var _stagingTitle:String;
+		private var _serverTimeAheadOfLocalTimeByMilliseconds:Number;
 		
 		// event constants
 		public static const DECK_LISTING_CLICKED:String = "DeckListing_deckListingClicked";
@@ -74,16 +76,18 @@
 		// The header to send with the above put HTTPService
   		[Bindable] private var putHeader:Object = new Object();
 
-		public function setup(deckXML:XML):void
+		public function setup(deckXML:XML, serverTime:Date):void
 		{
 			// build HTTPService headers
 			putHeader["X-HTTP-METHOD-OVERRIDE"] = "put";
 			
 			// update data model according to XML String (UI bound to data model)
-			userVisibleID = deckXML.user_visible_id;
-	  		lastSavedDate = DateUtil.parseW3CDTF(deckXML.last_saved_date);
+			_userVisibleID = deckXML.user_visible_id;
+	  		_serverTimeAheadOfLocalTimeByMilliseconds = DateUtilities.elapsedMilliseconds(serverTime, new Date());
+	  		_lastSavedDate = new Date();
+	  		_lastSavedDate.setTime(DateUtil.parseW3CDTF(deckXML.last_saved_date).getTime() - _serverTimeAheadOfLocalTimeByMilliseconds);	  		
 			var numCards:int = deckXML.num_cards;
-			numCardsString = (numCards == 1) ? "1 card" : numCards + " cards";
+			_numCardsString = (numCards == 1) ? "1 card" : numCards + " cards";
 			setTitle(deckXML.title);
 			
 			// create first side preview
@@ -93,13 +97,16 @@
 			var uiSide:UISide = new UISide(side, 182);
 			sidePreviewHBox.addChild(uiSide);
 			
+			// set modified date
+			lastSavedDateLabel.text="Modified: " + friendlyDate(_lastSavedDate);
+			
 			this.percentWidth = 100;
 		}
 		
 		private function setTitle(aTitle:String):void
 		{
-			title = aTitle;
-			titleLabel.text = title;
+			_title = aTitle;
+			titleLabel.text = _title;
 			resetTitleLabelLength();
 		}
 		
@@ -115,11 +122,7 @@
 		{
 			if (!(event.target is Button))
 			{
-				currentState = "listing_highlight";
-				
-				// set listing and title (inside it) to highlighted				
-				//this.setStyle("backgroundColor", "#6c757a");
-				//titleHBox.setStyle("backgroundColor", "#6c757a");
+				currentState = "listing_highlight";				
 			}
 		}
 		
@@ -127,20 +130,13 @@
 		{
 			currentState = "title_highlight";			
 			
-			// set title to hightlighted and listing to not highlighted
-			//titleHBox.setStyle("backgroundColor", "#6c757a");
-			//this.setStyle("backgroundColor", "#172322");
-			
 			// prevent event from reaching DeckListing (this should not be treated as a mouse over DeckListing)
 			event.stopPropagation();
 		}
 		
 		private function mouseOutListing(event:MouseEvent):void
 		{
-			currentState = "";
-			
-			//this.setStyle("backgroundColor", "#172322");
-			//titleHBox.setStyle("backgroundColor", "#172322");
+			currentState = "";			
 		}
 		
 		private function mouseOutTitle(event:MouseEvent):void
@@ -157,8 +153,8 @@
 			{
 				// fire event, passing back this deck ID
 				var params:Object = new Object();
-				params.userVisibleDeckID = userVisibleID;
-				params.title = title;
+				params.userVisibleDeckID = _userVisibleID;
+				params.title = _title;
 		    	var newEvent:CustomEvent = new CustomEvent(DECK_LISTING_CLICKED, params, true);
 		    	dispatchEvent(newEvent);
 	  		}	  		
@@ -169,7 +165,7 @@
 			// create a deck name dialog and add it to the screen
 			var deckNameDialog:DeckNameDialog = new DeckNameDialog();
             PopUpManager.addPopUp(deckNameDialog, this, true);
-       		deckNameDialog.setText(title);
+       		deckNameDialog.setText(_title);
             PopUpManager.centerPopUp(deckNameDialog);
             
             // wait for the new deck name event to be fired when the pop up closes
@@ -190,7 +186,7 @@
    			{
 				// fire event, passing back this deck ID
 				var params:Object = new Object();
-				params.userVisibleDeckID = userVisibleID;
+				params.userVisibleDeckID = _userVisibleID;
 		    	var newEvent:CustomEvent = new CustomEvent(DECK_DELETE_REQUESTED, params, true);
 		    	dispatchEvent(newEvent);
 		   }
@@ -200,8 +196,8 @@
 		{
 			// fire event, passing back this deck ID
 			var params:Object = new Object();
-			params.userVisibleDeckID = userVisibleID;
-			params.title = title;
+			params.userVisibleDeckID = _userVisibleID;
+			params.title = _title;
 	    	var newEvent:CustomEvent = new CustomEvent(DECK_DUPLICATION_REQUESTED, params, true);
 	    	dispatchEvent(newEvent);			
 		}
@@ -211,10 +207,6 @@
 			// remember new title - but don't adopt it yet
 			_stagingTitle = e.params.title;
 			
-			// show Saving Dialog to prevent any user interaction
-            //PopUpManager.addPopUp(_savingDialog, this, true);
-            //PopUpManager.centerPopUp(_savingDialog);
-
         	// prepare server request
 			var request:XML = <deck/>;
 			request['title'] = _stagingTitle;
@@ -233,41 +225,48 @@
 		
 		private function friendlyDate(date:Date):String
 		{
-			var now:Date = new Date();
-			var result:String;
-
-			//var timeDifferenceInMinutes:int = Math.floor((now.getTime() - date.getTime()) / 60000);
-
-			var dateDifferenceInMilliseconds:int = DateUtil.makeMorning(now).getTime() - DateUtil.makeMorning(date).getTime();			
-			var dateDifferenceInDays:int = Math.floor(dateDifferenceInMilliseconds/86400000);
-			
-			switch (dateDifferenceInDays)
-						{
-							case 0: // today
-								result = "Today";
-								break;
-							case 1: // yesterday
-								result = "Yesterday";
-								break;
-							case 2: // one of the 5 days before yesterday
-							case 3:
-							case 4:
-							case 5:
-							case 6:
-								result = DateUtil.getFullDayName(date);
-								break;
-							default: // more than 7 days ago, including today
-								if (date.fullYear == now.fullYear) // if this year, then print day + month
-								{
-									result = date.date + " " + DateUtil.getFullMonthName(date);
-								}
-								else // if before this year, print full date
-								{
-									result = date.date + " " + DateUtil.getFullMonthName(date) + " " + date.fullYear;
-								}
-								break;
-						}
-			return result;
+			if (date)
+			{
+				var now:Date = new Date();
+				var result:String;
+	
+				//var timeDifferenceInMinutes:int = Math.floor((now.getTime() - date.getTime()) / 60000);
+	
+				var dateDifferenceInMilliseconds:int = DateUtil.makeMorning(now).getTime() - DateUtil.makeMorning(date).getTime();			
+				var dateDifferenceInDays:int = Math.floor(dateDifferenceInMilliseconds/86400000);
+				
+				switch (dateDifferenceInDays)
+							{
+								case 0: // today
+									result = "Today";
+									break;
+								case 1: // yesterday
+									result = "Yesterday";
+									break;
+								case 2: // one of the 5 days before yesterday
+								case 3:
+								case 4:
+								case 5:
+								case 6:
+									result = DateUtil.getFullDayName(date);
+									break;
+								default: // more than 7 days ago, including today
+									if (date.fullYear == now.fullYear) // if this year, then print day + month
+									{
+										result = date.date + " " + DateUtil.getFullMonthName(date);
+									}
+									else // if before this year, print full date
+									{
+										result = date.date + " " + DateUtil.getFullMonthName(date) + " " + date.fullYear;
+									}
+									break;
+							}
+				return result;
+			}
+			else
+			{
+				return "";
+			}
 		}
 		
 	]]>

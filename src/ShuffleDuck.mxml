@@ -12,7 +12,7 @@
 				preloader="com.shuffleduck.view.preloaders.AppPreloader"
 				applicationComplete="initialSetup()"
 				backgroundColor="#86C9EF" horizontalAlign="center" verticalAlign="middle" verticalGap="0">
-				 
+
  <mx:Style source="com/shuffleduck/theme/styles.css"/>
  				
  <me_view:FrontPage id="frontPage" width="950" horizontalAlign="center" verticalAlign="middle"/>
@@ -72,8 +72,8 @@
   		public static const XML_BACKWARD_COMPATIBLE_IPHONE_VERSION_NO:String 	= "0.01";
 
 		// Web Service Configuration
-		public static const CONTEXT_URL:String = "http://localhost:3000";
-		//public static const CONTEXT_URL:String = "http://shuffleduck.heroku.com";
+		//public static const CONTEXT_URL:String = "http://localhost:3000";
+		public static const CONTEXT_URL:String = "http://shuffleduck.heroku.com";
 
 		// event constants
 		public static const USER_LOGGED_IN:String = "userLoggedIn";
