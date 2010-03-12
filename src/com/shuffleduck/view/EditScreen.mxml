@@ -240,6 +240,7 @@
 		   }
 		   else if (eventObj.detail==Alert.NO) // if user wishes to discard changes and exit
 		   {
+			   	_changedSinceSave = false;
 		   		exitToLibrary();
 		   }
 		   else // user cancelled
@@ -315,7 +316,6 @@
 
 		private function recallDeckChanged(event:CustomEvent):void
 		{
-			//trace(new Date());
 			_changedSinceSave = true;
 		}
 

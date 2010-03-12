@@ -212,11 +212,6 @@
   	    
   	    private function signUpButtonClicked():void
   	    {
-  	    	// show the sign up dialog
-  	    	//var registrationDialog:RegistrationDialog = new RegistrationDialog;
-  	    	//PopUpManager.addPopUp(registrationDialog, this, true);
-			//PopUpManager.centerPopUp(registrationDialog);
-
 			// clear the last error message if there was one
 			currentState = "";
 			// send the entered data to the server
@@ -283,17 +278,6 @@
 			currentState = "error";
 			errorsVBox.removeAllChildren();
 			
-			/*
-			var headerLabel:Label = new Label();
-			  	headerLabel.text = "     Sorry, there were some problems:";
-  	    		headerLabel.height = 20;
-  	    		headerLabel.width = 910;
-  	    		headerLabel.setStyle("fontSize", 12);
-  	    		headerLabel.setStyle("color", "#FFFFFF");
-  	    		headerLabel.setStyle("textAlign", "left");
-  	    		errorsVBox.addChild(headerLabel);
-			*/
-			
 			// add the errors
   	    	for each (var error:XML in error_xml.error)
   	    	{
@@ -318,15 +302,6 @@
   	    	
   	    }
 
-/*
-  	    private function guestButtonClicked():void
-  	    {
-  	    	// notify the application that button was clicked
-			var params:Object = new Object();
-            var event:CustomEvent = new CustomEvent(GUEST_BUTTON_CLICKED, params, true);
-            dispatchEvent(event);
-  	    }
-*/
   	]]>
   </mx:Script>
   
