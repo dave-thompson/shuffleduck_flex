@@ -20,7 +20,7 @@
 			<mx:VBox height="100%" width="100%" verticalGap="0">
 				<mx:HBox width="100%" height="42" verticalScrollPolicy="off" horizontalScrollPolicy="off" autoLayout="false" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0">
 					<mx:HBox id = "titleHBox" click="clickTitle(event)" width="100%" height="42" verticalScrollPolicy="off" horizontalScrollPolicy="off">
-						<mx:Label id = "titleLabel" color="#FFFFFF" fontSize="30" width="100%" mouseOver="mouseOverTitle(event)" mouseOut="mouseOutTitle(event)" toolTip="Rename this deck"/>
+						<mx:Label id = "titleLabel" color="#FFFFFF" fontSize="30" width="100%" mouseOver="mouseOverTitle(event)" mouseOut="mouseOutTitle(event)" toolTip="Rename this deck" updateComplete="resetTitleLabelLength()"/>
 					</mx:HBox>
 				</mx:HBox>
 				<mx:Label text="ID: {_userVisibleID}" color="#FFFFFF"/>
@@ -107,7 +107,6 @@
 		{
 			_title = aTitle;
 			titleLabel.text = _title;
-			resetTitleLabelLength();
 		}
 		
 		public function resetTitleLabelLength():void
