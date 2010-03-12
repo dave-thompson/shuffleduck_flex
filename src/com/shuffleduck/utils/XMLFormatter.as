@@ -20,12 +20,25 @@ package com.shuffleduck.utils
 		public static function makeStringXMLReady(string:String):String
 		{
 			var replaced:String = string;
+
 			// while there are still instances of double quotes in the string
 			while (replaced.indexOf("\"") != -1)
 			{
 				// replace the first instance with the XML representation
 				replaced = replaced.replace("\"", "&quot;");
 			}
+						
+			while (replaced.indexOf("<") != -1)
+			{
+				replaced = replaced.replace("<", "&lt;");
+			}
+			
+			while (replaced.indexOf(">") != -1)
+			{
+				replaced = replaced.replace(">", "&gt;");
+			}
+			
+			
 			return replaced;
 		}
 

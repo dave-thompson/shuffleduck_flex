@@ -92,7 +92,7 @@ package com.shuffleduck.data
 		public override function toXMLString():String
 		{
 			// construct XML string with TextBox's values
-			var xmlString:String = "<Component template_component_id=\"" + this.templateComponentID + "\" name=\"" + this.name + "\" x=\"" + this.x + "\" y=\"" + this.y + "\" width=\"" + this.width + "\" height=\"" + this.height + "\">";
+			var xmlString:String = "<Component template_component_id=\"" + this.templateComponentID + "\" name=\"" + XMLFormatter.makeStringXMLReady(this.name) + "\" x=\"" + this.x + "\" y=\"" + this.y + "\" width=\"" + this.width + "\" height=\"" + this.height + "\">";
 				xmlString = xmlString + "<TextBox>"
 					xmlString = xmlString + "<text variable=\"" + _text.variable + "\">" + XMLFormatter.makeStringXMLReady(_text.value) + "</text>";
 					xmlString = xmlString + "<font variable=\"" + _font.variable + "\">" + _font.value + "</font>";
