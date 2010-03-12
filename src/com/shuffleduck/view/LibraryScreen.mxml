@@ -136,7 +136,7 @@
 			var loader:URLLoader = new URLLoader();
         	loader.dataFormat = URLLoaderDataFormat.TEXT;
         	loader.addEventListener(Event.COMPLETE, handleTemplateLoadComplete);
-        	loader.load(new URLRequest("com/shuffleduck/assets/DefaultTemplate.xml"));
+        	loader.load(new URLRequest("DefaultTemplate.xml"));
 		}
 		
 		private function handleTemplateLoadComplete(event:Event):void
