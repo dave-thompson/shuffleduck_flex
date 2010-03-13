@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+				layout="absolute" 
+				width="286"
+				height="108" 
+				styleName="titleWindow" creationComplete="creationComplete()">
+				
+	<mx:Label text="Are you sure?" fontSize="22" fontWeight="bold" color="#000000" fontStyle="italic" x="10" y="10" id="label1"/>
+	
+	<mx:Script>
+		<![CDATA[
+			import com.shuffleduck.utils.CustomEvent;
+			import mx.managers.PopUpManager;
+			
+			public static const BUTTON_CLICKED:String = "ConfirmDialog_buttonClicked";
+			
+			private function creationComplete():void
+			{
+				yesButton.setFocus();
+			}
+			
+			private function buttonClicked(e:MouseEvent):void
+			{
+				var params:Object = new Object();
+				if (e.target.id == "yesButton")
+				{
+					params.choice = "yes";
+  	 			}
+  	 			else // e.target == "noButton"
+  	 			{
+					params.choice = "no";
+  	 			}
+	    		var newEvent:CustomEvent = new CustomEvent(BUTTON_CLICKED, params, false);
+	    		dispatchEvent(newEvent);
+			}			
+			
+		]]>
+	</mx:Script>
+	<mx:Button x="91.5" y="60" label="Cancel" width="73" click="buttonClicked(event)" id="noButton" fontSize="12" tabIndex="1"/>
+	<mx:Button x="173" y="60" label="Yes" width="73" click="buttonClicked(event)" id="yesButton" fontSize="12" tabIndex="0"/>
+	
+	
+</mx:TitleWindow>

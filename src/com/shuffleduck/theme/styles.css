@@ -51,3 +51,23 @@ Button.SlimlineButton
     thumbOverSkin: ClassReference('com.shuffleduck.theme.skins.CustomSkinThumb');
     thumbDownSkin: ClassReference('com.shuffleduck.theme.skins.CustomSkinThumb');
 }
+.titleWindow
+{
+	backgroundAlpha: 1;
+	backgroundColor: #80B4E9;
+	borderAlpha: 1;
+	borderColor: #FFFFFF;
+	borderStyle: solid;
+	borderThickness: 5;
+	cornerRadius: 20;
+	dropShadowEnabled: true;
+	headerHeight: 0;
+	roundedBottomCorners: true;
+}
+.titleWindowHeader
+{
+	color: #000000;
+	fontSize: 22;
+	fontStyle: italic;
+	fontWeight: bold;
+}

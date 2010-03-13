@@ -2,17 +2,8 @@
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
 				layout="absolute" 
 				width="318"
-				height="290" 
-				backgroundColor="#FFFFFF" 
-				backgroundAlpha="1"
-				borderStyle="solid" 
-				borderColor="#000000" 
-				borderThickness="2"
-				borderAlpha ="1"
-				headerHeight="0" 
-				cornerRadius="0"
-				dropShadowEnabled="true"
-				creationComplete="setup()" xmlns:ns1="com.shuffleduck.view.*">
+				height="294" 
+				creationComplete="setup()" xmlns:ns1="com.shuffleduck.view.*" styleName="titleWindow">
 	<mx:states>
 		<mx:State name="waiting">
 			<mx:RemoveChild target="{messageTextArea}"/>
@@ -52,7 +43,7 @@
 			</mx:AddChild>
 		</mx:State>
 	</mx:states>
-	<mx:Label text="Give Feedback" fontSize="22" fontWeight="bold" color="#25E9EB" fontStyle="italic" x="10" y="10" id="label1"/>
+	<mx:Label text="Feedback" fontSize="22" fontWeight="bold" color="#000000" fontStyle="italic" x="10" y="10" id="label1"/>
 	<mx:Button x="151" y="247" label="Send" width="133" click="okButtonClicked()" id="button1"/>
 	
 	<mx:HTTPService id="feedbackCreate" url="{ShuffleDuck.CONTEXT_URL}/feedbacks" method = "POST" resultFormat="e4x" contentType="application/xml" result="feedbackResult(event)" fault="feedbackFault(event)"/>

@@ -13,29 +13,7 @@
 <mx:HTTPService id="deckDetailsShow" url="{ShuffleDuck.CONTEXT_URL}/decks/{userVisibleDeckID}/deck_details/{userVisibleDeckID}" resultFormat="e4x" result="deckDetailsShowResult(event)"/>
 <mx:HTTPService id="deckDetailsUpdate" url="{ShuffleDuck.CONTEXT_URL}/decks/{userVisibleDeckID}/deck_details/{userVisibleDeckID}" method="POST" resultFormat="e4x" contentType="application/xml" result="completeSave(event)" headers="{putHeader}"/>
 <mx:HTTPService id="deckDetailsUpdateAndExit" url="{ShuffleDuck.CONTEXT_URL}/decks/{userVisibleDeckID}/deck_details/{userVisibleDeckID}" method="POST" resultFormat="e4x" contentType="application/xml" result="saveConfirmedAndExitRequested(event)" headers="{putHeader}"/>
-
-    <mx:XMLList id="mainMenu">
-        <menuitem label="File" >
-			<menuitem label="Load" data="load"/>
-            <menuitem label="Save" data="save"/>
-        </menuitem>
-    </mx:XMLList>
-    
-	<mx:Style>
-		.whiteFont
-		{
-		    fontSize: 12;
-		    color: #FFFFFF;
-		    backgroundColor: #000000;
-		    filColors: #000000;
-		}		
-		.blackFont
-		{
-		    fontSize: 12;
-		    color: #000000;
-          	backgroundColor: #FFFFFF;
-		}		
-	</mx:Style>    
+  
 	<mx:Style source="com/shuffleduck/theme/styles.css"/>
   
 	<mx:HBox backgroundColor="#000000" width="100%" height="55" horizontalGap="0" backgroundAlpha="0.0" verticalScrollPolicy="off" horizontalScrollPolicy="off">
@@ -83,7 +61,6 @@
   		import com.shuffleduck.view.UISide;
   		import com.shuffleduck.view.UITextBox;
   		import mx.managers.PopUpManager;
-  		import com.shuffleduck.view.SpecifyDeckNameDialog;
   		import com.shuffleduck.utils.DisplayListUtils;
   		import mx.core.UITextField;
 		import mx.core.UITextFormat;
@@ -101,6 +78,7 @@
 		import com.adobe.utils.DateUtil;
 		import mx.managers.PopUpManagerChildList;
 		import com.shuffleduck.data.DataModelItem;
+		import mx.core.IFlexDisplayObject;
 		
   		 public static const ROLL_OVER_COLOR:uint = 0x25e9eb;
   		 
@@ -222,8 +200,13 @@
   	    {
   	    	if (_changedSinceSave)
   	    	{
-	  	    	// show a dialog asking if the user would like to save or not, and act on their choice (via function processUserExitChoice)
-				Alert.show("Save Changes before closing?", "Save", Alert.YES|Alert.NO|Alert.CANCEL, this, processUserExitChoice, null, Alert.CANCEL);
+				// create a save or not dialog and add it to the screen
+				var saveOrNotDialog:SaveOrNotDialog = new SaveOrNotDialog();
+	 	        PopUpManager.addPopUp(saveOrNotDialog, this, true, PopUpManagerChildList.APPLICATION);
+	            PopUpManager.centerPopUp(saveOrNotDialog);
+	            
+	            // wait for the new deck name event to be fired when the pop up closes
+	            saveOrNotDialog.addEventListener(SaveOrNotDialog.SAVING_CHOICE, processUserExitChoice);            
   	    	}
   	    	else
   	    	{
@@ -231,14 +214,16 @@
   	    	}
   	    }
   	    
-		private function processUserExitChoice(eventObj:CloseEvent):void
+		private function processUserExitChoice(e:CustomEvent):void
 		{
-			if(eventObj.detail==Alert.YES) // if user wishes to save then exit
+			PopUpManager.removePopUp(e.target as IFlexDisplayObject);
+			
+			if (e.params.choice == "save") // if user wishes to save then exit
    			{
    				// save the deck (the saveDeck function will take care of exiting afterwards))
    				saveDeck(true);
 		   }
-		   else if (eventObj.detail==Alert.NO) // if user wishes to discard changes and exit
+		   else if (e.params.choice == "discard") // if user wishes to discard changes and exit
 		   {
 			   	_changedSinceSave = false;
 		   		exitToLibrary();

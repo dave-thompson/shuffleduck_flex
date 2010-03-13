@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+				layout="absolute" 
+				width="384"
+				height="154" 
+				creationComplete="setup()" styleName="titleWindow">
+	<mx:Label text="Save Changes?" fontSize="22" fontWeight="bold" color="#000000" fontStyle="italic" x="10" y="10" id="label1"/>
+	
+	<mx:Script>
+		<![CDATA[
+			import com.shuffleduck.utils.CustomEvent;
+			import mx.managers.PopUpManager;
+			
+			public static const SAVING_CHOICE:String = "SaveOrNotDialog_savingChoice";
+			
+			public function setup():void
+			{
+			}
+			
+			private function buttonClicked(e:MouseEvent):void
+			{
+				var params:Object = new Object();
+				if (e.target.id == "cancelButton")
+				{
+					params.choice = "cancel";
+  	 			}
+  	 			else if (e.target.id == "dontSaveButton")
+  	 			{
+					params.choice = "discard";  	 				
+  	 			}
+  	 			else // e.target == "saveButton"
+  	 			{
+					params.choice = "save";
+  	 			}
+				
+	    		var newEvent:CustomEvent = new CustomEvent(SAVING_CHOICE, params, false);
+	    		dispatchEvent(newEvent);
+			}
+			
+			
+			
+			
+		]]>
+	</mx:Script>
+	<mx:Button x="190" y="105" label="Cancel" width="73" click="buttonClicked(event)" id="cancelButton" fontSize="12" tabIndex="2"/>
+	<mx:TextArea x="10" y="51" width="340" editable="false" borderThickness="0" height="46" backgroundAlpha="0" color="#000000" fontSize="12">
+		<mx:text>If you don't save, your changes will be lost.</mx:text>
+	</mx:TextArea>
+	<mx:Button x="10" y="105" label="Don't Save" width="122.5" click="buttonClicked(event)" id="dontSaveButton" fontSize="12" tabIndex="1"/>
+	<mx:Button x="271" y="105" label="Save" width="73" click="buttonClicked(event)" id="saveButton" fontSize="12" tabIndex="0"/>
+	
+	
+</mx:TitleWindow>

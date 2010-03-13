@@ -11,10 +11,13 @@
 				backgroundGradientAlphas="[1.0, 1.0]"
 				preloader="com.shuffleduck.view.preloaders.AppPreloader"
 				applicationComplete="initialSetup()"
-				backgroundColor="#86C9EF" horizontalAlign="center" verticalAlign="middle" verticalGap="0">
+				backgroundColor="#86C9EF"
+				horizontalAlign="center"
+				verticalAlign="middle"
+				verticalGap="0">
 
  <mx:Style source="com/shuffleduck/theme/styles.css"/>
- 				
+ 
  <me_view:FrontPage id="frontPage" width="950" horizontalAlign="center" verticalAlign="middle"/>
  
   <mx:states>
@@ -61,7 +64,6 @@
 		import com.shuffleduck.view.FrontPage;
   		import com.shuffleduck.utils.CustomEvent;
   		import mx.managers.PopUpManager;
-  		import com.shuffleduck.view.DebugDialog;
   		import com.shuffleduck.view.DeckListing;
   		import mx.rpc.events.ResultEvent;
   		import com.shuffleduck.view.preloaders.AppPreloader;
@@ -100,10 +102,7 @@
 				
 				// Events from EditScreen
 				this.addEventListener(EditScreen.RETURN_TO_LIBRARY_REQUEST, returnToLibrary);
-				
-				// Other events
-				this.addEventListener(ShuffleDuck.DEBUG_POP_UP_REQUEST, popUpDebugMessage);
-			
+
 			// set up application
 			currentState="editScreen";
 			currentState="";
@@ -154,14 +153,6 @@
 			// go to the home page
 			currentState="homeScreen";
 			homeScreen.setup();
-		}
-		
-		private function popUpDebugMessage(e:CustomEvent):void
-		{
-			var debugDialog:DebugDialog = new DebugDialog;
-  	    	PopUpManager.addPopUp(debugDialog, this, true);
-			PopUpManager.centerPopUp(debugDialog);
-			debugDialog.message = e.params.message;
 		}
 		
 		private function deckListingClicked(e:CustomEvent):void

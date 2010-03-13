@@ -13,7 +13,6 @@
    	   	   	<mx:SetStyle target="{titleHBox}" name="borderColor"/>
    	   	</mx:State>
    	</mx:states>
-   	<mx:Style source="com/shuffleduck/theme/styles.css"/>
 	<mx:HBox width="182" height="112" backgroundColor="#FFFFFF" id="sidePreviewHBox"/>
 	<mx:VBox height="100%" verticalGap="0" width="100%">
 		<mx:HBox width="100%">
@@ -58,7 +57,9 @@
 		import mx.managers.PopUpManager;
 		import mx.rpc.events.ResultEvent;
 		import ascb.util.DateUtilities;
-		
+		import mx.core.IFlexDisplayObject;
+		import mx.managers.PopUpManagerChildList;
+				
 		// state variables
 		[Bindable] private var _userVisibleID:String;
   		[Bindable] private var _lastSavedDate:Date;
@@ -176,12 +177,20 @@
 		
 		private function deleteButtonClicked():void
 		{
-			Alert.show("Are you sure?", "Confirm Delete", Alert.YES|Alert.CANCEL, this, initiateDeckDeletion, null, Alert.CANCEL);			
+			// create a confirm dialog and add it to the screen
+			var confirmDialog:ConfirmDialog = new ConfirmDialog();
+ 	        PopUpManager.addPopUp(confirmDialog, this, true, PopUpManagerChildList.APPLICATION);
+            PopUpManager.centerPopUp(confirmDialog);
+            
+            // wait for the new deck name event to be fired when the pop up closes
+            confirmDialog.addEventListener(ConfirmDialog.BUTTON_CLICKED, initiateDeckDeletion);            
 		}
 		
-		private function initiateDeckDeletion(eventObj:CloseEvent):void
+		private function initiateDeckDeletion(e:CustomEvent):void
 		{
-			 if(eventObj.detail==Alert.YES)
+			PopUpManager.removePopUp(e.target as IFlexDisplayObject);
+			
+			if (e.params.choice == "yes")
    			{
 				// fire event, passing back this deck ID
 				var params:Object = new Object();

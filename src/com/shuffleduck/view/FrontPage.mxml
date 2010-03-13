@@ -12,7 +12,6 @@
 		 
 <mx:HTTPService id="accountCreate" url="{ShuffleDuck.CONTEXT_URL}/users" method = "POST" resultFormat="e4x" contentType="application/xml" result="loggedIn(true, event)" fault="failedAccountCreation(event)"/>
 <mx:HTTPService id="sessionCreate" url="{ShuffleDuck.CONTEXT_URL}/user_session" method = "POST" resultFormat="e4x" contentType="application/xml" result="loggedIn(false, event)" fault="failedLogIn(event)"/>
-<mx:Style source="com/shuffleduck/theme/styles.css"/>
 
 	<mx:states>
 		<mx:State name="error">

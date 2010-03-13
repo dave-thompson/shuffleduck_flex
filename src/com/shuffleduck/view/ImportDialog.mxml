@@ -2,19 +2,10 @@
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
 				layout="absolute" 
 				width="594"
-				height="480" 
-				backgroundColor="#FFFFFF" 
-				backgroundAlpha="1"
-				borderStyle="solid" 
-				borderColor="#000000" 
-				borderThickness="2"
-				borderAlpha ="1"
-				headerHeight="0" 
-				cornerRadius="0"
-				dropShadowEnabled="true"
-				creationComplete="setup()">
-	<mx:Label text="Data Import" fontSize="22" fontWeight="bold" color="#25E9EB" fontStyle="italic" x="10" y="10" id="label1"/>
-	<mx:Button x="427" y="432" label="Import" width="133" click="okButtonClicked()" id="button1"/>
+				height="492" 
+				creationComplete="setup()" styleName="titleWindow">
+	<mx:Label text="Data Import" fontSize="22" fontWeight="bold" color="#000000" fontStyle="italic" x="10" y="10" id="label1"/>
+	<mx:Button x="421" y="448" label="Import" width="133" click="okButtonClicked()" id="button1"/>
 	
 	<mx:Script>
 		<![CDATA[
@@ -58,10 +49,10 @@
 			
 		]]>
 	</mx:Script>
-	<mx:Button x="346" y="432" label="Cancel" width="73" click="cancelButtonClicked()" id="cancelButton"/>
-	<mx:TextArea x="10" y="103" width="550" height="321" id="clipboardTextArea"/>
-	<mx:Label x="10" y="51" text="Copy and paste spreadsheet data below and click 'Import'."/>
-	<mx:Label x="10" y="77" text="Cards will be added to the end of your deck."/>
+	<mx:Button x="340" y="448" label="Cancel" width="73" click="cancelButtonClicked()" id="cancelButton"/>
+	<mx:TextArea x="10" y="108" width="544" height="328" id="clipboardTextArea" cornerRadius="0"/>
+	<mx:Label x="10" y="51" text="Copy and paste from a spreadsheet to the box below, then click 'Import'." fontSize="12" color="#000000"/>
+	<mx:Label x="10" y="77" text="Cards will be added to the end of your deck." fontSize="12" color="#000000"/>
 	
 	
 </mx:TitleWindow>

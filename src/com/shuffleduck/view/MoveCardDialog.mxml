@@ -2,21 +2,12 @@
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
 				layout="absolute" 
 				width="316"
-				height="144" 
-				backgroundColor="#FFFFFF" 
-				backgroundAlpha="1"
-				borderStyle="solid" 
-				borderColor="#000000" 
-				borderThickness="2"
-				borderAlpha ="1"
-				headerHeight="0" 
-				cornerRadius="0"
-				dropShadowEnabled="true"
-				creationComplete="setup()">
+				height="146" 
+				creationComplete="setup()" styleName="titleWindow">
 
-	<mx:Label text="Move To Position" fontSize="22" fontWeight="bold" color="#25E9EB" fontStyle="italic" x="10" y="10"/>
-	<mx:TextInput x="10" y="51" width="272" height="35" fontSize="20" id="newIndexTextInput" restrict="0-9"/>
-	<mx:Button x="206" y="102" label="OK" width="76" click="okButtonClicked()"/>
+	<mx:Label text="Move to Position" fontSize="22" fontWeight="bold" color="#000000" fontStyle="italic" x="10" y="10"/>
+	<mx:TextInput x="10" y="51" width="266" height="35" fontSize="20" id="newIndexTextInput" restrict="0-9"/>
+	<mx:Button x="200" y="102" label="OK" width="76" click="okButtonClicked()"/>
 	
 	<mx:Script>
 		<![CDATA[

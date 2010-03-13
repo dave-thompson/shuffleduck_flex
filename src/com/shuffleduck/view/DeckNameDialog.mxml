@@ -1,22 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
 				layout="absolute" 
-				width="316"
-				height="144" 
-				backgroundColor="#FFFFFF" 
-				backgroundAlpha="1"
-				borderStyle="solid" 
-				borderColor="#000000" 
-				borderThickness="2"
-				borderAlpha ="1"
-				headerHeight="0" 
-				cornerRadius="0"
-				dropShadowEnabled="true"
-				creationComplete="setup()">
-
-	<mx:Label text="Deck Name" fontSize="22" fontWeight="bold" color="#25E9EB" fontStyle="italic" x="10" y="10"/>
-	<mx:TextInput x="10" y="51" width="272" height="35" fontSize="20" id="nameTextInput"/>
-	<mx:Button x="206" y="102" label="OK" width="76" click="okButtonClicked()"/>
+				width="358"
+				height="142" 
+				creationComplete="setup()"
+				styleName="titleWindow">
+				
+	<mx:Label text="Deck Name" fontSize="22" fontWeight="bold" color="#000000" fontStyle="italic" x="10" y="10"/>
+	<mx:TextInput x="10" y="51" width="308" height="35" fontSize="20" id="nameTextInput"/>
+	<mx:Button x="242" y="98" label="OK" width="76" click="okButtonClicked()"/>
 	
 	<mx:Script>
 		<![CDATA[

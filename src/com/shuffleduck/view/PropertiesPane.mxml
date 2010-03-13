@@ -90,7 +90,6 @@
 		<mx:State name="template_textbox"/>
 	</mx:states>
 	
-	<mx:Style source="com/shuffleduck/theme/styles.css"/>
 	
 	<mx:Script>
 		<![CDATA[

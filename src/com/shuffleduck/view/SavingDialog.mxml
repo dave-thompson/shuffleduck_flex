@@ -3,16 +3,8 @@
 				layout="absolute" 
 				width="316"
 				height="112" 
-				backgroundColor="#FFFFFF" 
-				backgroundAlpha="1"
-				borderStyle="solid" 
-				borderColor="#000000" 
-				borderThickness="2"
-				borderAlpha ="1"
-				headerHeight="0" 
-				cornerRadius="0"
-				dropShadowEnabled="true">
+				styleName="titleWindow">
 
-	<mx:Label text="Saving..." fontSize="22" fontWeight="bold" color="#25E9EB" fontStyle="italic" x="89.5" y="33"/>
+	<mx:Label text="Saving..." fontSize="36" fontWeight="bold" color="#FFFFFF" fontStyle="italic" x="53" y="23"/>
 	
 </mx:TitleWindow>

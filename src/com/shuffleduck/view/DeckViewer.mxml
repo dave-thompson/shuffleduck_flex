@@ -90,7 +90,6 @@
       </mx:State>
    </mx:states>
    
-   	<mx:Style source="com/shuffleduck/theme/styles.css"/>
 	
    <mx:HBox id = "TitleHBox" width="100%" horizontalGap="0">
    		<mx:Button id="newCardButton" label="+" styleName="SlimlineButton" textRollOverColor="0x25e9eb" click="newCard()" width="30" fontSize="15" toolTip="Insert a new card at the end of this deck"/>
