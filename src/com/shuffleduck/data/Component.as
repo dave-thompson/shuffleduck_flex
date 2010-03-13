@@ -32,7 +32,7 @@ package com.shuffleduck.data
 			// check that it is a subclass being instantiated & if not, throw error
 			if(getQualifiedClassName(this) == "com.mindegg.data::Component")
 			{
-				throw new Error("Component is an abstract class&gt and can not be instantiated.");
+				throw new Error("Component is an abstract class and can not be instantiated.");
 			}
 
 			// set attribute values
@@ -71,7 +71,7 @@ package com.shuffleduck.data
 			_nextTemplateComponentID ++;
 			
 			// set the component's default name
-			_name = getQualifiedClassName(this).substring(18) + " " + _templateComponentID;
+			_name = getQualifiedClassName(this).substring(22) + " " + _templateComponentID;
 			
 			raiseChangeEvent();
 		}
@@ -82,7 +82,7 @@ package com.shuffleduck.data
 			_templateComponentID = -1;
 			
 			// remove name from the component
-			_name = "Card Specific " + getQualifiedClassName(this).substring(18);
+			_name = "Card Specific " + getQualifiedClassName(this).substring(22);
 			
 			raiseChangeEvent();
 		}

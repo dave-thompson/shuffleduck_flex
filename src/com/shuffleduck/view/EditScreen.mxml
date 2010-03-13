@@ -62,7 +62,7 @@
 	</mx:HBox>
 	<mx:HBox width="100%" height="100%">
 			<me_view:DeckViewer id="deckViewer" width="100%" backgroundColor="#4C5C5E" cornerRadius="20" borderStyle="solid" borderThickness="5" height="100%" paddingBottom="0" borderColor="#FFFFFF"/>
-			<me_view:PropertiesPane id="propertiesPane" cornerRadius="20" height="100%" backgroundColor="#4C5C5E"/>
+			<me_view:PropertiesPane id="propertiesPane" cornerRadius="20" height="100%" backgroundColor="#4C5C5E" horizontalScrollPolicy="off"/>
 	</mx:HBox>
   
   <mx:Script>
