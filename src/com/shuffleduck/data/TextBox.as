@@ -32,7 +32,7 @@ package com.shuffleduck.data
 			this._backgroundTransparent.value = true;
 			this._alpha.value = 1.0;
 			this._text.value = "Text";
-			this._font.value = "Arial";
+			this._font.value = "ArialMT";
 			
 			// pass remaining attributes from signature
 			this._fontSize.value = fontSize;
@@ -377,13 +377,13 @@ package com.shuffleduck.data
 		
 		public function set font(font:String):void
 		{
-			if (font == "Arial")
+			if (font == "ArialMT")
 			{
 				this._font.value = font;
 				raiseChangeEvent();
 			}
 			else
-				{throw Error("Font must be set to one of the following: \"Arial\".");}
+				{throw Error("Font must be set to one of the following: \"ArialMT\".");}
 		}
 		
 		public function get text():String

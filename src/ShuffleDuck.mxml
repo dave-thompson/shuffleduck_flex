@@ -74,8 +74,8 @@
   		public static const XML_BACKWARD_COMPATIBLE_IPHONE_VERSION_NO:String 	= "0.01";
 
 		// Web Service Configuration
-		//public static const CONTEXT_URL:String = "http://localhost:3000";
-		public static const CONTEXT_URL:String = "http://shuffleduck.heroku.com";
+		public static const CONTEXT_URL:String = "http://localhost:3000";
+		//public static const CONTEXT_URL:String = "http://shuffleduck.heroku.com";
 
 		// event constants
 		public static const USER_LOGGED_IN:String = "userLoggedIn";

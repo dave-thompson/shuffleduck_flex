@@ -78,7 +78,7 @@ package com.shuffleduck.view
 
             // create an innerTextField to hold the text
 	            _innerTextField.x = 0;
-	            _innerTextField.width = _textBox.width * _sizeMultiplier;
+	            _innerTextField.width = _outerTextField.width;
 	            _innerTextField.text = _textBox.text;
 	            _innerTextField.alpha = _textBox.alpha;
 	            // format the text
@@ -87,7 +87,6 @@ package com.shuffleduck.view
 	            textFormat.size = _textBox.fontSize * _sizeMultiplier;
 	            textFormat.align = _textBox.alignment;
 	            textFormat.font = _textBox.font;
-	            textFormat.bold = false;
 	            _innerTextField.setTextFormat(textFormat);
 
 				// Determine height and y placement of the inner textField based on the text in the field
@@ -103,9 +102,8 @@ package com.shuffleduck.view
             this.height = _textBox.height * _sizeMultiplier;
             this.width = _textBox.width * _sizeMultiplier;
             
-            //textField should have no padding around text
-            //_textField.border = true;
-            // WORK REQUIRED HERE
+            // uncomment the following line to aid in debugging - it shows where the inner text field is at runtime
+            // _innerTextField.border = true;
             
             // draw a selection box around the UITextBox if it is selected
             super.implementSelectedIfTrue();

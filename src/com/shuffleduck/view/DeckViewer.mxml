@@ -18,7 +18,7 @@
          <mx:SetStyle target="{templateButton}" name="textRollOverColor" value="#FFFFFF"/>
          <mx:SetProperty target="{newCardButton}" name="enabled" value="false"/>
          <mx:SetProperty target="{templateButton}" name="toolTip" value=""/>
-         <mx:SetProperty target="{newCardButton}" name="toolTip" value=""/>
+         <mx:SetProperty target="{newCardButton}" name="toolTip" value="You're editing the template. To add cards, change to either Cards View or Grid View using the buttons to the right."/>
       </mx:State>
       <mx:State name="cards">
          <mx:SetStyle target="{cardsButton}" name="textDecoration" value="underline"/>
