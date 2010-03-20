@@ -59,6 +59,8 @@
 		import ascb.util.DateUtilities;
 		import mx.core.IFlexDisplayObject;
 		import mx.managers.PopUpManagerChildList;
+		import com.shuffleduck.view.dialogs.ConfirmDialog;
+		import com.shuffleduck.view.dialogs.DeckNameDialog;
 				
 		// state variables
 		[Bindable] private var _userVisibleID:String;

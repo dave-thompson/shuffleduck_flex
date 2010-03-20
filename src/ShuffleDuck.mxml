@@ -4,10 +4,11 @@
 				layout="vertical"
 				xmlns:me="com.shuffleduck.*"
 				xmlns:me_view="com.shuffleduck.view.*"
+				xmlns:screen="com.shuffleduck.view.screens.*"
 				paddingLeft="2"
 				paddingRight="2"
 				paddingTop="2"
-				paddingBottom="2"
+				paddingBottom="0"
 				backgroundGradientAlphas="[1.0, 1.0]"
 				preloader="com.shuffleduck.view.preloaders.AppPreloader"
 				applicationComplete="initialSetup()"
@@ -18,13 +19,13 @@
 
  <mx:Style source="com/shuffleduck/theme/styles.css"/>
  
- <me_view:FrontPage id="frontPage" width="950" horizontalAlign="center" verticalAlign="middle"/>
+ <screen:FrontScreen id="frontPage" width="950" horizontalAlign="center" verticalAlign="middle"/>
  
   <mx:states>
     <mx:State name="homeScreen">
       <mx:AddChild position="firstChild">
-        <me_view:LibraryScreen id="homeScreen" backgroundColor="#771C1C" backgroundAlpha="0.0">
-        </me_view:LibraryScreen>
+        <screen:LibraryScreen id="homeScreen" backgroundColor="#771C1C" backgroundAlpha="0.0">
+        </screen:LibraryScreen>
       </mx:AddChild>
       <mx:RemoveChild target="{frontPage}"/>
       <mx:SetStyle name="backgroundGradientAlphas"/>
@@ -32,16 +33,18 @@
       <mx:SetProperty target="{bottombar}" name="width" value="100%"/>
       <mx:SetProperty target="{bottombar}" name="height" value="20"/>
       <mx:SetStyle target="{bottombar}" name="horizontalAlign" value="right"/>
+      <mx:SetProperty target="{bottombar}" name="currentState"/>
     </mx:State>
     <mx:State name="editScreen">
       <mx:RemoveChild target="{frontPage}"/>
       <mx:AddChild position="firstChild">
-        <me_view:EditScreen id="editScreen" width="100%" height="100%">
-        </me_view:EditScreen>
+        <screen:EditScreen id="editScreen" width="100%" height="100%">
+        </screen:EditScreen>
       </mx:AddChild>
       <mx:SetProperty target="{bottombar}" name="width" value="100%"/>
       <mx:SetProperty target="{bottombar}" name="height" value="20"/>
       <mx:SetStyle target="{bottombar}" name="horizontalAlign" value="right"/>
+      <mx:SetProperty target="{bottombar}" name="currentState"/>
     </mx:State>
     <mx:State name="loading">
       <mx:RemoveChild target="{frontPage}"/>
@@ -51,7 +54,7 @@
       <mx:RemoveChild target="{bottombar}"/>
     </mx:State>
   </mx:states>
-  <me_view:BottomBar id="bottombar" width="950" height="100%" horizontalAlign="center"/>
+  <me_view:BottomBar id="bottombar" width="950" currentState="frontScreen"/>
  
  <mx:HTTPService id="sessionShow" url="{ShuffleDuck.CONTEXT_URL}/user_session" resultFormat="e4x" result="sessionDetailsReceived(event)" fault="sessionDetailsFault(event)"/>
   
@@ -61,7 +64,7 @@
   		import mx.rpc.events.ResultEvent;
   		import adobe.utils.CustomActions;
 
-		import com.shuffleduck.view.FrontPage;
+		import com.shuffleduck.view.screens.FrontScreen;
   		import com.shuffleduck.utils.CustomEvent;
   		import mx.managers.PopUpManager;
   		import com.shuffleduck.view.DeckListing;

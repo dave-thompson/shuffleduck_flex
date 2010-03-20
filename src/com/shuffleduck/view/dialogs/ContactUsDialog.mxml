@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+				layout="absolute" 
+				width="478"
+				height="428" 
+				creationComplete="setup()" styleName="titleWindow">
+	<mx:Label text="Contact Us" fontSize="22" fontWeight="bold" color="#FFFFFF" fontStyle="italic" x="10" y="10" id="label1" textDecoration="underline"/>
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.managers.PopUpManager;
+			
+			public function setup():void
+			{
+				this.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
+			}
+			
+			private function keyPressed(event:KeyboardEvent):void
+			{
+				if (event.keyCode == Keyboard.ENTER)
+				{
+					cancelButtonClicked();
+				}
+				event.stopImmediatePropagation();
+			}
+			
+			private function cancelButtonClicked():void
+			{
+				// remove pop up from screen
+  	    		PopUpManager.removePopUp(this);				
+			}
+			
+		]]>
+	</mx:Script>
+	<mx:Label x="10" y="50" text="Email" fontSize="16" fontWeight="bold" color="#FFFFFF" textDecoration="normal"/>
+	<mx:Canvas x="10" y="83" width="428" height="55" backgroundColor="#F5F3EE" cornerRadius="5" borderStyle="solid" borderThickness="0">
+		<mx:TextArea x="10" y="10" width="71" editable="false" borderThickness="0" height="34" backgroundAlpha="0" color="#000000" fontSize="11" fontWeight="bold">
+			<mx:text><![CDATA[Support:CEO:]]></mx:text>
+		</mx:TextArea>
+		<mx:TextArea x="89" y="10" width="162" editable="false" borderThickness="0" height="34" backgroundAlpha="0" color="#000000" fontSize="11">
+				<mx:text><![CDATA[support@shuffleduck.com
+dave@shuffleduck.com
+]]></mx:text>
+		</mx:TextArea>
+	</mx:Canvas>
+		<mx:Label x="10" y="227" text="Registered Address" fontSize="16" fontWeight="bold" color="#FFFFFF" textDecoration="normal"/>
+	<mx:Canvas x="10" y="180" width="428" height="35" backgroundColor="#F5F3EE" cornerRadius="5" borderStyle="solid" borderThickness="0">
+		<mx:TextArea x="10" y="10" width="71" editable="false" borderThickness="0" height="15" backgroundAlpha="0" color="#000000" fontSize="11" fontWeight="bold">
+			<mx:text>TBC</mx:text>
+		</mx:TextArea>
+	</mx:Canvas>
+		<mx:Label x="10" y="146" text="Phone" fontSize="16" fontWeight="bold" color="#FFFFFF" textDecoration="normal"/>
+	<mx:Canvas x="10" y="260" width="428" height="116" backgroundColor="#F5F3EE" cornerRadius="5" borderStyle="solid" borderThickness="0">
+		<mx:TextArea x="10" y="10" width="175" editable="false" borderThickness="0" height="96" backgroundAlpha="0" color="#000000" fontSize="11" fontWeight="normal">
+			<mx:text>TBC</mx:text>
+		</mx:TextArea>
+	</mx:Canvas>
+	<mx:Button x="351" y="384" label="Close" width="87" click="cancelButtonClicked()" id="cancelButton"/>
+</mx:TitleWindow>

@@ -43,7 +43,7 @@
 			</mx:AddChild>
 		</mx:State>
 	</mx:states>
-	<mx:Label text="Feedback" fontSize="22" fontWeight="bold" color="#000000" fontStyle="italic" x="10" y="10" id="label1"/>
+	<mx:Label text="Send Feedback" fontSize="22" fontWeight="bold" color="#000000" fontStyle="italic" x="10" y="10" id="label1"/>
 	<mx:Button x="151" y="247" label="Send" width="133" click="okButtonClicked()" id="button1"/>
 	
 	<mx:HTTPService id="feedbackCreate" url="{ShuffleDuck.CONTEXT_URL}/feedbacks" method = "POST" resultFormat="e4x" contentType="application/xml" result="feedbackResult(event)" fault="feedbackFault(event)"/>

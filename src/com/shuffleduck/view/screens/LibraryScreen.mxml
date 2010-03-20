@@ -71,6 +71,7 @@
 		import com.shuffleduck.utils.CustomEvent;
 		import com.adobe.utils.DateUtil;
 		import mx.rpc.events.ResultEvent;
+		import com.shuffleduck.view.DeckListing;
 
 		// event constants
 		public static const FEEDBACK_BUTTON_CLICKED:String = "feedbackButtonClicked";

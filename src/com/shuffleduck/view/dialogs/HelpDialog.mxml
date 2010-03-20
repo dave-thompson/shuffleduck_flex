@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+				layout="absolute" 
+				width="384"
+				height="144" 
+				creationComplete="setup()" styleName="titleWindow">
+	<mx:Label text="Like Some Help?" fontSize="22" fontWeight="bold" color="#000000" fontStyle="italic" x="10" y="10" id="label1"/>
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.managers.PopUpManager;
+			
+			public function setup():void
+			{
+				this.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
+			}
+			
+			private function keyPressed(event:KeyboardEvent):void
+			{
+				if (event.keyCode == Keyboard.ENTER)
+				{
+					cancelButtonClicked();
+				}
+				event.stopImmediatePropagation();
+			}
+			
+			private function cancelButtonClicked():void
+			{
+				// remove pop up from screen
+  	    		PopUpManager.removePopUp(this);				
+			}
+			
+			
+		]]>
+	</mx:Script>
+	<mx:TextArea x="10" y="51" width="340" editable="false" borderThickness="0" height="37" backgroundAlpha="0" color="#000000" fontSize="12">
+		<mx:text>Drop us a mail at support@shuffleduck.com, or ask a question via the Feedback link below.</mx:text>
+	</mx:TextArea>
+	<mx:Button x="271" y="95" label="Okay" width="73" click="cancelButtonClicked()" id="okayButton" fontSize="12" tabIndex="0"/>
+	
+	
+</mx:TitleWindow>

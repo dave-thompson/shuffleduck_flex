@@ -134,8 +134,10 @@
 		import flash.net.*;
 		import mx.events.FlexEvent;
 		import com.shuffleduck.utils.datagrid.*;
-		import com.shuffleduck.view.ImportDialog;
-		
+		import com.shuffleduck.view.dialogs.ImportDialog;
+		import com.shuffleduck.view.dialogs.ExportDialog;
+		import com.shuffleduck.view.dialogs.MoveCardDialog;
+
 		// event constants
 		public static const SIDE_SELECTED:String = "sideSelected";
 		public static const DECK_CLEARED:String = "deckCleared";

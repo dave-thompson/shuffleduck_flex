@@ -79,6 +79,10 @@
 		import mx.managers.PopUpManagerChildList;
 		import com.shuffleduck.data.DataModelItem;
 		import mx.core.IFlexDisplayObject;
+		import com.shuffleduck.view.CardViewer;
+		import com.shuffleduck.view.dialogs.SaveOrNotDialog;
+		import com.shuffleduck.view.dialogs.SavingDialog;
+
 		
   		 public static const ROLL_OVER_COLOR:uint = 0x25e9eb;
   		 
