@@ -45,7 +45,7 @@
     <mx:Button x="201" y="158" label="Log In" width="116" height="24" cornerRadius="10" id="loginButton" click="logInButtonClicked()"/>
     <mx:TextInput x="135" y="60" height="30" width="180" tabIndex="1" id="loginUsernameTextInput" fontSize="17"/>
     <mx:TextInput x="135" y="96" height="30" width="180" displayAsPassword="true" enabled="true" editable="true" tabIndex="2" id="loginPasswordTextInput" enter="logInButtonClicked()" fontSize="17"/>
-    <mx:Button x="140" y="128" label="Forgot Username / Password" fillAlphas="0" cornerRadius="0" alpha="0.0" fontWeight="normal" textDecoration="underline" id="forgotPasswordButton" click="showPasswordResetDialog()"/>
+    <mx:Button x="140" y="128" label="Forgot Username / Password" fillAlphas="0" cornerRadius="0" alpha="0.0" fontWeight="normal" textDecoration="underline" id="forgotPasswordButton" click="showPasswordResetDialog()" textRollOverColor="#FF0000"/>
   </mx:Canvas>
   <mx:Canvas width="585" height="526" borderStyle="solid" backgroundColor="#DEE2E2" y="10" x="0" id="canvas1" cornerRadius="20" verticalScrollPolicy="off" horizontalScrollPolicy="off" borderThickness="5" borderColor="#ffffff">
     <mx:Canvas x="10" y="10" width="555" height="496">
@@ -65,8 +65,8 @@
     <mx:TextInput x="135" y="136" height="30" width="180" displayAsPassword="true" id="signUpPasswordTextInput" tabIndex="5" fontSize="17"/>
     <mx:Label x="10" y="98" text="Username" fontSize="20"/>
     <mx:TextInput x="135" y="98" height="30" width="180" id="signUpUsernameTextInput" tabIndex="4" fontSize="17"/>
-    <mx:Button x="92" y="215" label="Terms of Use" fillAlphas="0" cornerRadius="0" alpha="0.0" fontWeight="normal" textDecoration="underline" id="termsOfUseButton" click="showTermsDialog()"/>
-    <mx:Button x="31" y="215" label="Privacy" fillAlphas="0" cornerRadius="0" alpha="0.0" fontWeight="normal" textDecoration="underline" id="privacyButton" click="showPrivacyDialog()"/>
+    <mx:Button x="92" y="215" label="Terms of Use" fillAlphas="0" cornerRadius="0" alpha="0.0" fontWeight="normal" textDecoration="underline" id="termsOfUseButton" click="showTermsDialog()" textRollOverColor="#FF0000"/>
+    <mx:Button x="31" y="215" label="Privacy" fillAlphas="0" cornerRadius="0" alpha="0.0" fontWeight="normal" textDecoration="underline" id="privacyButton" click="showPrivacyDialog()" textRollOverColor="#FF0000"/>
   </mx:Canvas>
 				 
   <mx:Script>
@@ -81,8 +81,8 @@
 		import mx.collections.ArrayCollection;
 		import ascb.util.StringUtilities;
 		import com.shuffleduck.view.dialogs.PasswordResetDialog;
-
-
+		import com.shuffleduck.view.dialogs.RichTextDialog;
+		
 		[Bindable]
         public var ages:ArrayCollection = new ArrayCollection([
                   													{label:"1", data:1},
@@ -202,6 +202,15 @@
   		 
   	    private function logInButtonClicked():void
   	    {
+  	    	
+  	    
+  	    	var i:int=0;
+			var str:String="";
+			while(++i<17000){
+  			str=str+"a";
+  			trace(str.length);
+			}
+		
 			// clear the last error message if there was one
 			currentState = "";
 			// send the entered data to the server
@@ -295,12 +304,16 @@
   	    
   	    public function showTermsDialog():void
   	    {
-  	    	
+  	    	// open new browser tab with terms URL
+  	    	var urlRequest:URLRequest = new URLRequest('http://www.shuffleduck.com/terms');
+            navigateToURL(urlRequest, '_blank');
   	    }
 
   	    public function showPrivacyDialog():void
   	    {
-  	    	
+  	    	// open new browser tab with privacy URL
+  	    	var urlRequest:URLRequest = new URLRequest('http://www.shuffleduck.com/privacy');
+            navigateToURL(urlRequest, '_blank');
   	    }
 
   	]]>

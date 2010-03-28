@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
 				layout="absolute" 
-				width="282"
-				height="138" 
+				width="736"
+				height="562" 
 				creationComplete="setup()" styleName="titleWindow">
-	<mx:Label text="Question?" fontSize="22" fontWeight="bold" color="#FFFFFF" fontStyle="italic" x="10" y="10" id="label1"/>
-	
 	<mx:Script>
 		<![CDATA[
 			import mx.managers.PopUpManager;
@@ -30,13 +28,8 @@
   	    		PopUpManager.removePopUp(this);				
 			}
 			
-			
 		]]>
 	</mx:Script>
-	<mx:TextArea x="10" y="51" width="232" editable="false" borderThickness="0" height="42" backgroundAlpha="0" color="#000000" fontSize="12" verticalScrollPolicy="off">
-		<mx:text><![CDATA[Ask us through the feedback link at the bottom there. ]]></mx:text>
-	</mx:TextArea>
-	<mx:Button x="179" y="91" label="Okay" width="73" click="cancelButtonClicked()" id="okayButton" fontSize="12" tabIndex="0"/>
-	
-	
+	<mx:Button x="609" y="518" label="Close" width="87" click="cancelButtonClicked()" id="cancelButton"/>
+	<mx:TextArea x="10" y="20" width="686" height="480" editable="false" id="textArea"/>
 </mx:TitleWindow>
