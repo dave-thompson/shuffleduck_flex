@@ -18,7 +18,7 @@
 	<mx:Button label="Help" alpha="0.0" fontWeight="normal" color="#172322" click="helpClicked(event)" textRollOverColor="#FF0000"/>
 
 	<mx:Button label="About Us" alpha="0.0" fontWeight="normal" color="#172322" click="aboutUsClicked(event)" textRollOverColor="#FF0000" visible="false" includeInLayout="false"/>
-	<mx:Button label="Feedback" alpha="1.0" fontWeight="bold" color="#FFFFFF" click="feedbackClicked(event)" textRollOverColor="#FF0000" height="20" fillAlphas="[1.0, 1.0]" fillColors="[#FF4E00, #FF4E00, #01AC25, #01AC25]" cornerRadius="0" fontSize="14" themeColor="#01AC25" id="button1"/>
+	<mx:Button label="Feedback" alpha="1.0" fontWeight="bold" color="#FFFFFF" click="feedbackClicked(event)" textRollOverColor="#FF4E00" height="20" fillAlphas="[1.0, 1.0]" fillColors="[#FF4E00, #FF4E00, #FFFFFF, #FFFFFF]" cornerRadius="0" fontSize="14" id="button1"/>
 
 	<mx:Script>
 		<![CDATA[
