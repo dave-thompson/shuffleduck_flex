@@ -305,14 +305,14 @@
   	    public function showTermsDialog():void
   	    {
   	    	// open new browser tab with terms URL
-  	    	var urlRequest:URLRequest = new URLRequest('http://www.shuffleduck.com/terms');
+  	    	var urlRequest:URLRequest = new URLRequest('./terms.html');
             navigateToURL(urlRequest, '_blank');
   	    }
 
   	    public function showPrivacyDialog():void
   	    {
   	    	// open new browser tab with privacy URL
-  	    	var urlRequest:URLRequest = new URLRequest('http://www.shuffleduck.com/privacy');
+  	    	var urlRequest:URLRequest = new URLRequest('./privacy.html');
             navigateToURL(urlRequest, '_blank');
   	    }
 
