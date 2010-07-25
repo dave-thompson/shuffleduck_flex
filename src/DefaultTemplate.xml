@@ -6,7 +6,7 @@
 				<Component template_component_id="1" name="Question" x="0" y="50" width="260" height="60">
 					<TextBox>
 						<text variable="true">Question</text>
-						<font variable="false">Arial</font>
+						<font variable="false">ArialMT</font>
 						<fontSize variable="false">35</fontSize>
 						<foregroundColor variable="false">16777215</foregroundColor>
 						<backgroundColor variable="false">13421772</backgroundColor>
@@ -20,7 +20,7 @@
 				<Component template_component_id="2" name="Answer" x="0" y="50" width="260" height="60">
 					<TextBox>
 						<text variable="true">Answer</text>
-						<font variable="false">Arial</font>
+						<font variable="false">ArialMT</font>
 						<fontSize variable="false">35</fontSize>
 						<foregroundColor variable="false">16777215</foregroundColor>
 						<backgroundColor variable="false">13421772</backgroundColor>
