@@ -73,7 +73,7 @@
 					var feedback:XML = <feedback/>;
 					feedback['email'] = StringUtilities.trim(emailTextInput.text);
 					feedback['message'] = StringUtilities.trim(messageTextArea.text);
-					serviceParameters = WebServiceUtils.buildRequestParamameters(feedback);
+					serviceParameters = WebServiceUtils.buildRequestParameters(feedback);
 					feedbackCreate.send(feedback);
 				}
 			}

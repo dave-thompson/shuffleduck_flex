@@ -18,7 +18,7 @@ package com.shuffleduck.utils
 
 		// Supplies the parameters (always api_key and signature) to be used for web service requests
 		// Takes the POST data as an input, and defaults to a GET request if that POST data is not given
-		public static function buildRequestParamameters(postData:String = ""):String
+		public static function buildRequestParameters(postData:String = ""):String
 		{
 			// note that the current API implementation is susceptible to replay attack - this is especially significant due to the REST implementation not using parameters for its GET requests - any GET request may therefore be issued by an attacker using the same api_key and signature
 			// enhanced security would require a timestamp to be sent along with the message & checked as being larger than previous timestamps

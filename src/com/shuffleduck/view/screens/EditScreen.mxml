@@ -289,7 +289,7 @@
         {
         	// Retrieve deck from server
         	userVisibleDeckID = requestedUserVisibleDeckID;
-        	serviceParameters = WebServiceUtils.buildRequestParamameters();
+        	serviceParameters = WebServiceUtils.buildRequestParameters();
         	deckDetailsShow.send();
 
 			// reset the save timer
@@ -789,12 +789,12 @@
 			// send server request
 			if (exitAfterwards)
 			{
-				serviceParameters = WebServiceUtils.buildRequestParamameters(deck_detail);
+				serviceParameters = WebServiceUtils.buildRequestParameters(deck_detail);
 				deckDetailsUpdateAndExit.send(deck_detail);
 			}
 			else
 			{
-				serviceParameters = WebServiceUtils.buildRequestParamameters(deck_detail);
+				serviceParameters = WebServiceUtils.buildRequestParameters(deck_detail);
 				deckDetailsUpdate.send(deck_detail);
 			}
         }

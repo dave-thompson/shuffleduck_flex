@@ -96,7 +96,7 @@
 
 			// retrieve user's decks from server
 			setLoading(true);
-			serviceParameters = WebServiceUtils.buildRequestParamameters();
+			serviceParameters = WebServiceUtils.buildRequestParameters();
 			decksIndex.send();
 
 			 // Set up event listeners
@@ -113,7 +113,7 @@
 		
 		private function logoutButtonClicked():void
 		{
-			serviceParameters = WebServiceUtils.buildRequestParamameters();
+			serviceParameters = WebServiceUtils.buildRequestParameters();
 			sessionDelete.send();
 		}
 		
@@ -156,7 +156,7 @@
 			deck['last_saved_date'] = DateUtil.toW3CDTF(new Date());
 			
 			// send new deck details to server for new deck creation
-			serviceParameters = WebServiceUtils.buildRequestParamameters(deck);
+			serviceParameters = WebServiceUtils.buildRequestParameters(deck);
 			decksCreate.send(deck);
 		}
 
@@ -164,7 +164,7 @@
 		{
 			// delete deck from server
 			userVisibleDeckIDForDeletion = e.params.userVisibleDeckID;
-			serviceParameters = WebServiceUtils.buildRequestParamameters();
+			serviceParameters = WebServiceUtils.buildRequestParameters();
 			decksDelete.send();
 			
 			// wait for the response before removing deck from the UI
@@ -174,7 +174,7 @@
 		private function decksDeleteResult(event:ResultEvent):void
 		{
 			// refresh the deck list
-			serviceParameters = WebServiceUtils.buildRequestParamameters();
+			serviceParameters = WebServiceUtils.buildRequestParameters();
 			decksIndex.send();
 		}
 
@@ -186,7 +186,7 @@
 
 			// retrieve the deck for duplication from the server
 			userVisibleDeckIDForDuplication = e.params.userVisibleDeckID;
-			serviceParameters = WebServiceUtils.buildRequestParamameters();
+			serviceParameters = WebServiceUtils.buildRequestParameters();
 			deckDetailsShowForDuplication.send();
 			
 			// wait for the response, then duplicate the deck
@@ -212,13 +212,13 @@
 			create_deck_request['last_saved_date'] = DateUtil.toW3CDTF(new Date());
 			
 			// send new deck details to server for new deck creation
-			serviceParameters = WebServiceUtils.buildRequestParamameters(create_deck_request);
+			serviceParameters = WebServiceUtils.buildRequestParameters(create_deck_request);
 			decksCreate.send(create_deck_request);
 		}
 		
 		private function requestDecksIndex():void
 		{
-			serviceParameters = WebServiceUtils.buildRequestParamameters();
+			serviceParameters = WebServiceUtils.buildRequestParameters();
 			decksIndex.send();		
 		}
 		

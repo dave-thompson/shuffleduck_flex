@@ -80,8 +80,8 @@
 	  		public static const XML_BACKWARD_COMPATIBLE_IPHONE_VERSION_NO:String 	= "0.01";
 	
 			// Web Service Configuration
-			public static const CONTEXT_URL:String = "http://localhost:3000";
-			//public static const CONTEXT_URL:String = "http://shuffleduck.heroku.com";
+			//public static const CONTEXT_URL:String = "http://localhost:3000";
+			public static const CONTEXT_URL:String = "http://shuffleduck.heroku.com";
 			public static const APP_KEY:String = "3000";
 			public static const APP_SECRET:String = "xUoMDKO1iSZPrEC4hY4n";
 			
@@ -130,7 +130,7 @@
 			*/			
 
 			// check to see if there is a session in progress, and if so go to the library screen
-			serviceParameters = WebServiceUtils.buildRequestParamameters();
+			serviceParameters = WebServiceUtils.buildRequestParameters();
 			sessionShow.send();
 		}
 		
