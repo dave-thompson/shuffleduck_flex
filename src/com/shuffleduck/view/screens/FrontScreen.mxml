@@ -10,8 +10,8 @@
 				width="100%"
 				backgroundAlpha="0.0">
 		 
-<mx:HTTPService id="accountCreate" url="{ShuffleDuck.CONTEXT_URL}/users" method = "POST" resultFormat="e4x" contentType="application/xml" result="loggedIn(true, event)" fault="failedAccountCreation(event)"/>
-<mx:HTTPService id="sessionCreate" url="{ShuffleDuck.CONTEXT_URL}/user_session" method = "POST" resultFormat="e4x" contentType="application/xml" result="loggedIn(false, event)" fault="failedLogIn(event)"/>
+<mx:HTTPService id="accountCreate" url="{ShuffleDuck.CONTEXT_URL}/users{serviceParameters}" method = "POST" resultFormat="e4x" contentType="application/xml" result="loggedIn(true, event)" fault="failedAccountCreation(event)"/>
+<mx:HTTPService id="sessionCreate" url="{ShuffleDuck.CONTEXT_URL}/user_session{serviceParameters}" method = "POST" resultFormat="e4x" contentType="application/xml" result="loggedIn(false, event)" fault="failedLogIn(event)"/>
 
 	<mx:states>
 		<mx:State name="error">
@@ -82,6 +82,9 @@
 		import ascb.util.StringUtilities;
 		import com.shuffleduck.view.dialogs.PasswordResetDialog;
 		import com.shuffleduck.view.dialogs.RichTextDialog;
+		import com.shuffleduck.utils.WebServiceUtils;
+		
+		[Bindable] private var serviceParameters:String;
 		
 		[Bindable]
         public var ages:ArrayCollection = new ArrayCollection([
@@ -202,21 +205,13 @@
   		 
   	    private function logInButtonClicked():void
   	    {
-  	    	
-  	    
-  	    	var i:int=0;
-			var str:String="";
-			while(++i<17000){
-  			str=str+"a";
-  			trace(str.length);
-			}
-		
 			// clear the last error message if there was one
 			currentState = "";
 			// send the entered data to the server
 			var user_session:XML = <user_session/>;
 			user_session['username'] = StringUtilities.trim(loginUsernameTextInput.text);			
 			user_session['password'] = StringUtilities.trim(loginPasswordTextInput.text);
+			serviceParameters = WebServiceUtils.buildRequestParamameters(user_session);
 			sessionCreate.send(user_session);
   	    }
   	    
@@ -230,6 +225,7 @@
 			user['username'] = StringUtilities.trim(signUpUsernameTextInput.text);
 			user['password'] = signUpPasswordTextInput.text;
 			user['age_at_signup'] = signUpAgeComboBox.value;
+			serviceParameters = WebServiceUtils.buildRequestParamameters(user);
 			accountCreate.send(user);
   	    }
   	    

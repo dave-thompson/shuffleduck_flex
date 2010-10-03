@@ -10,9 +10,9 @@
 				 backgroundAlpha="0.0">
   
 <!-- Web Services -->
-<mx:HTTPService id="deckDetailsShow" url="{ShuffleDuck.CONTEXT_URL}/decks/{userVisibleDeckID}/deck_details/{userVisibleDeckID}" resultFormat="e4x" result="deckDetailsShowResult(event)"/>
-<mx:HTTPService id="deckDetailsUpdate" url="{ShuffleDuck.CONTEXT_URL}/decks/{userVisibleDeckID}/deck_details/{userVisibleDeckID}" method="POST" resultFormat="e4x" contentType="application/xml" result="completeSave(event)" headers="{putHeader}"/>
-<mx:HTTPService id="deckDetailsUpdateAndExit" url="{ShuffleDuck.CONTEXT_URL}/decks/{userVisibleDeckID}/deck_details/{userVisibleDeckID}" method="POST" resultFormat="e4x" contentType="application/xml" result="saveConfirmedAndExitRequested(event)" headers="{putHeader}"/>
+<mx:HTTPService id="deckDetailsShow" url="{ShuffleDuck.CONTEXT_URL}/decks/{userVisibleDeckID}/deck_details/{userVisibleDeckID}{serviceParameters}" resultFormat="e4x" result="deckDetailsShowResult(event)"/>
+<mx:HTTPService id="deckDetailsUpdate" url="{ShuffleDuck.CONTEXT_URL}/decks/{userVisibleDeckID}/deck_details/{userVisibleDeckID}{serviceParameters}" method="POST" resultFormat="e4x" contentType="application/xml" result="completeSave(event)" headers="{putHeader}"/>
+<mx:HTTPService id="deckDetailsUpdateAndExit" url="{ShuffleDuck.CONTEXT_URL}/decks/{userVisibleDeckID}/deck_details/{userVisibleDeckID}{serviceParameters}" method="POST" resultFormat="e4x" contentType="application/xml" result="saveConfirmedAndExitRequested(event)" headers="{putHeader}"/>
   
 	<mx:Style source="com/shuffleduck/theme/styles.css"/>
   
@@ -82,7 +82,7 @@
 		import com.shuffleduck.view.CardViewer;
 		import com.shuffleduck.view.dialogs.SaveOrNotDialog;
 		import com.shuffleduck.view.dialogs.SavingDialog;
-
+		import com.shuffleduck.utils.WebServiceUtils;
 		
   		 public static const ROLL_OVER_COLOR:uint = 0x25e9eb;
   		 
@@ -101,6 +101,8 @@
   		 
   		 // The header to send with the above put HTTPServices
   		 [Bindable] private var putHeader:Object = new Object();
+  		 // The parameters to send on the end of HTTPService calls
+  		 [Bindable] private var serviceParameters:String;
   		 
   		 private var _lastClickTime:uint = 0; // stores the last time the user clicked on _a component_ for double-click detection
   		 
@@ -287,6 +289,7 @@
         {
         	// Retrieve deck from server
         	userVisibleDeckID = requestedUserVisibleDeckID;
+        	serviceParameters = WebServiceUtils.buildRequestParamameters();
         	deckDetailsShow.send();
 
 			// reset the save timer
@@ -786,10 +789,12 @@
 			// send server request
 			if (exitAfterwards)
 			{
+				serviceParameters = WebServiceUtils.buildRequestParamameters(deck_detail);
 				deckDetailsUpdateAndExit.send(deck_detail);
 			}
 			else
 			{
+				serviceParameters = WebServiceUtils.buildRequestParamameters(deck_detail);
 				deckDetailsUpdate.send(deck_detail);
 			}
         }

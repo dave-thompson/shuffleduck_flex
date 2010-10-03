@@ -25,15 +25,15 @@
 	</mx:states>
 			
 <!-- Web Services -->
-<mx:HTTPService id="decksIndex" url="{ShuffleDuck.CONTEXT_URL}/decks" resultFormat="e4x" result="decksIndexResult(event)"/>
-<mx:HTTPService id="deckDetailsShowForDuplication" url="{ShuffleDuck.CONTEXT_URL}/decks/{userVisibleDeckIDForDuplication}/deck_details/{userVisibleDeckIDForDuplication}" resultFormat="e4x" result="deckDetailsShowForDuplicationResult(event)"/>
-<mx:HTTPService id="decksCreate" url="{ShuffleDuck.CONTEXT_URL}/decks" method = "POST" resultFormat="e4x" contentType="application/xml" result="decksIndex.send()"/>
-<mx:HTTPService id="decksDelete" url="{ShuffleDuck.CONTEXT_URL}/decks/{userVisibleDeckIDForDeletion}" method="POST" resultFormat="e4x" contentType="application/xml" result="decksDeleteResult(event)" headers="{deleteHeader}">
+<mx:HTTPService id="decksIndex" url="{ShuffleDuck.CONTEXT_URL}/decks{serviceParameters}" resultFormat="e4x" result="decksIndexResult(event)"/>
+<mx:HTTPService id="deckDetailsShowForDuplication" url="{ShuffleDuck.CONTEXT_URL}/decks/{userVisibleDeckIDForDuplication}/deck_details/{userVisibleDeckIDForDuplication}{serviceParameters}" resultFormat="e4x" result="deckDetailsShowForDuplicationResult(event)"/>
+<mx:HTTPService id="decksCreate" url="{ShuffleDuck.CONTEXT_URL}/decks{serviceParameters}" method = "POST" resultFormat="e4x" contentType="application/xml" result="requestDecksIndex()"/>
+<mx:HTTPService id="decksDelete" url="{ShuffleDuck.CONTEXT_URL}/decks/{userVisibleDeckIDForDeletion}{serviceParameters}" method="POST" resultFormat="e4x" contentType="application/xml" result="decksDeleteResult(event)" headers="{deleteHeader}">
 	<mx:request>
 	   <flex>true</flex>
 	</mx:request>
 </mx:HTTPService>
-<mx:HTTPService id="sessionDelete" url="{ShuffleDuck.CONTEXT_URL}/user_session" method="POST" resultFormat="e4x" contentType="application/xml" result="loggedOut()" headers="{deleteHeader}">
+<mx:HTTPService id="sessionDelete" url="{ShuffleDuck.CONTEXT_URL}/user_session{serviceParameters}" method="POST" resultFormat="e4x" contentType="application/xml" result="loggedOut()" headers="{deleteHeader}">
 	<mx:request>
 	   <flex>true</flex>
 	</mx:request>
@@ -72,6 +72,7 @@
 		import com.adobe.utils.DateUtil;
 		import mx.rpc.events.ResultEvent;
 		import com.shuffleduck.view.DeckListing;
+		import com.shuffleduck.utils.WebServiceUtils;
 
 		// event constants
 		public static const FEEDBACK_BUTTON_CLICKED:String = "feedbackButtonClicked";
@@ -81,6 +82,7 @@
 		 
 		[Bindable] private var userVisibleDeckIDForDeletion:int;
 		[Bindable] private var userVisibleDeckIDForDuplication:int;
+		[Bindable] private var serviceParameters:String;
 		private var titleOfDeckToBeDuplicated:String;
 		
   		/********************
@@ -94,6 +96,7 @@
 
 			// retrieve user's decks from server
 			setLoading(true);
+			serviceParameters = WebServiceUtils.buildRequestParamameters();
 			decksIndex.send();
 
 			 // Set up event listeners
@@ -110,6 +113,7 @@
 		
 		private function logoutButtonClicked():void
 		{
+			serviceParameters = WebServiceUtils.buildRequestParamameters();
 			sessionDelete.send();
 		}
 		
@@ -152,6 +156,7 @@
 			deck['last_saved_date'] = DateUtil.toW3CDTF(new Date());
 			
 			// send new deck details to server for new deck creation
+			serviceParameters = WebServiceUtils.buildRequestParamameters(deck);
 			decksCreate.send(deck);
 		}
 
@@ -159,7 +164,8 @@
 		{
 			// delete deck from server
 			userVisibleDeckIDForDeletion = e.params.userVisibleDeckID;
-			decksDelete.send(); 
+			serviceParameters = WebServiceUtils.buildRequestParamameters();
+			decksDelete.send();
 			
 			// wait for the response before removing deck from the UI
 		}
@@ -168,6 +174,7 @@
 		private function decksDeleteResult(event:ResultEvent):void
 		{
 			// refresh the deck list
+			serviceParameters = WebServiceUtils.buildRequestParamameters();
 			decksIndex.send();
 		}
 
@@ -179,6 +186,7 @@
 
 			// retrieve the deck for duplication from the server
 			userVisibleDeckIDForDuplication = e.params.userVisibleDeckID;
+			serviceParameters = WebServiceUtils.buildRequestParamameters();
 			deckDetailsShowForDuplication.send();
 			
 			// wait for the response, then duplicate the deck
@@ -204,7 +212,14 @@
 			create_deck_request['last_saved_date'] = DateUtil.toW3CDTF(new Date());
 			
 			// send new deck details to server for new deck creation
+			serviceParameters = WebServiceUtils.buildRequestParamameters(create_deck_request);
 			decksCreate.send(create_deck_request);
+		}
+		
+		private function requestDecksIndex():void
+		{
+			serviceParameters = WebServiceUtils.buildRequestParamameters();
+			decksIndex.send();		
 		}
 		
 		private function decksIndexResult(event:ResultEvent):void

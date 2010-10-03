@@ -56,7 +56,7 @@
   </mx:states>
   <me_view:BottomBar id="bottombar" width="950" currentState="frontScreen"/>
  
- <mx:HTTPService id="sessionShow" url="{ShuffleDuck.CONTEXT_URL}/user_session" resultFormat="e4x" result="sessionDetailsReceived(event)" fault="sessionDetailsFault(event)"/>
+ <mx:HTTPService id="sessionShow" url="{ShuffleDuck.CONTEXT_URL}/user_session{serviceParameters}" resultFormat="e4x" result="sessionDetailsReceived(event)" fault="sessionDetailsFault(event)"/>
   
   <mx:Script>
   	<![CDATA[
@@ -71,19 +71,27 @@
   		import mx.rpc.events.ResultEvent;
   		import com.shuffleduck.view.preloaders.AppPreloader;
   		import com.shuffleduck.utils.ExternalInterfaceUtil;
+  		import com.shuffleduck.utils.WebServiceUtils;
 
-		// Version Numbers
-  		public static const XML_VERSION_NO:String 								= "0.01";
-  		public static const XML_BACKWARD_COMPATIBLE_IPHONE_VERSION_NO:String 	= "0.01";
+		// Application Global Configuration
 
-		// Web Service Configuration
-		//public static const CONTEXT_URL:String = "http://localhost:3000";
-		public static const CONTEXT_URL:String = "http://shuffleduck.heroku.com";
-
+			// Version Numbers
+	  		public static const XML_VERSION_NO:String 								= "0.01";
+	  		public static const XML_BACKWARD_COMPATIBLE_IPHONE_VERSION_NO:String 	= "0.01";
+	
+			// Web Service Configuration
+			public static const CONTEXT_URL:String = "http://localhost:3000";
+			//public static const CONTEXT_URL:String = "http://shuffleduck.heroku.com";
+			public static const APP_KEY:String = "3000";
+			public static const APP_SECRET:String = "xUoMDKO1iSZPrEC4hY4n";
+			
 		// event constants
 		public static const USER_LOGGED_IN:String = "userLoggedIn";
 		public static const USER_LOGGED_OUT:String = "userLoggedOut";
 		public static const DEBUG_POP_UP_REQUEST:String = "debugPopUpRequest";
+  		 
+  		// Web Service Parameters 
+  		[Bindable] public var serviceParameters:String = "";
   		 
   		/********************
   		 * Constructor
@@ -122,6 +130,7 @@
 			*/			
 
 			// check to see if there is a session in progress, and if so go to the library screen
+			serviceParameters = WebServiceUtils.buildRequestParamameters();
 			sessionShow.send();
 		}
 		
@@ -133,7 +142,7 @@
 			{
 	  	    	// raise an event to the application (self) so it may show the user's decks
 	  	    	var params:Object = new Object();
-	  	    	params.username = user_details.username
+	  	    	params.username = user_details.username;
 		    	var newEvent:CustomEvent = new CustomEvent(ShuffleDuck.USER_LOGGED_IN, params, true);
 		    	dispatchEvent(newEvent);
 			}

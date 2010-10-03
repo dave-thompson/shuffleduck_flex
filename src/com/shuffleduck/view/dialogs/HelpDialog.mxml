@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
 				layout="absolute" 
-				width="282"
-				height="138" 
+				width="812"
+				height="584" 
 				creationComplete="setup()" styleName="titleWindow">
-	<mx:Label text="Question?" fontSize="22" fontWeight="bold" color="#FFFFFF" fontStyle="italic" x="10" y="10" id="label1"/>
+	<mx:Label text="Getting Started" fontSize="22" fontWeight="bold" color="#FFFFFF" fontStyle="italic" x="10" y="10" id="label1" width="762" textAlign="center"/>
 	
 	<mx:Script>
 		<![CDATA[
@@ -33,10 +33,29 @@
 			
 		]]>
 	</mx:Script>
-	<mx:TextArea x="10" y="51" width="232" editable="false" borderThickness="0" height="42" backgroundAlpha="0" color="#000000" fontSize="12" verticalScrollPolicy="off">
-		<mx:text><![CDATA[Ask us through the feedback link at the bottom there. ]]></mx:text>
+	<mx:TextArea x="10" y="92" width="762" editable="false" borderThickness="0" height="29" backgroundAlpha="0" color="#000000" fontSize="12" verticalScrollPolicy="off">
+		<mx:text>Just logged in? Hit the New Deck Button, wait for the deck to appear, then click on the deck to edit it.</mx:text>
 	</mx:TextArea>
-	<mx:Button x="179" y="91" label="Okay" width="73" click="cancelButtonClicked()" id="okayButton" fontSize="12" tabIndex="0"/>
+	<mx:Button x="666" y="527" label="Back to It" width="106" click="cancelButtonClicked()" id="okayButton" fontSize="12" tabIndex="0"/>
+	<mx:Label text="1) Creating a Deck" fontSize="22" fontWeight="bold" color="#000000" fontStyle="italic" x="10" y="51" id="label0"/>
+	<mx:Label text="2) Power Editing : Cards View" fontSize="22" fontWeight="bold" color="#000000" fontStyle="italic" x="10" y="129" id="label2"/>
+	<mx:TextArea x="10" y="170" width="762" editable="false" borderThickness="0" height="176" backgroundAlpha="0" color="#000000" fontSize="12" verticalScrollPolicy="off">
+		<mx:text><![CDATA[Once in the editor, there are three views to use: Template, Cards, Grid. Blank decks open in Template mode. You can switch views using the links at the top, on the right hand side.
+
+Switch to Cards view and add some new cards using the Add Card button (top left). Each card has two sides, with the front side being shown at the top and the back side at the bottom.
+
+Click on the black border around a card to change background colours (on the right). Click on some text to format or edit it. Click the New TextBox button (top left), then click a side to add a TextBox to it.
+
+Use the delete key, Ctrl-C, Ctrl-V on textboxes to delete, copy and paste.]]></mx:text>
+	</mx:TextArea>
+	<mx:Label text="3) Fast Editing: Grid View" fontSize="22" fontWeight="bold" color="#000000" fontStyle="italic" x="10" y="354" id="label3"/>
+	<mx:TextArea x="10" y="395" width="762" editable="false" borderThickness="0" height="37" backgroundAlpha="0" color="#000000" fontSize="12" verticalScrollPolicy="off">
+		<mx:text>Switch to Grid View (top right) and see how fast you can change card values and add new cards. Switch back to Cards view to see the results!</mx:text>
+	</mx:TextArea>
+	<mx:Label text="4) Save and Study" fontSize="22" fontWeight="bold" color="#000000" fontStyle="italic" x="10" y="440" id="label4"/>
+	<mx:TextArea x="10" y="481" width="762" editable="false" borderThickness="0" height="37" backgroundAlpha="0" color="#000000" fontSize="12" verticalScrollPolicy="off">
+		<mx:text>Click the ShuffleDuck icon (top left) to return to the Library, clicking Save when prompted to save your deck. Find the numeric ID shown on your new deck. Anyone can use this ID to download and study your deck on their iPhone.</mx:text>
+	</mx:TextArea>
 	
 	
 </mx:TitleWindow>
