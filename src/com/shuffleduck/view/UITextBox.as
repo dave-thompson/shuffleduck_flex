@@ -9,6 +9,7 @@ package com.shuffleduck.view
     import flash.text.TextField;
     import flash.text.TextFieldType;
     import flash.text.TextFormat;
+    import flash.text.TextLineMetrics;
     
     
     public class UITextBox extends UIUserComponent
@@ -46,6 +47,10 @@ package com.shuffleduck.view
         	 // _innerTextField and _outerTextField should not receive mouse events
             _innerTextField.mouseEnabled = false;
             _outerTextField.mouseEnabled = false;
+        	
+        	// text should be multiline and wrap automatically
+        	_innerTextField.multiline = true;
+        	_innerTextField.wordWrap = true;
         	
         	// call super so that it also has reference
         	super(textBox);
@@ -90,10 +95,8 @@ package com.shuffleduck.view
 	            _innerTextField.setTextFormat(textFormat);
 
 				// Determine height and y placement of the inner textField based on the text in the field
-	            // height should be just height of text, plus a little extra to cover low hanging letters, eg. "g"
-				var requiredHeightForText:Number = _innerTextField.getLineMetrics(0).ascent + _innerTextField.getLineMetrics(0).descent + (4 * _sizeMultiplier);
-				_innerTextField.height = requiredHeightForText;
-	            _innerTextField.y = (((_textBox.height * _sizeMultiplier) - _innerTextField.height)/2); // textField should be offset to be vertically in middle of the UITextBox
+	            this.updateInnerLineHeight();
+
 			this.addChild(_innerTextField);
             
             // position the UITextBox on the UISide
@@ -112,10 +115,22 @@ package com.shuffleduck.view
             this.invalidateDisplayList();
         }
         
+        private function updateInnerLineHeight():void
+        {
+        	var lineMetrics:TextLineMetrics = _innerTextField.getLineMetrics(0);
+	        var lastLineHeight:Number = lineMetrics.ascent + lineMetrics.descent + (4 * _sizeMultiplier); // height should be just height of text, plus the gutters
+	        var otherLineHeights:Number = lineMetrics.ascent + lineMetrics.descent + lineMetrics.leading; // height is height of text plus gap between this and the next line
+			var requiredHeightForText:Number = (otherLineHeights * (_innerTextField.numLines - 1)) + lastLineHeight;
+			_innerTextField.height = requiredHeightForText;
+	        _innerTextField.y = (((_textBox.height * _sizeMultiplier) - _innerTextField.height)/2); // textField should be offset to be vertically in middle of the UITextBox
+        }
+        
 		private function handleUserTextUpdate(event:Event):void
 		{
 			// update the data model
 			_textBox.text = _innerTextField.text;
+			// Determine height and y placement of the inner textField based on the text in the field
+			this.updateInnerLineHeight();
 		}
 		
 		private function handleComponentSelection(event:Event):void

@@ -34,7 +34,7 @@ package com.shuffleduck.view
 			// retain Side that this UISide will represent
 			_side = side;
 			
-			// set standard properties	
+			// set standard properties
 			this.width = 260 * _sizeMultiplier;
 			this.height = 160 * _sizeMultiplier;
 			this.setStyle("backgroundColor", _side.backgroundColor);
