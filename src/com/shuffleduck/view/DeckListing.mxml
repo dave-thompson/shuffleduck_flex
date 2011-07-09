@@ -43,13 +43,13 @@
 
 	</mx:VBox>
 
-	<mx:HTTPService id="decksUpdate" url="{ShuffleDuck.CONTEXT_URL}/decks/{_userVisibleID}" method="POST" resultFormat="e4x" contentType="application/xml" result="completeTitleChange(event)" headers="{putHeader}"/>
+	<mx:HTTPService id="decksUpdate" url="{ShuffleDuck.CONTEXT_URL}/decks/{_userVisibleID}{serviceParameters}" method="POST" resultFormat="e4x" contentType="application/xml" result="completeTitleChange(event)" headers="{putHeader}"/>
 
 
 <mx:Script>
 	<![CDATA[
 		import com.shuffleduck.data.Side;
-		
+		import com.shuffleduck.utils.WebServiceUtils;
 		import com.adobe.utils.DateUtil;
 		import com.shuffleduck.utils.CustomEvent;
 		import mx.events.CloseEvent;
@@ -63,6 +63,7 @@
 		import com.shuffleduck.view.dialogs.DeckNameDialog;
 				
 		// state variables
+		[Bindable] private var serviceParameters:String;
 		[Bindable] private var _userVisibleID:String;
   		[Bindable] private var _lastSavedDate:Date;
   		[Bindable] private var _numCardsString:String;
@@ -222,6 +223,7 @@
 			request['title'] = _stagingTitle;
 
 			// update the server
+			serviceParameters = WebServiceUtils.buildRequestParameters(request);
 			decksUpdate.send(request);
 			
 			// wait for the server to update, then continue with completeTitleChange() below
