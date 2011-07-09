@@ -852,6 +852,9 @@
         	// clear the current deck
         	deckViewer.clear();
         	
+        	// stop firing timer events every minute to update the save time
+        	saveTimer.stop();
+        	
         	// raise event so that application may change state back to the library
 			var params:Object = new Object();
 	    	var newEvent:CustomEvent = new CustomEvent(RETURN_TO_LIBRARY_REQUEST, params, true);
