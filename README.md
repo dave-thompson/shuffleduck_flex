@@ -1,6 +1,6 @@
 #ShuffleDuck
 
-SHUFFLEDUCK was a flashcard-based education platform.  It comprised:
+ShuffleDuck was a flashcard-based education platform.  It comprised:
 
 - a Flash / ActionScript WYSIWIG flashcard editor
 - an iOS app for studying hi-fidelity flashcards
